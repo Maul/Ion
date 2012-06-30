@@ -1,0 +1,15 @@
+﻿## Interface: 40300
+## Title: Ion: Menu Bar
+## Author: Maul
+## Version: 1.0
+## Notes: Menu bar for Ion
+## DefaultState: enabled
+## Dependencies: Ion
+## SavedVariables: IonMenuGDB
+## SavedVariablesPerCharacter: IonMenuCDB
+## X-Child-Of: Ion
+## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved..
+## X-Email: trinityui@live.com
+
+Ion-MenuBar.lua
+Ion-MenuBar.xml

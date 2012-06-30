@@ -1,0 +1,26 @@
+﻿## Interface: 40300
+## Title: Ion
+## Notes: Ion: Action Bar & Object Mananger
+## Author: Connor Chenoweth (aka Maul)
+## Version: 1.0
+## DefaultState: enabled
+## SavedVariables: IonGDB, IonItemCache
+## SavedVariablesPerCharacter: IonCDB, IonSpec
+## OptionalDeps: Align, Masque, BarKeep, Bartender4, Dominos, MagnetButtons, nMainbar, Orbs, rActionBarStyler, StellarBars, Tukui, XBar
+## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
+## X-Email: trinityui@live.com
+
+Libs\LibStub\LibStub.lua
+Libs\AceLocale-3.0\AceLocale-3.0.xml
+
+Ion_Localizations.xml
+
+Ion__Core.lua
+
+Ion_States.lua
+Ion_Buttons.lua
+Ion_Bars.lua
+Ion_KeyBinder.lua
+Ion_SnapTo.lua
+
+Ion__Core.xml

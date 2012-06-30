@@ -1,0 +1,880 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
+
+	<!-- Macaroon, a World of WarcraftÂ® user interface addon. -->
+	<!-- CopyrightÂ© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved. -->
+
+	<Frame name="MacaroonBarEditor" enableMouse="true" movable="true" frameStrata="DIALOG" parent="UIParent" clampedToScreen="true">
+		<Anchors>
+			<Anchor point="TOP" relativeTo="UIParent" relativePoint="TOP">
+				<Offset x="0" y="0"/>
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="22"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5"/>
+			</BackgroundInsets>
+		</Backdrop>
+		<Frames>
+			<Frame name="$parentBarList" parentKey="barlist">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="10" y="-10"/>
+					</Anchor>
+					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT">
+						<Offset x="150" y="-10"/>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Frames>
+					<ScrollFrame name="$parentScrollFrame" inherits="MacaroonScrollFrameTemplate1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="5" y="-5"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="-27" y="5"/>
+							</Anchor>
+						</Anchors>
+						<ScrollChild>
+							<Frame name="$parentScrollChildFrame">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="5" y="-5"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="-5" y="5"/>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Scripts>
+								<OnShow>
+									--self:SetValue(0)
+								</OnShow>
+							</Scripts>
+						</ScrollChild>
+						<Scripts>
+							<OnLoad>
+								Macaroon.BarListScrollFrame_OnLoad(self)
+							</OnLoad>
+							<OnShow>
+								Macaroon.BarListScrollFrameUpdate()
+							</OnShow>
+							<OnVerticalScroll>
+								FauxScrollFrame_OnVerticalScroll(self, offset, 2, Macaroon.BarListScrollFrameUpdate)
+							</OnVerticalScroll>
+						</Scripts>
+					</ScrollFrame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						Macaroon.BarList_OnLoad(self)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+			<Frame name="$parentBarOptions" parentKey="baropt">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
+						<Offset x="6" y="0"/>
+					</Anchor>
+					<Anchor point="BOTTOM" relativeTo="$parentBarList" relativePoint="BOTTOM" >
+						<Offset x="0" y="0"/>
+					</Anchor>
+					<Anchor point="RIGHT">
+						<Offset x="-10" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentAdjustableOptions" parentKey="adjopt">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="0" y="-45"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
+								<Offset x="235" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="16"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="5" right="5" top="5" bottom="5"/>
+							</BackgroundInsets>
+						</Backdrop>
+						<Scripts>
+							<OnLoad>
+								Macaroon.AdjustableOptions_OnLoad(self)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parentStateData" parentKey="statedata">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentAdjustableOptions" relativePoint="BOTTOMRIGHT">
+								<Offset x="6" y="90"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="16"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="5" right="5" top="5" bottom="5"/>
+							</BackgroundInsets>
+						</Backdrop>
+						<Scripts>
+							<OnLoad>
+								Macaroon.AdjustableOptions_OnLoad(self)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parentStateEditor" parentKey="editor">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentAdjustableOptions" relativePoint="BOTTOMRIGHT">
+								<Offset x="6" y="230"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parentStateData" relativePoint="TOPRIGHT">
+								<Offset x="0" y="45"/>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentPresets" parentKey="presets" hidden="true">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer level="ARTWORK">
+										<FontString name="$parentPrimary" parentKey="primary" justifyH="CENTER" inherits="GameFontNormalSmall">
+											<Anchors>
+												<Anchor point="TOP">
+													<Offset x="-100" y="-10"/>
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+									<Layer level="ARTWORK">
+										<FontString name="$parentSecondary" parentKey="secondary" justifyH="CENTER" inherits="GameFontNormalSmall">
+											<Anchors>
+												<Anchor point="TOP">
+													<Offset x="150" y="-10"/>
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+								<Frames>
+									<Frame>
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
+												<Offset x="100" y="0"/>
+											</Anchor>
+										</Anchors>
+										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+											<EdgeSize>
+												<AbsValue val="16"/>
+											</EdgeSize>
+											<TileSize>
+												<AbsValue val="16"/>
+											</TileSize>
+											<BackgroundInsets>
+												<AbsInset left="5" right="5" top="5" bottom="5"/>
+											</BackgroundInsets>
+										</Backdrop>
+										<Scripts>
+											<OnLoad>
+												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+												self:SetBackdropColor(0,0,0,0.5)
+											</OnLoad>
+										</Scripts>
+									</Frame>
+									<Frame>
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="103" y="0"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+										</Anchors>
+										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+											<EdgeSize>
+												<AbsValue val="16"/>
+											</EdgeSize>
+											<TileSize>
+												<AbsValue val="16"/>
+											</TileSize>
+											<BackgroundInsets>
+												<AbsInset left="5" right="5" top="5" bottom="5"/>
+											</BackgroundInsets>
+										</Backdrop>
+										<Scripts>
+											<OnLoad>
+												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+												self:SetBackdropColor(0,0,0,0.5)
+											</OnLoad>
+										</Scripts>
+									</Frame>
+								</Frames>
+								<Scripts>
+									<OnLoad>
+										--self.primary:SetText("Primary Bar States")
+										--self.secondary:SetText("Secondary Bar States")
+									</OnLoad>
+								</Scripts>
+							</Frame>
+							<Frame name="$parentCustom" parentKey="custom" hidden="true">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+								</Anchors>
+								<Frames>
+									<Frame>
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+										</Anchors>
+										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+											<EdgeSize>
+												<AbsValue val="16"/>
+											</EdgeSize>
+											<TileSize>
+												<AbsValue val="16"/>
+											</TileSize>
+											<BackgroundInsets>
+												<AbsInset left="5" right="5" top="5" bottom="5"/>
+											</BackgroundInsets>
+										</Backdrop>
+										<Scripts>
+											<OnLoad>
+												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+												self:SetBackdropColor(0,0,0,0.5)
+											</OnLoad>
+										</Scripts>
+									</Frame>
+								</Frames>
+							</Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								Macaroon.AdjustableOptions_OnLoad(self)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+					<Frame name="$parentMiscOptions" parentKey="miscopt">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentAdjustableOptions" relativePoint="TOPRIGHT">
+								<Offset x="6" y="0"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parentStateEditor" relativePoint="TOPRIGHT">
+								<Offset x="0" y="22"/>
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="16"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="5" right="5" top="5" bottom="5"/>
+							</BackgroundInsets>
+						</Backdrop>
+						<Frames>
+
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								Macaroon.AdjustableOptions_OnLoad(self)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						Macaroon.AdjustableOptions_OnLoad(self)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+			<Frame name="$parentObjectOptions" parentKey="objopt" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
+						<Offset x="6" y="0"/>
+					</Anchor>
+					<Anchor point="BOTTOM" relativeTo="$parentBarList" relativePoint="BOTTOM" >
+						<Offset x="0" y="0"/>
+					</Anchor>
+					<Anchor point="RIGHT">
+						<Offset x="-10" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentList" parentKey="list">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+							<Anchor point="TOPRIGHT" relativePoint="TOPLEFT">
+								<Offset x="150" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="16"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="5" right="5" top="5" bottom="5"/>
+							</BackgroundInsets>
+						</Backdrop>
+						<Frames>
+							<ScrollFrame name="$parentScrollFrame" inherits="MacaroonScrollFrameTemplate1">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="5" y="-5"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="-27" y="5"/>
+									</Anchor>
+								</Anchors>
+								<ScrollChild>
+									<Frame name="$parentScrollChildFrame">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="5" y="-5"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT">
+												<Offset x="-5" y="5"/>
+											</Anchor>
+										</Anchors>
+									</Frame>
+									<Scripts>
+										<OnShow>
+											--self:SetValue(0)
+										</OnShow>
+									</Scripts>
+								</ScrollChild>
+								<Scripts>
+									<OnLoad>
+										Macaroon.ObjectListScrollFrame_OnLoad(self)
+									</OnLoad>
+									<OnShow>
+										Macaroon.ObjectListScrollFrameUpdate()
+									</OnShow>
+									<OnVerticalScroll>
+										FauxScrollFrame_OnVerticalScroll(self, offset, 2, Macaroon.ObjectListScrollFrameUpdate)
+									</OnVerticalScroll>
+								</Scripts>
+							</ScrollFrame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								Macaroon.ObjectList_OnLoad(self)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						MacaroonObjectOptions = self
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+			<Button name="$parentCreate" inherits="MacaroonButtonTemplate1">
+				<Size x="60" y="25"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="BOTTOMLEFT">
+						<Offset x="-1" y="-5"/>
+					</Anchor>
+					<Anchor point="TOPRIGHT" relativeTo="$parentBarList" relativePoint="BOTTOMRIGHT">
+						<Offset x="1" y="-5"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.type = "create"
+						self.text:SetText(Macaroon.Strings.CREATE_BAR)
+					</OnLoad>
+					<OnClick>
+						Macaroon.BarEditor_CreateNewBar(self)
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentObjectEdit" parentKey="objedit" inherits="MacaroonButtonTemplate1">
+				<Size x="60" y="25"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentObjectOptionsList" relativePoint="BOTTOMLEFT">
+						<Offset x="-1" y="-5"/>
+					</Anchor>
+					<Anchor point="TOPRIGHT" relativeTo="$parentObjectOptionsList" relativePoint="BOTTOMRIGHT">
+						<Offset x="1" y="-5"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.type = "editobjs"
+						self.text:SetText(Macaroon.Strings.EDIT_BUTTONS)
+					</OnLoad>
+					<OnClick>
+						Macaroon.BarEditor_EditObjects(self)
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentBindEdit" parent="MacaroonBarEditorBarOptions" parentKey="bindedit" inherits="MacaroonButtonTemplate1">
+				<Size x="149" y="25"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="MacaroonBarEditorObjectEdit" relativePoint="RIGHT">
+						<Offset x="4" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.type = "editbindings"
+						self.text:SetText(Macaroon.Strings.EDIT_BINDINGS)
+					</OnLoad>
+					<OnClick>
+						Macaroon.ButtonBind()
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentDelete" parent="MacaroonBarEditorBarOptions" inherits="MacaroonButtonTemplate1">
+				<Size x="150" y="25"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="MacaroonBarEditor" relativePoint="BOTTOMRIGHT">
+						<Offset x="-8" y="15"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.parent = self:GetParent()
+						self.parent.delete = self
+						self.type = "delete"
+						self.text:SetText(Macaroon.Strings.DELETE_BAR)
+					</OnLoad>
+					<OnClick>
+						Macaroon.BarEditor_DeleteBar(self)
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parentRaiseButtons" parent="MacaroonBarEditorBarOptionsDelete" parentKey="raise" inherits="MacaroonButtonTemplate1">
+				<Size x="149" y="25"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="MacaroonBarEditorBarOptionsBindEdit" relativePoint="RIGHT">
+						<Offset x="4" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.type = "raise"
+						self.text:SetText(Macaroon.Strings.RAISE_BUTTONS)
+					</OnLoad>
+					<OnClick>
+						Macaroon.RaiseButtons()
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Frame name="$parentConfirm" parent="MacaroonBarEditorBarOptions" hidden="true">
+				<Size x="240" y="25"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="MacaroonBarEditor" relativePoint="BOTTOMRIGHT">
+						<Offset x="-10" y="15"/>
+					</Anchor>
+					<Anchor point="LEFT" relativeTo="MacaroonBarEditorBarOptionsDeleteRaiseButtons" relativePoint="LEFT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentTitle" parentKey="title" inherits="GameFontNormal" justifyH="CENTER">
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset x="0" y="0"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="$parentConfirmYes" inherits="MacaroonButtonTemplate1">
+						<Size x="60" y="25"/>
+						<Anchors>
+							<Anchor point="LEFT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.parent = self:GetParent()
+								self.type = "yes"
+								_G[self:GetName().."Text"]:SetText(Macaroon.Strings.CONFIRM_YES)
+							</OnLoad>
+							<OnClick>
+								Macaroon.BarEditor_ConfirmYes(self)
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="$parentConfirmNo" inherits="MacaroonButtonTemplate1">
+						<Size x="60" y="25"/>
+						<Anchors>
+							<Anchor point="RIGHT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.parent = self:GetParent()
+								self.type = "no"
+								_G[self:GetName().."Text"]:SetText(Macaroon.Strings.CONFIRM_NO)
+							</OnLoad>
+							<OnClick>
+								Macaroon.BarEditor_ConfirmNo(self)
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self.parent = self:GetParent()
+						self.parent.confirm = self
+						self.title:SetText(Macaroon.Strings.CONFIRM)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+			<Button name="$parentDone" toplevel="true" frameStrata="TOOLTIP">
+				<Size x="32" y="32"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="1" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.button = "close"
+					</OnLoad>
+					<OnClick>
+						MacaroonBarEditor.shrink = true
+					</OnClick>
+				</Scripts>
+				<NormalTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+
+			<ColorSelect name="MacaroonColorPicker" parent="UIParent" frameStrata="TOOLTIP" enableMouse="true" movable="true" enableKeyboard="true">
+				<Size x="200" y="120"/>
+				<Backdrop bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="3" bottom="3"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<ColorWheelTexture name="$parentColorPickerWheel">
+					<Size x="80" y="80"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="10" y="-10"/>
+						</Anchor>
+					</Anchors>
+				</ColorWheelTexture>
+				<ColorWheelThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
+					<Size x="10" y="10"/>
+					<TexCoords left="0" right="0.15625" top="0" bottom="0.625"/>
+				</ColorWheelThumbTexture>
+				<ColorValueTexture>
+					<Size x="20" y="80"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentColorPickerWheel" relativePoint="RIGHT">
+							<Offset x="20" y="0"/>
+						</Anchor>
+					</Anchors>
+				</ColorValueTexture>
+				<ColorValueThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
+					<Size x="32" y="12"/>
+					<TexCoords left="0.25" right="1.0" top="0" bottom="0.875"/>
+				</ColorValueThumbTexture>
+				<Frames>
+					<EditBox name="$parentRedValue" parentKey="redvalue" inherits="MacaroonEditBoxTemplate3" letters="4">
+						<Anchors>
+							<Anchor point="TOPRIGHT">
+								<Offset x="-10" y="-5"/>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="RIGHT" text="R">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="LEFT">
+											<Offset x="-1" y="0"/>
+										</Anchor>
+									</Anchors>
+									<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnTabPressed>
+								self:GetParent().greenvalue:SetFocus()
+								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
+							</OnTabPressed>
+							<OnEnterPressed>
+								self:ClearFocus()
+								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
+							</OnEnterPressed>
+						</Scripts>
+					</EditBox>
+					<EditBox name="$parentGreenValue" parentKey="greenvalue" inherits="MacaroonEditBoxTemplate3" letters="4">
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="$parentRedValue" relativePoint="BOTTOMRIGHT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="RIGHT" text="G">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="LEFT">
+											<Offset x="-1" y="0"/>
+										</Anchor>
+									</Anchors>
+									<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnTabPressed>
+								self:GetParent().bluevalue:SetFocus()
+								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
+							</OnTabPressed>
+							<OnEnterPressed>
+								self:ClearFocus()
+								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
+							</OnEnterPressed>
+						</Scripts>
+					</EditBox>
+					<EditBox name="$parentBlueValue" parentKey="bluevalue" inherits="MacaroonEditBoxTemplate3" letters="4">
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="$parentGreenValue" relativePoint="BOTTOMRIGHT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="RIGHT" text="B">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="LEFT">
+											<Offset x="-1" y="0"/>
+										</Anchor>
+									</Anchors>
+									<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnTabPressed>
+								self:GetParent().hexvalue:SetFocus()
+								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
+							</OnTabPressed>
+							<OnEnterPressed>
+								self:ClearFocus()
+								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
+							</OnEnterPressed>
+						</Scripts>
+					</EditBox>
+					<EditBox name="$parentHexValue" parentKey="hexvalue" inherits="MacaroonEditBoxTemplate3">
+						<Size x="55" y="21"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativeTo="$parentBlueValue" relativePoint="BOTTOMRIGHT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="RIGHT" text="Hex">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="LEFT">
+											<Offset x="-1" y="0"/>
+										</Anchor>
+									</Anchors>
+									<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnTextChanged>
+								self:SetText((self:GetText()):gsub("%X", ""):upper())
+							</OnTextChanged>
+							<OnTabPressed>
+								self:GetParent().redvalue:SetFocus()
+								hex = self:GetText()
+								local rhex, ghex, bhex = string.sub(hex, 1, 2), string.sub(hex, 3, 4), string.sub(hex, 5, 6)
+								local r, g, b = tonumber(rhex, 16), tonumber(ghex, 16), tonumber(bhex, 16)
+								r = r/255
+								g = g/255
+								b = b/255
+								self:GetParent():SetColorRGB(r, g, b)
+							</OnTabPressed>
+							<OnEnterPressed>
+								self:ClearFocus()
+								hex = self:GetText()
+								local rhex, ghex, bhex = string.sub(hex, 1, 2), string.sub(hex, 3, 4), string.sub(hex, 5, 6)
+								local r, g, b = tonumber(rhex, 16), tonumber(ghex, 16), tonumber(bhex, 16)
+								r = r/255
+								g = g/255
+								b = b/255
+								self:GetParent():SetColorRGB(r, g, b)
+							</OnEnterPressed>
+						</Scripts>
+					</EditBox>
+					<Button name="$parentDone" inherits="MacaroonButtonTemplate1">
+						<Size x="60" y="25"/>
+						<Anchors>
+							<Anchor point="BOTTOMLEFT">
+								<Offset x="10" y="10"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.text:SetText(Macaroon.Strings.DONE)
+								self.parent = self:GetParent()
+							</OnLoad>
+							<OnClick>
+								PlaySound("gsTitleOptionOK")
+								self.parent:Hide()
+								if (self.parent.updateFunc) then
+									self.parent.updateFunc(self.parent)
+									self.parent.updateFunc = nil
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button name="$parentCancel" inherits="MacaroonButtonTemplate1">
+						<Size x="60" y="25"/>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="-10" y="10"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.text:SetText(Macaroon.Strings.CANCEL)
+								self.parent = self:GetParent()
+							</OnLoad>
+							<OnClick>
+								PlaySound("gsTitleOptionOK")
+								self.parent:Hide()
+								self.parent.updateFunc = nil
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self:SetBackdropColor(0, 0, 0, 1)
+						self:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
+						self:SetFrameStrata("TOOLTIP")
+					</OnLoad>
+					<OnShow>
+						local r,g,b = self:GetColorRGB()
+						self.redvalue:SetText(r); self.redvalue:SetCursorPosition(0)
+						self.greenvalue:SetText(g); self.greenvalue:SetCursorPosition(0)
+						self.bluevalue:SetText(b); self.bluevalue:SetCursorPosition(0)
+						self.hexvalue:SetText(string.upper(string.format("%02x%02x%02x", math.ceil((r*255)), math.ceil((g*255)), math.ceil((b*255))))); self.hexvalue:SetCursorPosition(0)
+					</OnShow>
+					<OnColorSelect>
+						self.redvalue:SetText(r)
+						self.greenvalue:SetText(g)
+						self.bluevalue:SetText(b)
+						self.hexvalue:SetText(string.upper(string.format("%02x%02x%02x", math.ceil((r*255)), math.ceil((g*255)), math.ceil((b*255)))))
+					</OnColorSelect>
+				</Scripts>
+			</ColorSelect>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:SetBackdropBorderColor(0.7, 0.7, 0.7)
+				self:SetBackdropColor(0,0,0,1)
+				self:RegisterEvent("ADDON_LOADED")
+				self:RegisterForDrag("LeftButton", "RightButton")
+				self.bottom = 0
+			</OnLoad>
+			<OnEvent>
+                                if (... == "Macaroon") then
+				    Macaroon.BarEditor_OnEvent(self)
+                                end
+			</OnEvent>
+			<OnShow>
+				Macaroon.BarEditorUpdateData(self)
+			</OnShow>
+			<OnHide>
+				Macaroon.BarEditor_OnHide(self)
+			</OnHide>
+			<OnUpdate>
+				Macaroon.BarEditor_OnUpdate(self, elapsed)
+			</OnUpdate>
+			<OnDragStart>
+				Macaroon.PanelMover_OnDragStart(self)
+			</OnDragStart>
+			<OnDragStop>
+				Macaroon.PanelMover_OnDragStop(self)
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+</Ui>

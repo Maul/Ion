@@ -1,0 +1,15 @@
+﻿## Interface: 40300
+## Title: Ion: Pet Action Bar
+## Author: Maul
+## Version: 1.0
+## Notes: Pet action bar for Ion
+## DefaultState: enabled
+## Dependencies: Ion
+## SavedVariables: IonPetGDB
+## SavedVariablesPerCharacter: IonPetCDB
+## X-Child-Of: Ion
+## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved..
+## X-Email: trinityui@live.com
+
+Ion-PetBar.lua
+Ion-PetBar.xml

@@ -1,0 +1,17 @@
+﻿## Interface: 40300
+## Title: Ion: Status Bars
+## Author: Maul
+## Version: 1.0
+## Notes: Status bars for Ion
+## DefaultState: enabled
+## Dependencies: Ion
+## SavedVariables: IonStatusGDB
+## SavedVariablesPerCharacter: IonStatusCDB
+## X-Child-Of: Ion
+## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved..
+## X-Email: trinityui@live.com
+
+Ion-StatusBars_Localizations.xml
+
+Ion-StatusBars.lua
+Ion-StatusBars.xml

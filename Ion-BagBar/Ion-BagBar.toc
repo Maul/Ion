@@ -1,0 +1,15 @@
+﻿## Interface: 40300
+## Title: Ion: Bag Bar
+## Author: Maul
+## Version: 1.0
+## Notes: Bag bar for Ion
+## DefaultState: enabled
+## Dependencies: Ion
+## SavedVariables: IonBagGDB
+## SavedVariablesPerCharacter: IonBagCDB
+## X-Child-Of: Ion
+## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved..
+## X-Email: trinityui@live.com
+
+Ion-BagBar.lua
+Ion-BagBar.xml

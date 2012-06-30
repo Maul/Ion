@@ -1,0 +1,304 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<!-- Ion Menu Bar, a World of WarcraftÂ® user interface addon. -->
+	<!-- CopyrightÂ© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved. -->
+
+	<Button name="IonCharacterButton" inherits="MainMenuBarMicroButton" parent="UIParent">
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentPortrait">
+					<Size x="18" y="25"/>
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="0" y="-28"/>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.2" right="0.8" top="0.0666" bottom="0.9"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				Ion.CharacterButton_OnLoad(self)
+			</OnLoad>
+			<OnMouseDown>
+				Ion.CharacterButton_OnMouseDown(self)
+			</OnMouseDown>
+			<OnMouseUp>
+				Ion.CharacterButton_OnMouseUp(self)
+			</OnMouseUp>
+			<OnEvent>
+				Ion.CharacterButton_OnEvent(self, event, ...)
+			</OnEvent>
+		</Scripts>
+	</Button>
+
+	<Button name="IonSpellbookButton" inherits="SecureActionButtonTemplate, MainMenuBarMicroButton" parent="UIParent">
+		<Scripts>
+			<OnLoad>
+				Ion.SpellbookButton_OnLoad(self)
+			</OnLoad>
+			<OnEnter>
+				Ion.SpellbookButton_OnEnter(self)
+			</OnEnter>
+		</Scripts>
+	</Button>
+
+	<Button name="IonTalentButton" inherits="SecureActionButtonTemplate, MainMenuBarMicroButton" parent="UIParent">
+		<Scripts>
+			<OnLoad>
+				Ion.TalentButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.TalentButton_OnEvent(self, event, ...)
+			</OnEvent>
+		</Scripts>
+	</Button>
+
+	<Button name="IonAchievementButton" inherits="MainMenuBarMicroButton" parent="UIParent">
+		<Scripts>
+			<OnLoad>
+				Ion.AchievementButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.AchievementButton_OnEvent(self, event, ...)
+			</OnEvent>
+			<OnClick>
+				Ion.AchievementButton_OnClick(self)
+			</OnClick>
+			<OnEnter>
+				Ion.AchievementButton_OnEnter(self)
+			</OnEnter>
+		</Scripts>
+	</Button>
+
+	<Button name="IonQuestLogButton" inherits="MainMenuBarMicroButton" parent="UIParent">
+		<Scripts>
+			<OnLoad>
+				Ion.QuestLogButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.QuestLogButton_OnEvent(self, event, ...)
+			</OnEvent>
+			<OnClick>
+				Ion.QuestLogButton_OnClick(self)
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<Button name="IonGuildButton" inherits="SecureActionButtonTemplate, MainMenuBarMicroButton" parent="UIParent">
+		<Frames>
+			<Frame name="$parentTabard" parentKey="tabard" hidden="true">
+				<Size x="28" y="58"/>
+				<Anchors>
+					<Anchor point="TOPLEFT"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture name="$parentBackground" file="Interface\Buttons\UI-MicroButton-Guild-Banner" parentKey="background">
+							<Size x="30" y="60"/>
+							<Anchors>
+								<Anchor point="CENTER" x="0" y="0"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY" textureSubLevel="1">
+						<Texture name="$parentEmblem" parentKey="emblem" file="Interface\GuildFrame\GuildEmblems_01">
+							<Size x="16" y="16"/>
+							<Anchors>
+								<Anchor point="CENTER" x="0" y="-9"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Ion.GuildButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.GuildButton_OnEvent(self, event, ...)
+			</OnEvent>
+		</Scripts>
+	</Button>
+
+	<Button name="IonPVPButton" inherits="MainMenuBarMicroButton" parent="UIParent">
+		<Layers>
+			<Layer level="OVERLAY">
+		                <Texture name="$parentFaction">
+					<Size x="36" y="36"/>
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="6" y="-30"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				Ion.PVPButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.PVPButton_OnEvent(self, event, ...)
+			</OnEvent>
+			<OnMouseDown>
+				Ion.PVPButton_OnMouseDown(self)
+			</OnMouseDown>
+			<OnMouseUp>
+				Ion.PVPButton_OnMouseUp(self)
+			</OnMouseUp>
+		</Scripts>
+	</Button>
+
+	<Button name="IonLFDButton" inherits="MainMenuBarMicroButton" parent="UIParent">
+		<Scripts>
+			<OnLoad>
+				Ion.LFDButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.LFDButton_OnEvent(self, event, ...)
+			</OnEvent>
+			<OnClick>
+				Ion.LFDButton_OnClick(self)
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<Button name="IonEJButton" inherits="MainMenuBarMicroButton" parent="MainMenuBarArtFrame">
+		<Scripts>
+			<OnLoad>
+				Ion.EJButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.EJButton_OnEvent(self, event, ...)
+			</OnEvent>
+			<OnClick>
+				Ion.EJButton_OnClick(self)
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<Button name="IonRaidButton" inherits="MainMenuBarMicroButton" parent="MainMenuBarArtFrame">
+		<Scripts>
+			<OnLoad>
+				Ion.RaidButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.RaidButton_OnEvent(self, event, ...)
+			</OnEvent>
+			<OnClick>
+				Ion.RaidButton_OnClick(self)
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<!-- I have borrowed the latency button from LedMirage to be the Ion default latency indicator -->
+	<!-- LedMirage 11/27/2006 New Frame for MirageUI Latency Button -->
+
+	<Button name="IonLatencyButton" parent="UIParent" hidden="true">
+		<Size>
+			<AbsDimension x="28" y="58"/>
+		</Size>
+		<HitRectInsets>
+			<AbsInset left="0" right="0" top="18" bottom="0"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentOverlay" file="Interface\AddOns\Ion-MenuBar\Images\MirageUI_LatencyMicroButton_Overlay">
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				Ion.LatencyButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.LatencyButton_OnEvent(self, event, ...)
+			</OnEvent>
+			<OnClick>
+				Ion.LatencyButton_OnClick(self, button, down)
+			</OnClick>
+			<OnEnter>
+				Ion.LatencyButton_OnEnter(self)
+			</OnEnter>
+			<OnLeave>
+				Ion.LatencyButton_OnLeave(self)
+			</OnLeave>
+			<OnUpdate>
+				Ion.LatencyButton_OnUpdate(self, elapsed)
+			</OnUpdate>
+		</Scripts>
+		<NormalTexture file="Interface\AddOns\Ion-MenuBar\Images\MirageUI_LatencyMicroButton_Frame"/>
+		<HighlightTexture file="Interface\Buttons\UI-MicroButton-Hilight" alphaMode="ADD"/>
+		<PushedTexture file="Interface\AddOns\Ion-MenuBar\Images\MirageUI_LatencyMicroButton_FramePushed"/>
+		<CheckedTexture file="Interface\Buttons\UI-MicroButton-Hilight" alphaMode="ADD"/>
+	</Button>
+
+	<Button name="IonHelpButton" inherits="MainMenuBarMicroButton" parent="UIParent" hidden="true">
+		<Scripts>
+			<OnLoad>
+				Ion.HelpButton_OnLoad(self)
+			</OnLoad>
+			<OnClick>
+				Ion.HelpButton_OnClick(self)
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<GameTooltip name="IonMenuBarTooltip" inherits="GameTooltipTemplate" parent="UIParent" enableMouse="true" toplevel="true" movable="true" frameStrata="TOOLTIP" hidden="true">
+		<Size>
+			<AbsDimension x="128" y="64"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT">
+				<Offset>
+					<AbsDimension x="150" y="80"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button name="ItemRefCloseButton">
+				<Size>
+					<AbsDimension x="32" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="1" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide()
+						self.wasShown = nil
+						IonLatencyButton.hover = nil
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				GameTooltip_OnLoad(self)
+				self:SetPadding(16)
+				self:RegisterForDrag("LeftButton")
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</GameTooltip>
+</Ui>
