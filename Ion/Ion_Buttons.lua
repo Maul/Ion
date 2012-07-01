@@ -2492,7 +2492,7 @@ end
 
 function BUTTON:SaveData(state)
 
-	local index, spec = self.id, GetActiveTalentGroup()
+	local index, spec = self.id, GetActiveSpecGroup()
 
 	if (not state) then
 		state = self:GetParent():GetAttribute("activestate") or "homestate"

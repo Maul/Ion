@@ -1,4 +1,4 @@
-﻿## Interface: 40300
+﻿## Interface: 50001
 ## Title: Ion: MiniMap
 ## Author: Maul
 ## Version: 1.0

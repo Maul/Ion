@@ -1,4 +1,4 @@
-﻿## Interface: 40300
+﻿## Interface: 50001
 ## Title: Ion: Pet Action Bar
 ## Author: Maul
 ## Version: 1.0

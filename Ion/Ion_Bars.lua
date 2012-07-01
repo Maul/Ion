@@ -783,8 +783,6 @@ function BAR:CreateDriver()
 
 			function(self,name,value)
 
-
-
 		end)
 
 	driver:SetAllPoints(self)
@@ -1451,11 +1449,15 @@ function BAR:OnClick(...)
 
 		self.mousewheelfunc = nil
 
-		--if (not self.newBar and MacaroonBarEditor:IsVisible()) then
-		--	M.BarEditorHide()
-		--else
-		--	M.BarEditorShow()
-		--end
+		if (not IsAddOnLoaded("Ion-GUI")) then
+			LoadAddOn("Ion-GUI")
+		end
+
+		if (not self.newBar and IonBarEditor:IsVisible()) then
+			IonBarEditor:Hide()
+		else
+			IonBarEditor:Show()
+		end
 
 	elseif (not down) then
 

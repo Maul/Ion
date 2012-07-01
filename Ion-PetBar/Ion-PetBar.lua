@@ -381,7 +381,7 @@ function BUTTON:OnReceiveDrag()
 	end
 end
 
-function BUTTON:OnEnter()
+function BUTTON:PET_SetTooltip()
 
 	local actionID = self.actionID
 
@@ -412,7 +412,31 @@ function BUTTON:OnEnter()
 		GameTooltip:SetText(L.EMPTY_BUTTON)
 	end
 
-	GameTooltip:Show()
+end
+
+function BUTTON:OnEnter(...)
+
+	if (self.bar) then
+
+		if (self.tooltipsCombat and InCombatLockdown()) then
+			return
+		end
+
+		if (self.tooltips) then
+
+			if (self.tooltipsEnhanced) then
+				self.UberTooltips = true
+				GameTooltip_SetDefaultAnchor(GameTooltip, self)
+			else
+				self.UberTooltips = false
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			end
+
+			self:PET_SetTooltip()
+
+			GameTooltip:Show()
+		end
+	end
 end
 
 function BUTTON:OnLeave ()
@@ -428,6 +452,10 @@ function BUTTON:SetData(bar)
 
 		self.upClicks = bar.cdata.upClicks
 		self.downClicks = bar.cdata.downClicks
+
+		self.tooltips = bar.cdata.tooltips
+		self.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
+		self.tooltipsCombat = bar.cdata.tooltipsCombat
 
 		self:SetFrameStrata(bar.gdata.objectStrata)
 

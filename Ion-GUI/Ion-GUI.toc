@@ -1,15 +1,16 @@
 ﻿## Interface: 50001
-## Title: Ion: Macaroon Macro Grabber
+## Title: Ion: GUI
 ## Author: Maul
 ## Version: 1.0
-## Notes: Helps to import macros from Macroon to Ion
+## Notes: GUI for Ion
 ## DefaultState: enabled
 ## Dependencies: Ion
-## OptionalDeps: Macaroon
-## SavedVariables: IonMMGGDB
+## LoadOnDemand: 1
+## SavedVariables: IonGUIGDB
+## SavedVariablesPerCharacter: IonGUICDB
 ## X-Child-Of: Ion
 ## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved..
 ## X-Email: trinityui@live.com
 
-Ion-MMG.lua
-Ion-MMG.xml
+Ion-GUI.lua
+Ion-GUI.xml

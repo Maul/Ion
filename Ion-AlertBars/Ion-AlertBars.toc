@@ -1,15 +1,15 @@
 ﻿## Interface: 50001
-## Title: Ion: Macaroon Macro Grabber
+## Title: Ion: Alert Bars
 ## Author: Maul
 ## Version: 1.0
-## Notes: Helps to import macros from Macroon to Ion
+## Notes: Alert and Loot frames for Ion
 ## DefaultState: enabled
 ## Dependencies: Ion
-## OptionalDeps: Macaroon
-## SavedVariables: IonMMGGDB
+## SavedVariables: IonAlertGDB
+## SavedVariablesPerCharacter: IonAlertCDB
 ## X-Child-Of: Ion
 ## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved..
 ## X-Email: trinityui@live.com
 
-Ion-MMG.lua
-Ion-MMG.xml
+Ion-AlertBar.lua
+Ion-AlertBar.xml

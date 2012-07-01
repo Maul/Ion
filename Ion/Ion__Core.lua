@@ -1324,8 +1324,8 @@ function ION:ToggleVehicleBar(on)
 	if (on) then
 
 		local button
-		for i=1, VEHICLE_MAX_ACTIONBUTTONS do
-			button = _G["VehicleMenuBarActionButton"..i]
+		for i=1, NUM_OVERRIDE_BUTTONS do
+			button = _G["OverrideActionBarButton"..i]
 			handler:WrapScript(button, "OnShow", [[
 				local key = GetBindingKey("ACTIONBUTTON"..self:GetID())
 				if (key) then
@@ -1349,8 +1349,8 @@ function ION:ToggleVehicleBar(on)
 	else
 
 		local button
-		for i=1, VEHICLE_MAX_ACTIONBUTTONS do
-			button = _G["VehicleMenuBarActionButton"..i]
+		for i=1, NUM_OVERRIDE_BUTTONS do
+			button = _G["OverrideActionBarButton"..i]
 			handler:UnwrapScript(button, "OnShow")
 			handler:UnwrapScript(button, "OnHide")
 		end
@@ -1601,6 +1601,10 @@ function ION:ToggleBars(show, hide)
 			end
 
 			ION:ChangeBar(nil)
+
+			if (IonBarEditor)then
+				IonBarEditor:Hide()
+			end
 		else
 
 			ION.BarsShown = true
