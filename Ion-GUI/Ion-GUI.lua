@@ -5,9 +5,13 @@ local ION, GDB, CDB, PEW = Ion
 
 local width, height = 775, 440
 
+local barNames = {}
+
 local numShown = 15
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
+
+local LGUI = LibStub("AceLocale-3.0"):GetLocale("IonGUI")
 
 IonGUIGDB = {
 	firstRun = true,
@@ -18,6 +22,11 @@ IonGUICDB = {
 }
 
 local defGDB, defCDB = CopyTable(IonGUIGDB), CopyTable(IonGUICDB)
+
+function ION:UpdateGUI()
+
+	ION.BarListScrollFrameUpdate()
+end
 
 function ION.BarList_OnLoad(self)
 
@@ -60,22 +69,23 @@ function ION.BarListScrollFrame_OnLoad(self)
 						if (self.alt) then
 
 							if (self.bar) then
-								--M.CreateNewBar(self.bar)
+
+								ION:CreateNewBar(self.bar)
+
+								IonBarEditorCreate:Click()
 							end
 
 							self.alt = nil
 
 						elseif (self.bar) then
 
-							--M.ChangeBar(self.bar)
+							ION:ChangeBar(self.bar)
 
-							--M.ObjListFirstBtn:Click()
 						end
 					else
 						button:SetChecked(nil)
 					end
 
-					--M.OptionsGeneral_ModifyReset()
 				end
 
 			end)
@@ -85,7 +95,7 @@ function ION.BarListScrollFrame_OnLoad(self)
 				if (self.alt) then
 
 				elseif (self.bar) then
-					--M.Bar_OnEnter(self.bar, true)
+					self.bar:OnEnter()
 				end
 			end)
 
@@ -94,7 +104,7 @@ function ION.BarListScrollFrame_OnLoad(self)
 				if (self.alt) then
 
 				elseif (self.bar) then
-					--M.Bar_OnLeave(self.bar, true)
+					self.bar:OnLeave()
 				end
 			end)
 
@@ -126,11 +136,7 @@ function ION.BarListScrollFrame_OnLoad(self)
 	end
 
 	ION.BarListScrollFrameUpdate()
-
-	--tinsert(M.UpdateFunctions, M.BarListScrollFrameUpdate)
 end
-
-local barNames = {}
 
 function ION.BarListScrollFrameUpdate(frame, tableList, alt)
 
@@ -155,7 +161,7 @@ function ION.BarListScrollFrameUpdate(frame, tableList, alt)
 
 	local dataOffset, count, data, button, text, datum = FauxScrollFrame_GetOffset(frame), 1, {}
 
-	for k,v in pairs(tableList) do
+	for k in pairs(tableList) do
 		data[count] = k; count = count + 1
 	end
 
@@ -185,6 +191,19 @@ function ION.BarListScrollFrameUpdate(frame, tableList, alt)
 			button.name:SetText(text)
 			button:Enable()
 			button:Show()
+
+			if (alt) then
+				if (i>1) then
+					button.name:SetTextColor(0,1,0)
+					button.name:SetJustifyH("CENTER")
+				else
+					button.name:SetJustifyH("CENTER")
+					button:Disable()
+				end
+			else
+				button.name:SetTextColor(1,0.82,0)
+				button.name:SetJustifyH("LEFT")
+			end
 		else
 
 			button:Hide()
@@ -193,6 +212,107 @@ function ION.BarListScrollFrameUpdate(frame, tableList, alt)
 
 	FauxScrollFrame_Update(frame, #data, numShown, 2)
 end
+
+function ION:CreateButton_OnLoad(button)
+
+	button.type = "create"
+	button.text:SetText(LGUI.CREATE_BAR)
+
+end
+
+function ION:BarEditor_CreateNewBar(button)
+
+	if (button.type == "create") then
+
+		local data = { [LGUI.SELECT_BAR_TYPE] = "none" }
+
+		for class,info in pairs(ION.RegisteredBarData) do
+			if (info.barCreateMore) then
+				data[info.barLabel] = class
+			end
+		end
+
+		ION.BarListScrollFrameUpdate(nil, data, true)
+
+		button.type = "cancel"
+
+		button.text:SetText(LGUI.CANCEL)
+	else
+
+		ION.BarListScrollFrameUpdate()
+
+		button.type = "create"
+
+		button.text:SetText(LGUI.CREATE_BAR)
+
+	end
+end
+
+function ION:DeleteButton_OnLoad(button)
+
+	button.parent = button:GetParent()
+	button.parent.delete = button
+	button.type = "delete"
+	button.text:SetText(LGUI.DELETE_BAR)
+
+end
+
+function ION:BarEditor_DeleteBar(button)
+
+	local bar = ION.CurrentBar
+
+	if (bar and button.type == "delete") then
+
+		button:Hide()
+		button.parent.confirm:Show()
+		button.type = "confirm"
+	else
+		button:Show()
+		button.parent.confirm:Hide()
+		button.type = "delete"
+	end
+
+end
+
+function ION:Confirm_OnLoad(button)
+
+	button.parent = button:GetParent()
+	button.parent.confirm = button
+	button.title:SetText(LGUI.CONFIRM)
+
+end
+
+function ION:ConfirmYes_OnLoad(button)
+
+	button.parent = button:GetParent()
+	button.type = "yes"
+	_G[button:GetName().."Text"]:SetText(LGUI.CONFIRM_YES)
+
+end
+
+function ION:BarEditor_ConfirmYes(button)
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+		bar:DeleteBar()
+	end
+
+	IonBarEditorBarOptionsDelete:Click()
+
+end
+
+function ION:ConfirmNo_OnLoad(button)
+
+	button.parent = button:GetParent()
+	button.type = "no"
+	_G[button:GetName().."Text"]:SetText(LGUI.CONFIRM_NO)
+end
+
+function ION:BarEditor_ConfirmNo(button)
+	IonBarEditorBarOptionsDelete:Click()
+end
+
 
 local function controlOnEvent(self, event, ...)
 

@@ -1,7 +1,7 @@
 ﻿--Ion Macraoon Macro Grabber, a World of Warcraft® user interface addon.
 --Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local ION, GDB, PEW = Ion
+local ION, GDB, PEW = {}
 
 IonMMGGDB = { index = {}, macros = {} }
 
@@ -19,6 +19,8 @@ local tempMacro = {
 local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Ion-MMG") then
+
+		ION.player, ION.class, ION.realm = UnitName("player"), select(2, UnitClass("player")), GetRealmName()
 
 		GDB = IonMMGGDB
 

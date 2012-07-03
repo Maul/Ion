@@ -141,7 +141,7 @@ local function controlOnEvent(self, event, ...)
 		petbtnsGDB = GDB.petbtns
 		petbtnsCDB = CDB.petbtns
 
-		ION:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, 10, true, STORAGE)
+		ION:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, 10, true, STORAGE, nil, nil, true)
 
 		if (GDB.firstRun) then
 

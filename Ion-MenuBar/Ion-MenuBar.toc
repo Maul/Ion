@@ -1,7 +1,7 @@
 ﻿## Interface: 50001
 ## Title: Ion: Menu Bar
 ## Author: Maul
-## Version: 1.0
+## Version: Hydrogen
 ## Notes: Menu bar for Ion
 ## DefaultState: enabled
 ## Dependencies: Ion

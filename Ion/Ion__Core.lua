@@ -1272,27 +1272,24 @@ function ION:ToggleMainMenu(on)
 
 	if (on) then
 
+		ActionBarButtonEventsFrame_OnLoad(ActionBarButtonEventsFrame)
+		ActionBarActionEventsFrame_OnLoad(ActionBarActionEventsFrame)
+
 		MainMenuBar:SetPoint("BOTTOM", 0, 0)
 		MainMenuBar_OnLoad(MainMenuBar)
 		MainMenuBar:Show()
 
 		MainMenuBar_OnLoad(MainMenuBarArtFrame)
 
-		--if (GetNumShapeshiftForms() > 0) then
-			--ShapeshiftBar_OnLoad(ShapeshiftBarFrame)
-		--else
-			--ShapeshiftBarFrame:UnregisterAllEvents()
-		--end
-
-		--BonusActionBar_OnLoad(BonusActionBarFrame)
-
 		PossessBar_OnLoad(PossessBarFrame)
 
 		UnregisterStateDriver(MainMenuBar, "visibility")
-		--UnregisterStateDriver(ShapeshiftBarFrame, "visibility")
 		UnregisterStateDriver(PossessBarFrame, "visibility")
 
 	else
+
+		ActionBarButtonEventsFrame:UnregisterAllEvents()
+		ActionBarActionEventsFrame:UnregisterAllEvents()
 
 		MainMenuBar:SetPoint("BOTTOM", 0, -200)
 		MainMenuBar:UnregisterAllEvents()
@@ -1301,17 +1298,10 @@ function ION:ToggleMainMenu(on)
 		MainMenuBarArtFrame:UnregisterEvent("BAG_UPDATE");
 		MainMenuBarArtFrame:UnregisterEvent("ACTIONBAR_PAGE_CHANGED");
 
-		--ShapeshiftBarFrame:UnregisterAllEvents()
-		--ShapeshiftBarFrame:Hide()
-
-		--BonusActionBarFrame:UnregisterAllEvents()
-		--BonusActionBarFrame:Hide()
-
 		PossessBarFrame:UnregisterAllEvents()
 		PossessBarFrame:Hide()
 
 		RegisterStateDriver(MainMenuBar, "visibility", "hide")
-		--RegisterStateDriver(ShapeshiftBarFrame, "visibility", "hide")
 		RegisterStateDriver(PossessBarFrame, "visibility", "hide")
 
 	end
@@ -1659,12 +1649,15 @@ function ION:PrintBarTypes()
 
 	for k,v in pairs(ION.RegisteredBarData) do
 
-		index = tonumber(v.createMsg:match("%d+"))
-		barType = v.createMsg:gsub("%d+","")
+		if (v.barCreateMore) then
 
-		if (index  and barType) then
-			data[index] = { k, barType }
-			if (index > high) then high = index end
+			index = tonumber(v.createMsg:match("%d+"))
+			barType = v.createMsg:gsub("%d+","")
+
+			if (index and barType) then
+				data[index] = { k, barType }
+				if (index > high) then high = index end
+			end
 		end
 	end
 
@@ -1674,7 +1667,9 @@ function ION:PrintBarTypes()
 	print(L.BARTYPES_TYPES)
 
 	for k,v in ipairs(data) do
-		print("       |cff00ff00"..v[1].."|r: "..format(L.BARTYPES_LINE, v[2]))
+		if (type(v) == "table") then
+			print("       |cff00ff00"..v[1].."|r: "..format(L.BARTYPES_LINE, v[2]))
+		end
 	end
 
 end
@@ -1687,6 +1682,7 @@ function ION:RegisterBarClass(class, ...)
 		barType = select(1,...):gsub("%s+", ""),
 		barLabel = select(1,...),
 		barReverse = select(11,...),
+		barCreateMore = select(15,...),
 		GDB = select(3,...),
 		CDB = select(4,...),
 		gDef = select(13,...),

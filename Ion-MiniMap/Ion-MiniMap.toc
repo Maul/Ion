@@ -1,7 +1,7 @@
 ﻿## Interface: 50001
 ## Title: Ion: MiniMap
 ## Author: Maul
-## Version: 1.0
+## Version: Hydrogen
 ## Notes: MiniMap Control for Ion
 ## DefaultState: enabled
 ## Dependencies: Ion

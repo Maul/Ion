@@ -414,7 +414,7 @@ local function controlOnEvent(self, event, ...)
 		bagbtnsGDB = GDB.bagbtns
 		bagbtnsCDB = CDB.bagbtns
 
-		ION:RegisterBarClass("bag", "Bag Bar", "Bag Button", bagbarsGDB, bagbarsCDB, BAGIndex, bagbtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, true, STORAGE, gDef)
+		ION:RegisterBarClass("bag", "Bag Bar", "Bag Button", bagbarsGDB, bagbarsCDB, BAGIndex, bagbtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, true, STORAGE, gDef, nil, true)
 
 		if (GDB.firstRun) then
 

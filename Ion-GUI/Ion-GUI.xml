@@ -602,11 +602,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						self.type = "create"
-						--self.text:SetText(Ion.Strings.CREATE_BAR)
+						Ion:CreateButton_OnLoad(self)
 					</OnLoad>
 					<OnClick>
-						--Ion.BarEditor_CreateNewBar(self)
+						Ion:BarEditor_CreateNewBar(self)
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -659,13 +658,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						self.parent = self:GetParent()
-						self.parent.delete = self
-						self.type = "delete"
-						--self.text:SetText(Ion.Strings.DELETE_BAR)
+						Ion:DeleteButton_OnLoad(self)
 					</OnLoad>
 					<OnClick>
-						--Ion.BarEditor_DeleteBar(self)
+						Ion:BarEditor_DeleteBar(self)
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -719,12 +715,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self.parent = self:GetParent()
-								self.type = "yes"
-								--_G[self:GetName().."Text"]:SetText(Ion.Strings.CONFIRM_YES)
+								Ion:ConfirmYes_OnLoad(self)
 							</OnLoad>
 							<OnClick>
-								--Ion.BarEditor_ConfirmYes(self)
+								Ion:BarEditor_ConfirmYes(self)
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -737,21 +731,17 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self.parent = self:GetParent()
-								self.type = "no"
-								--_G[self:GetName().."Text"]:SetText(Ion.Strings.CONFIRM_NO)
+								Ion:ConfirmNo_OnLoad(self)
 							</OnLoad>
 							<OnClick>
-								--Ion.BarEditor_ConfirmNo(self)
+								Ion:BarEditor_ConfirmNo(self)
 							</OnClick>
 						</Scripts>
 					</Button>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						self.parent = self:GetParent()
-						self.parent.confirm = self
-						--self.title:SetText(Ion.Strings.CONFIRM)
+						Ion:Confirm_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>

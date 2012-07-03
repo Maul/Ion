@@ -1,7 +1,7 @@
 ﻿## Interface: 50001
 ## Title: Ion: Status Bars
 ## Author: Maul
-## Version: 1.0
+## Version: Hydrogen
 ## Notes: Status bars for Ion
 ## DefaultState: enabled
 ## Dependencies: Ion

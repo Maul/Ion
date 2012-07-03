@@ -1716,7 +1716,7 @@ local function controlOnEvent(self, event, ...)
 		statusbtnsGDB = GDB.statusbtns
 		statusbtnsCDB = CDB.statusbtns
 
-		ION:RegisterBarClass("status", "Status Bar Group", "Status Bar", statusbarsGDB, statusbarsCDB, STATUSIndex, statusbtnsGDB, "Button", "IonStatusBarTemplate", { __index = STATUS }, false, false, STORAGE)
+		ION:RegisterBarClass("status", "Status Bar Group", "Status Bar", statusbarsGDB, statusbarsCDB, STATUSIndex, statusbtnsGDB, "Button", "IonStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
 
 		if (GDB.firstRun) then
 

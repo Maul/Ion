@@ -347,7 +347,7 @@ local function controlOnEvent(self, event, ...)
 		minimapbtnsGDB = GDB.minimapbtns
 		minimapbtnsCDB = CDB.minimapbtns
 
-		ION:RegisterBarClass("minimap", "MiniMap Bar", "MiniMap", minimapbarsGDB, minimapbarsCDB, MINIMAPIndex, minimapbtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #minimapElements, false, STORAGE, gDef)
+		ION:RegisterBarClass("minimap", "MiniMap Bar", "MiniMap", minimapbarsGDB, minimapbarsCDB, MINIMAPIndex, minimapbtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #minimapElements, false, STORAGE, gDef, nil, false)
 
 		if (GDB.firstRun) then
 

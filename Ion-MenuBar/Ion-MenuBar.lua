@@ -1149,7 +1149,7 @@ local function controlOnEvent(self, event, ...)
 		menubtnsGDB = GDB.menubtns
 		menubtnsCDB = CDB.menubtns
 
-		ION:RegisterBarClass("menu", "Menu Bar", "Menu Button", menubarsGDB, menubarsCDB, MENUIndex, menubtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef)
+		ION:RegisterBarClass("menu", "Menu Bar", "Menu Button", menubarsGDB, menubarsCDB, MENUIndex, menubtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, true)
 
 		if (GDB.firstRun) then
 

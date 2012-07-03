@@ -1071,6 +1071,10 @@ function BAR:Update(show, hide)
 	handler:SetAlpha(self.gdata.alpha)
 
 	self:SaveData()
+
+	if (IonBarEditor and IonBarEditor:IsVisible()) then
+		ION:UpdateGUI()
+	end
 end
 
 function BAR:GetPosition(oFrame)
@@ -1465,10 +1469,12 @@ function BAR:OnClick(...)
 			--updateState(self, 1)
 		end
 
-		--M.BarEditorUpdateData(MacaroonBarEditor)
 	end
 
-	--M.OptionsGeneral_ModifyReset()
+	if (IonBarEditor and IonBarEditor:IsVisible()) then
+		ION:UpdateGUI()
+	end
+
 end
 
 function BAR:OnEnter(...)
@@ -1478,6 +1484,8 @@ function BAR:OnEnter(...)
 	else
 		self:SetBackdropColor(0,0,1,0.5)
 	end
+
+	self.text:Show()
 end
 
 function BAR:OnLeave(...)
@@ -1489,6 +1497,10 @@ function BAR:OnLeave(...)
 		else
 			self:SetBackdropColor(0,0,0,0.4)
 		end
+	end
+
+	if (self ~= ION.CurrentBar) then
+		self.text:Hide()
 	end
 end
 
@@ -1892,6 +1904,10 @@ function BAR:DeleteBar()
 
 	self.GDB[self:GetID()] = nil
 	self.CDB[self:GetID()] = nil
+
+	if (IonBarEditor and IonBarEditor:IsVisible()) then
+		ION:UpdateGUI()
+	end
 
 end
 
@@ -2912,7 +2928,7 @@ local function controlOnEvent(self, event, ...)
 
 		barCDB = CDB.bars
 
-		ION:RegisterBarClass("bar", "Action Bar", "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE)
+		ION:RegisterBarClass("bar", "Action Bar", "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
 
 		if (GDB.firstRun) then
 
