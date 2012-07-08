@@ -7,13 +7,17 @@ ION.STATUSIndex = {}
 
 local STATUSIndex = ION.STATUSIndex
 
+local EDITIndex, OBJEDITOR = ION.EDITIndex, ION.OBJEDITOR
+
 local statusbarsGDB, statusbarsCDB, statusbtnsGDB, statusbtnsCDB
 
 local STATUS = setmetatable({}, { __index = CreateFrame("Button") })
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
-local L = LibStub("AceLocale-3.0"):GetLocale("IonStatusBars")
+local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
+
+local LSTAT = LibStub("AceLocale-3.0"):GetLocale("IonStatusBars")
 
 IonStatusGDB = {
 	statusbars = {},
@@ -1527,6 +1531,8 @@ end
 
 function STATUS:LoadAux()
 
+	self:CreateEditFrame(self.objTIndex)
+
 	-- empty
 
 end
@@ -1676,11 +1682,46 @@ function STATUS:SetType(save)
 
 		end
 
-		self.editframe.feedback.text:SetText(L[self.config.sbType:upper().."_BAR"])
+		self.editframe.feedback.text:SetText(LSTAT[self.config.sbType:upper().."_BAR"])
 
 	end
 
 	self:SetData(self.bar)
+
+end
+
+function STATUS:SetFauxState(state)
+
+	-- empty
+
+end
+
+local OBJEDITOR_MT = { __index = OBJEDITOR }
+
+function STATUS:CreateEditFrame(index)
+
+	local OBJEDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "IonEditFrameTemplate")
+
+	setmetatable(OBJEDITOR, OBJEDITOR_MT)
+
+	OBJEDITOR:EnableMouseWheel(true)
+	OBJEDITOR:RegisterForClicks("AnyDown")
+	OBJEDITOR:SetAllPoints(self)
+	OBJEDITOR:SetScript("OnShow", OBJEDITOR.OnShow)
+	OBJEDITOR:SetScript("OnHide", OBJEDITOR.OnHide)
+	OBJEDITOR:SetScript("OnEnter", OBJEDITOR.OnEnter)
+	OBJEDITOR:SetScript("OnLeave", OBJEDITOR.OnLeave)
+	OBJEDITOR:SetScript("OnClick", OBJEDITOR.OnClick)
+
+	OBJEDITOR.type:SetText("")
+	OBJEDITOR.object = self
+	OBJEDITOR.editType = "status"
+
+	self.OBJEDITOR = OBJEDITOR
+
+	EDITIndex["STATUS"..index] = OBJEDITOR
+
+	OBJEDITOR:Hide()
 
 end
 
@@ -1717,6 +1758,8 @@ local function controlOnEvent(self, event, ...)
 		statusbtnsCDB = CDB.statusbtns
 
 		ION:RegisterBarClass("status", "Status Bar Group", "Status Bar", statusbarsGDB, statusbarsCDB, STATUSIndex, statusbtnsGDB, "Button", "IonStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
+
+		ION:RegisterGUIOptions("status", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
 
 		if (GDB.firstRun) then
 

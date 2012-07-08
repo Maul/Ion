@@ -612,6 +612,8 @@ local function controlOnEvent(self, event, ...)
 
 		ION:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, ION.maxPetID, false, STORAGE, gDef, nil, true)
 
+		ION:RegisterGUIOptions("pet", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
+
 		if (GDB.firstRun) then
 
 			local bar, object = ION:CreateNewBar("pet", 1, true)

@@ -213,7 +213,7 @@ local function updateMicroButtons()
 		end
 	end
 
-	if (IonLFDButton and LFDParentFrame and LFDParentFrame:IsShown())  then
+	if (IonLFDButton and PVEFrame and PVEFrame:IsShown())  then
 
 		IonLFDButton:SetButtonState("PUSHED", 1)
 
@@ -240,6 +240,22 @@ local function updateMicroButtons()
 
 	end
 
+	if (IonCompanionButton and PetJournalParent and PetJournalParent:IsShown())  then
+
+		IonCompanionButton:SetButtonState("PUSHED", 1)
+
+	elseif (IonCompanionButton) then
+
+		IonCompanionButton:GetNormalTexture():SetDesaturated(nil)
+		IonCompanionButton:GetNormalTexture():SetVertexColor(1,1,1)
+		IonCompanionButton:GetPushedTexture():SetDesaturated(nil)
+		IonCompanionButton:SetPushedTexture("Interface\\Buttons\\UI-MicroButton-Mounts-Down")
+		IonCompanionButton:SetHighlightTexture("Interface\\Buttons\\UI-MicroButton-Hilight")
+		IonCompanionButton:SetButtonState("NORMAL")
+		IonCompanionButton.disabledTooltip = nil
+
+	end
+
 	if (IonEJButton and EncounterJournal and EncounterJournal:IsShown())  then
 
 		IonEJButton:SetButtonState("PUSHED", 1)
@@ -253,22 +269,6 @@ local function updateMicroButtons()
 		IonEJButton:SetHighlightTexture("Interface\\Buttons\\UI-MicroButton-Hilight")
 		IonEJButton:SetButtonState("NORMAL")
 		IonEJButton.disabledTooltip = nil
-
-	end
-
-	if (IonRaidButton and RaidFrame and RaidFrame:IsShown() and FriendsFrame and FriendsFrame:IsShown())  then
-
-		IonRaidButton:SetButtonState("PUSHED", 1)
-
-	elseif (IonRaidButton) then
-
-		IonRaidButton:GetNormalTexture():SetDesaturated(nil)
-		IonRaidButton:GetNormalTexture():SetVertexColor(1,1,1)
-		IonRaidButton:GetPushedTexture():SetDesaturated(nil)
-		IonRaidButton:SetPushedTexture("Interface\\Buttons\\UI-MicroButton-Raid-Down")
-		IonRaidButton:SetHighlightTexture("Interface\\Buttons\\UI-MicroButton-Hilight")
-		IonRaidButton:SetButtonState("NORMAL")
-		IonRaidButton.disabledTooltip = nil
 
 	end
 
@@ -637,6 +637,32 @@ function ION.LFDButton_OnClick(self)
 	end
 end
 
+function ION.CompanionButton_OnLoad(self)
+
+	self:RegisterEvent("UPDATE_BINDINGS")
+	self.tooltipText = MicroButtonTooltipText(MOUNTS_AND_PETS, "TOGGLEMOUNTJOURNAL")
+	self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+
+	LoadMicroButtonTextures(self, "Mounts")
+
+	self:HookScript("OnEnter", function(self) if (self.disabledTooltip) then GameTooltip:AddLine(self.disabledTooltip, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true) GameTooltip:Show() end end)
+
+	menuElements[#menuElements+1] = self
+
+end
+
+function ION.CompanionButton_OnEvent(self, event, ...)
+
+	self.tooltipText = MicroButtonTooltipText(MOUNTS_AND_PETS, "TOGGLEMOUNTJOURNAL")
+	self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+
+end
+
+function ION.CompanionButton_OnClick(self)
+
+	TogglePetJournal()
+end
+
 function ION.EJButton_OnLoad(self)
 
 	self:RegisterEvent("UPDATE_BINDINGS")
@@ -671,32 +697,6 @@ function ION.EJButton_OnClick(self)
 	if (EncounterJournal) then
 		ToggleFrame(EncounterJournal)
 	end
-end
-
-function ION.RaidButton_OnLoad(self)
-
-	self:RegisterEvent("UPDATE_BINDINGS")
-	self.tooltipText = MicroButtonTooltipText(RAID, "TOGGLERAIDTAB")
-	self.newbieText = NEWBIE_TOOLTIP_RAID
-
-	LoadMicroButtonTextures(self, "Raid")
-
-	self:HookScript("OnEnter", function(self) if (self.disabledTooltip) then GameTooltip:AddLine(self.disabledTooltip, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true) GameTooltip:Show() end end)
-
-	menuElements[#menuElements+1] = self
-
-end
-
-function ION.RaidButton_OnEvent(self, event, ...)
-
-	self.tooltipText = MicroButtonTooltipText(RAID, "TOGGLERAIDTAB")
-	self.newbieText = NEWBIE_TOOLTIP_RAID
-
-end
-
-function ION.RaidButton_OnClick(self)
-
-	ToggleRaidFrame()
 end
 
 function ION.HelpButton_OnLoad(self)
@@ -1150,6 +1150,8 @@ local function controlOnEvent(self, event, ...)
 		menubtnsCDB = CDB.menubtns
 
 		ION:RegisterBarClass("menu", "Menu Bar", "Menu Button", menubarsGDB, menubarsCDB, MENUIndex, menubtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, true)
+
+		ION:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
 
 		if (GDB.firstRun) then
 

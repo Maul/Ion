@@ -211,21 +211,9 @@
 	</Button>
 
 	<Button name="IonEditFrameTemplate" frameStrata="TOOLTIP" hidden="true" virtual="true">
-		<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-			<EdgeSize>
-				<AbsValue val="8"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="2" right="2" top="2" bottom="2"/>
-			</BackgroundInsets>
-			<Anchors>
-				<Anchor point="TOPLEFT"/>
-				<Anchor point="BOTTOMRIGHT"/>
-			</Anchors>
-		</Backdrop>
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parentType" inherits="ChatFontSmall" justifyH="CENTER" justifyV="CENTER" nonspacewrap="true">
+				<FontString name="$parentType" parentKey="type" inherits="ChatFontSmall" justifyH="CENTER" justifyV="CENTER" nonspacewrap="true">
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset x="0" y="-1"/>

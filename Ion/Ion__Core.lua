@@ -12,9 +12,11 @@ Ion = {
 	BARIndex = {},
 	BARNameIndex = {},
 	BTNIndex = {},
+	EDITIndex = {},
 	BINDIndex = {},
 	ModuleIndex = 0,
-	RegisteredBarData ={},
+	RegisteredBarData = {},
+	RegisteredGUIData = {},
 	MacroDrag = {},
 	StartDrag = false,
 	maxActionID = 132,
@@ -1222,7 +1224,9 @@ function ION:MinimapButton_OnClick(minimap, button)
 
 	if (InCombatLockdown()) then return end
 
-	if (IsAltKeyDown()) then
+	if (button == "RightButton") then
+		ION:ToggleEditFrames()
+	elseif (IsAltKeyDown()) then
 		ION:ToggleBindings()
 	else
 		ION:ToggleBars()
@@ -1502,6 +1506,7 @@ function ION:CreateNewObject(class, id, firstRun)
 		object.id = id
 		object:SetID(0)
 		object.objTIndex = index
+		object.objType = data.objType:gsub("%s", ""):upper()
 
 		object:LoadData(GetActiveSpecGroup(), "homestate")
 
@@ -1537,8 +1542,6 @@ function ION:ChangeBar(bar)
 			else
 				bar:SetBackdropColor(0,0,1,0.5)
 			end
-
-			--updateCycleOrder(bar)
 
 			newBar = true
 		end
@@ -1596,6 +1599,8 @@ function ION:ToggleBars(show, hide)
 				IonBarEditor:Hide()
 			end
 		else
+
+			ION:ToggleEditFrames(nil, true)
 
 			ION.BarsShown = true
 
@@ -1701,6 +1706,14 @@ function ION:RegisterBarClass(class, ...)
 
 end
 
+function ION:RegisterGUIOptions(class, ...)
+
+	ION.RegisteredGUIData[class] = {
+		chkOpt = select(1,...),
+		stateOpt = select(2,...),
+	}
+end
+
 function ION:SetTimerLimit(msg)
 
 	local limit = tonumber(msg:match("%d+"))
@@ -1727,7 +1740,13 @@ local function control_OnEvent(self, event, ...)
 
 	ION.CurrEvent = event
 
-	if (event == "ADDON_LOADED" and ... == "Ion") then
+	if (event == "PLAYER_REGEN_DISABLED") then
+
+		ION:ToggleEditFrames(nil, true)
+		ION:ToggleBindings(nil, true)
+		ION:ToggleBars(nil, true)
+
+	elseif (event == "ADDON_LOADED" and ... == "Ion") then
 
 		ION.MAS = Ion.MANAGED_ACTION_STATES
 		ION.MBS = Ion.MANAGED_BAR_STATES
@@ -1826,6 +1845,7 @@ frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("PLAYER_LEAVING_WORLD")
+frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 frame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 frame:RegisterEvent("SKILL_LINES_CHANGED")
 frame:RegisterEvent("CHARACTER_POINTS_CHANGED")

@@ -166,7 +166,21 @@
 		</Scripts>
 	</Button>
 
-	<Button name="IonEJButton" inherits="MainMenuBarMicroButton" parent="MainMenuBarArtFrame">
+	<Button name="IonCompanionButton" inherits="MainMenuBarMicroButton" parent="UIParent">
+		<Scripts>
+			<OnLoad>
+				Ion.CompanionButton_OnLoad(self)
+			</OnLoad>
+			<OnEvent>
+				Ion.CompanionButton_OnEvent(self, event, ...)
+			</OnEvent>
+			<OnClick>
+				Ion.CompanionButton_OnClick(self)
+			</OnClick>
+		</Scripts>
+	</Button>
+
+	<Button name="IonEJButton" inherits="MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
 				Ion.EJButton_OnLoad(self)
@@ -176,20 +190,6 @@
 			</OnEvent>
 			<OnClick>
 				Ion.EJButton_OnClick(self)
-			</OnClick>
-		</Scripts>
-	</Button>
-
-	<Button name="IonRaidButton" inherits="MainMenuBarMicroButton" parent="MainMenuBarArtFrame">
-		<Scripts>
-			<OnLoad>
-				Ion.RaidButton_OnLoad(self)
-			</OnLoad>
-			<OnEvent>
-				Ion.RaidButton_OnEvent(self, event, ...)
-			</OnEvent>
-			<OnClick>
-				Ion.RaidButton_OnClick(self)
 			</OnClick>
 		</Scripts>
 	</Button>

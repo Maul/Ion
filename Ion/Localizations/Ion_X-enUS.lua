@@ -207,6 +207,8 @@ L.KEYBIND_TOOLTIP2 = "Left-Click to lock this %s's bindings\nHit |cfff00000ESC|r
 L.KEYBIND_TOOLTIP2 = "Hit |cfff00000ESC|r to clear this %s's current binding(s)"
 L.KEYBIND_TOOLTIP3 = "|cffffffffCurrent Binding(s): |r|cff00ff00"
 
+L.EDITFRAME_EDIT = "edit"
+
 L.EMPTY_BUTTON = "Empty Button"
 L.EDIT_BINDINGS = "Edit Bindings"
 L.KEYBIND_NONE = "none"
@@ -216,7 +218,7 @@ L.BINDFRAME_LOCKED = "locked"
 L.BINDFRAME_PRIORITY = "priority"
 L.BINDINGS_LOCKED	= "This button's bindings are locked.\nLeft-Click button to unlock."
 
-L.ALPHAUP_NONE = "none"
+L.OFF = "Off"
 L.ALPHAUP_BATTLE = "Combat"
 L.ALPHAUP_MOUSEOVER = "Mouseover"
 L.ALPHAUP_BATTLEMOUSE = "Combat+Mouseover"

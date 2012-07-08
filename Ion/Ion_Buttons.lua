@@ -615,17 +615,15 @@ function BUTTON:MACRO_GetDragAction()
 
 end
 
-local ud_parse, ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__
+local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__
 
 function BUTTON:MACRO_UpdateData(...)
 
 	if (self.macroparse) then
 
-		ud_parse = self.macroparse
-
 		ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__ = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
 
-		for cmd, options in gmatch(ud_parse, "(%c%p%a+)(%C+)") do
+		for cmd, options in gmatch(self.macroparse, "(%c%p%a+)(%C+)") do
 
 			--after gmatch, remove unneeded characters
 			if (cmd) then cmd = cmd:gsub("^%c+", "") end
@@ -1661,10 +1659,11 @@ function BUTTON:MACRO_PlaceSpell(action1, action2, hasAction)
 	if (action1 == 0) then
 		return
 	else
-	 	_, subName = GetSpellBookItemName(action1, action2)
+	 	spell, subName = GetSpellBookItemName(action1, action2)
 	 	_, spellID = GetSpellBookItemInfo(action1, action2)
 
-	 	spell = GetSpellInfo(spellID)
+	 	--print(GetSpellBookItemName(action1, action2))
+	 	--spell = GetSpellInfo(spellID)
 
 	 	self.data.macro_Text = self:AutoWriteMacro(spell, subName)
 	 	self.data.macro_Auto = spell..";"..subName
@@ -1856,7 +1855,11 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 
 	if (InCombatLockdown()) then return end
 
-	local cursorType, action1, action2, move = GetCursorInfo()
+	local cursorType, action1, action2, ID = GetCursorInfo()
+
+	--for i=1,select("#",GetCursorInfo()) do
+	--	print(i..": "..select(i,GetCursorInfo()))
+	--end
 
 	local texture = self.iconframeicon:GetTexture()
 
@@ -2023,8 +2026,6 @@ function BUTTON:MACRO_PreClick(button)
 
 			self:SetAttribute("type", "")
 
-			self:SetType(true, true)
-
 		end
 	end
 end
@@ -2042,8 +2043,6 @@ function BUTTON:MACRO_PostClick(button)
 		elseif (self.middleclick) then
 
 			self:SetAttribute("type", self.middleclick)
-
-			self:SetType(true)
 
 			self.middleclick = nil
 		end
@@ -2463,6 +2462,13 @@ function BUTTON:SetData(bar)
 	if (self.macroText) then self.macroname:Show() else self.macroname:Hide() end
 	if (self.countText) then self.count:Show() else self.count:Hide() end
 
+	--local ldown, rdown, lup, rup = "", "", "", ""
+
+	--if (self.downClicks) then ldown = ldown.."LeftButtonDown" rdown = rdown.."RightButtonDown" end
+	--if (self.upClicks) then lup = lup.."LeftButtonUp" rup = rup.."RightButtonUp" end
+
+	--self:RegisterForClicks(ldown, lup, rup, rdown)
+
 	local down, up = "", ""
 
 	if (self.upClicks) then up = up.."AnyUp" end
@@ -2604,7 +2610,9 @@ function BUTTON:LoadData(spec, state)
 			self.keys = self.GDB[id].keys
 		end
 
-		self.statedata = self.CDB[id][spec]
+		self.specdata = self.CDB[id]
+
+		self.statedata = self.specdata[spec]
 
 		self.data = self.statedata[state]
 
@@ -2671,6 +2679,7 @@ end
 
 function BUTTON:LoadAux()
 
+	self:CreateEditFrame(self.objTIndex)
 	self:CreateBindFrame(self.objTIndex)
 
 end
@@ -2809,6 +2818,46 @@ function BUTTON:SetType(save, kill, init)
 
 	if (save) then
 		self:SaveData(state)
+	end
+end
+
+function BUTTON:SetFauxState(state)
+
+	if (state)  then
+
+		local msg = (":"):split(state)
+
+		if (msg:find("vehicle")) then
+
+			if (self:GetAttribute("lastPos")) then
+
+				self:SetAttribute("type", "macro")
+
+				if (UnitHasVehicleUI("player")) then
+					self:SetAttribute("*macrotext*", "/click VehicleMenuBarLeaveButton")
+				else
+					self:SetAttribute("*macrotext*", "/click PossessButton2")
+				end
+
+				self:SetAttribute("*action*", 0)
+
+			else
+
+				self:SetAttribute("type", "action")
+
+				self:SetAttribute("*action*", self:GetAttribute("barPos")+120)
+			end
+
+		else
+
+			self:SetAttribute("type", "macro")
+
+			self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
+
+		end
+
+		self:SetAttribute("activestate", msg)
+
 	end
 end
 

@@ -34,6 +34,82 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		<DisabledFont inherits="GameFontDisableSmall"/>
 	</Button>
 
+	<Button name="IonTopTabTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<Size x="10" y="32"/>
+		<HitRectInsets>
+			<AbsInset left="10" right="10" top="-6" bottom="4"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentLeftDisabled" parentKey="leftdisabled" file="Interface\AddOns\Ion-GUI\Images\UI-Character-ActiveTab">
+					<Size x="20" y="35"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="20"/>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="0.15625" top="0" bottom="0.546875"/>
+				</Texture>
+				<Texture name="$parentMiddleDisabled" parentKey="middledisabled" file="Interface\AddOns\Ion-GUI\Images\UI-Character-ActiveTab">
+					<Size x="88" y="35"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentLeftDisabled" relativePoint="RIGHT"/>
+					</Anchors>
+					<TexCoords left="0.15625" right="0.84375" top="0" bottom="0.546875"/>
+				</Texture>
+				<Texture name="$parentRightDisabled" parentKey="rightdisabled" file="Interface\AddOns\Ion-GUI\Images\UI-Character-ActiveTab">
+					<Size x="20" y="35"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentMiddleDisabled" relativePoint="RIGHT"/>
+					</Anchors>
+					<TexCoords left="0.84375" right="1.0" top="0" bottom="0.546875"/>
+				</Texture>
+				<Texture name="$parentLeft" parentKey="left" file="Interface\AddOns\Ion-GUI\Images\UI-Character-InActiveTab">
+					<Size x="20" y="32"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="0" y="13"/>
+					</Anchors>
+					<TexCoords left="0" right="0.15625" top="0" bottom="1.0"/>
+				</Texture>
+				<Texture name="$parentMiddle" parentKey="middle" file="Interface\AddOns\Ion-GUI\Images\UI-Character-InActiveTab">
+					<Size x="88" y="32"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+					</Anchors>
+					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0"/>
+				</Texture>
+				<Texture name="$parentRight" parentKey="right" file="Interface\AddOns\Ion-GUI\Images\UI-Character-InActiveTab">
+					<Size x="20" y="32"/>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT"/>
+					</Anchors>
+					<TexCoords left="0.84375" right="1.0" top="0" bottom="1.0"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<ButtonText parentKey="text">
+			<Size x="0" y="10"/>
+			<Anchors>
+				<Anchor point="CENTER">
+					<Offset x="0" y="2"/>
+				</Anchor>
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontNormalSmall"/>
+		<HighlightFont style="GameFontHighlightSmall"/>
+		<DisabledFont style="GameFontDisableSmall"/>
+		<HighlightTexture parentKey="highlighttexture" file="Interface\AddOns\Ion-GUI\Images\UI-Character-Tab-RealHighlight" alphaMode="ADD">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="-4" y="13"/>
+				</Anchor>
+				<Anchor point="BOTTOMRIGHT">
+					<Offset x="3" y="-2"/>
+				</Anchor>
+			</Anchors>
+		</HighlightTexture>
+	</Button>
+
 	<!-- CheckButton Templates -->
 
 	<CheckButton name="IonScrollFrameButtonTemplate" virtual="true">
@@ -125,6 +201,357 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		</Scripts>
 	</CheckButton>
 
+	<CheckButton name="IonMacroIconButtonTemplate" virtual="true">
+		<Size x="28" y="28"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\Buttons\UI-EmptySlot" parentKey="bg">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="-2" y="2"/>
+						</Anchor>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset x="2" y="-2"/>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0.15625" right="0.8125" top="0.15625" bottom="0.8125"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.elapsed = 0
+				self.click = false
+				self:RegisterForClicks("AnyUp")
+			</OnLoad>
+			<OnClick>
+				if (self.onclick_func) then
+					self.onclick_func(self, button, down)
+				end
+			</OnClick>
+			<OnUpdate>
+				if (self.onupdate_func) then
+					self.onupdate_func(self, elapsed)
+				end
+			</OnUpdate>
+		</Scripts>
+		<NormalTexture name="$parentIcon" parentKey="icon">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="1" y="-1"/>
+				</Anchor>
+				<Anchor point="BOTTOMRIGHT">
+					<Offset x="1" y="-1"/>
+				</Anchor>
+			</Anchors>
+			<TexCoords left="0.01" right="0.99" top="0.01" bottom="0.99"/>
+		</NormalTexture>
+		<CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight"/>
+	</CheckButton>
+
+	<CheckButton name="IonOptionsCheckButtonTemplate" virtual="true">
+		<Size x="26" y="26"/>
+		<HitRectInsets>
+			<AbsInset left="0" right="-50" top="0" bottom="0"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" parentkey="text" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT">
+							<Offset x="3" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnClick>
+				if ( self:GetChecked() ) then
+					PlaySound("igMainMenuOptionCheckBoxOn");
+				else
+					PlaySound("igMainMenuOptionCheckBoxOff");
+				end
+			</OnClick>
+			<OnEnter>
+				if ( self.tooltipText ) then
+					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
+					GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, 1);
+				end
+				if ( self.tooltipRequirement ) then
+					GameTooltip:AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, 1.0);
+					GameTooltip:Show();
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+		<NormalTexture file="Interface\Addons\Ion\Images\RoundCheckBox.tga"/>
+		<CheckedTexture file="Interface\Addons\Ion\Images\RoundCheck.tga"/>
+		<DisabledTexture file="Interface\Addons\Ion\Images\RoundCheckDisabled.tga"/>
+		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+	</CheckButton>
+
+	<!-- Editbox Templates -->
+
+	<EditBox name="IonEditBoxTemplateSmall" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
+		<Size x="37" y="21"/>
+		<Scripts>
+			<OnEscapePressed>
+				self:ClearFocus()
+			</OnEscapePressed>
+			<OnEditFocusLost>
+				self:HighlightText(0, 0)
+			</OnEditFocusLost>
+			<OnEditFocusGained>
+				self:HighlightText()
+			</OnEditFocusGained>
+		</Scripts>
+		<FontString name="$parentFont" justifyH="CENTER" inherits="GameFontHighlight"/>
+	</EditBox>
+
+	<EditBox name="IonDropDownOption" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
+		<Frames>
+			<Button name="$parentButton" parentKey="button" hidden="false">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent().show = nil
+						self:GetParent().popup.timer = 0;
+						if (self:GetParent().popup:IsVisible()) then
+							self:GetParent().popup:Hide()
+						else
+							if (self:GetParent().popup.data) then
+								self:GetParent().popup:Show()
+							end
+						end
+						PlaySound("igMainMenuOptionCheckBoxOn")
+					</OnClick>
+				</Scripts>
+				<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="6" y="-2"/>
+						</Anchor>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset x="-6" y="2"/>
+						</Anchor>
+					</Anchors>
+				</HighlightTexture>
+				<PushedTexture file="" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="4" y="-4"/>
+						</Anchor>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset x="-8" y="0"/>
+						</Anchor>
+					</Anchors>
+				</PushedTexture>
+			</Button>
+			<Frame name="$parentPopUp" parentkey="popup" toplevel="true" clampedToScreen="true">
+				<Anchors>
+					<Anchor point="RIGHT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="18"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="8"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="2" bottom="2"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						self.timer = 0
+						self.options = {}
+						self:RegisterEvent("ADDON_LOADED")
+						self:SetBackdropColor(0, 0, 0)
+						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+						self:Hide()
+					</OnLoad>
+					<OnShow>
+						self.timer = 0
+					</OnShow>
+					<OnHide>
+						self:GetParent().click = nil
+					</OnHide>
+					<OnUpdate>
+						self.timer = self.timer + elapsed
+						if (self:IsVisible() and self.timer > 5) then
+							if (not self:IsMouseOver()) then
+								self:Hide()
+							end
+						end
+					</OnUpdate>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:RegisterEvent("PLAYER_LOGIN")
+				self:SetBackdropColor(0, 0, 0)
+				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+			</OnLoad>
+			<OnTabPressed>
+				self:ClearFocus()
+			</OnTabPressed>
+			<OnEnterPressed>
+				self:ClearFocus()
+			</OnEnterPressed>
+			<OnEscapePressed>
+				self:ClearFocus()
+			</OnEscapePressed>
+			<OnEditFocusLost>
+				self:HighlightText(0, 0)
+			</OnEditFocusLost>
+			<OnEditFocusGained>
+				self:HighlightText()
+			</OnEditFocusGained>
+		</Scripts>
+		<FontString name="$parentFont" justifyH="CENTER" inherits="GameFontHighlight"/>
+	</EditBox>
+
+	<EditBox name="IonDropDownOptionFull" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
+		<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="14"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="20"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="3" right="3" top="2" bottom="2"/>
+			</BackgroundInsets>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" parentKey="text" justifyH="CENTER" inherits="GameFontNormalSmall" nonspacewrap="true">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOP">
+							<Offset x="0" y="1"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentButton" hidden="false">
+				<Size x="20" y="20"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterEvent("ADDON_LOADED")
+					</OnLoad>
+					<OnEvent>
+                                                if (... == "Ion-GUI") then
+							self:SetWidth(self:GetParent():GetHeight())
+							self:SetHeight(self:GetParent():GetHeight())
+                                                end
+					</OnEvent>
+					<OnClick>
+						self:GetParent().show = nil
+						self:GetParent().popup.timer = 0;
+						if (self:GetParent().popup:IsVisible()) then
+							self:GetParent().popup:Hide()
+						else
+							if (self:GetParent().popup.data) then
+								self:GetParent().popup:Show()
+							end
+						end
+						PlaySound("igMainMenuOptionCheckBoxOn")
+					</OnClick>
+				</Scripts>
+				<NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up"/>
+				<PushedTexture name="$parentPushedTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Down"/>
+				<DisabledTexture name="$parentDisabledTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Disabled"/>
+				<HighlightTexture name="$parentHighlightTexture" file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
+			<Frame name="$parentPopUp" parentKey="popup" toplevel="true" clampedToScreen="true">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="18"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="8"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="2" bottom="2"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						self.timer = 0
+						self.options = {}
+						self:RegisterEvent("ADDON_LOADED")
+						self:SetBackdropColor(0, 0, 0)
+						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+						self:Hide()
+					</OnLoad>
+					<OnShow>
+						self.timer = 0
+					</OnShow>
+					<OnHide>
+						self:GetParent().click = nil
+					</OnHide>
+					<OnUpdate>
+						self.timer = self.timer + elapsed
+						if (self:IsVisible() and self.timer > 5) then
+							if (not self:IsMouseOver()) then
+								self:Hide()
+							end
+						end
+					</OnUpdate>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:RegisterEvent("PLAYER_LOGIN")
+				self:SetBackdropColor(0, 0, 0)
+				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+			</OnLoad>
+			<OnTabPressed>
+				self:ClearFocus()
+			</OnTabPressed>
+			<OnEnterPressed>
+				self:ClearFocus()
+			</OnEnterPressed>
+			<OnEscapePressed>
+				self:ClearFocus()
+			</OnEscapePressed>
+			<OnEditFocusLost>
+				self:HighlightText(0, 0)
+			</OnEditFocusLost>
+			<OnEditFocusGained>
+				self:HighlightText()
+			</OnEditFocusGained>
+		</Scripts>
+		<FontString name="$parentFont" justifyH="CENTER" inherits="GameFontHighlightSmall"/>
+	</EditBox>
+
 	<!-- ScrollFrame Templates -->
 
 	<ScrollFrame name="IonScrollFrameTemplate1" toplevel="true"  inherits="UIPanelScrollFrameTemplate" virtual="true">
@@ -166,6 +593,204 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</OnMouseWheel>
 		</Scripts>
 	</ScrollFrame>
+
+	<ScrollFrame name="IonScrollFrameTemplate2" inherits="UIPanelScrollFrameTemplate" virtual="true">
+		<Frames>
+			<Button name="$parentFocusButton" parentKey="focus" setAllPoints="true">
+				<Scripts>
+					<OnClick>
+						self:GetParent().edit:SetFocus()
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<ScrollChild>
+			<EditBox name="$parentEditBox" parentKey="edit" multiLine="true" letters="1023" countInvisibleLetters="true" autoFocus="false">
+				<Size x="330" y="1"/>
+				<Scripts>
+					<OnTextChanged>
+						ScrollingEdit_OnTextChanged(self, self:GetParent())
+					</OnTextChanged>
+					<OnCursorChanged function="ScrollingEdit_OnCursorChanged"/>
+					<OnEscapePressed>
+						self:ClearFocus()
+					</OnEscapePressed>
+					<OnTabPressed>
+						self:ClearFocus()
+					</OnTabPressed>
+					<OnHide>
+						self:ClearFocus()
+					</OnHide>
+					<OnEditFocusLost>
+						self:GetParent().focus:Show()
+					</OnEditFocusLost>
+					<OnEditFocusGained>
+						self:GetParent().focus:Hide()
+					</OnEditFocusGained>
+					<OnUpdate>
+						ScrollingEdit_OnUpdate(self, elapsed, self:GetParent())
+					</OnUpdate>
+				</Scripts>
+				<FontString inherits="GameFontHighlight"/>
+			</EditBox>
+		</ScrollChild>
+		<Scripts>
+			<OnLoad>
+				self.scrollbar = _G[self:GetName().."ScrollBar"]
+				self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
+				self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
+
+				self.scrollbar:SetFrameLevel(self.focus:GetFrameLevel() + 2)
+				self.scrollbar:ClearAllPoints()
+				self.scrollbar:SetPoint("TOPLEFT", self, "TOPRIGHT", -18, -10)
+				self.scrollbar:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", -18, 8)
+
+				self.scrollbarup:SetPoint("BOTTOM", self.scrollbar, "TOP", 0, -4)
+				self.scrollbardown:SetPoint("TOP", self.scrollbar, "BOTTOM", 0, 4)
+			</OnLoad>
+		</Scripts>
+	</ScrollFrame>
+
+	<!-- Frame Templates -->
+
+	<Frame name="IonAdjustOptionTemplate" virtual="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="text" inherits="GameFontNormal" justifyH="LEFT" nonspacewrap="false">
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="CENTER">
+							<Offset x="-15" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="method1" enableMouse="true" hidden="true">
+				<Size x="80" y="24"/>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="CENTER">
+						<Offset x="5" y="0"/>
+					</Anchor>
+					<Anchor point="RIGHT">
+						<Offset x="-10" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Button parentKey="add" hidden="true">
+						<Size x="24" y="30"/>
+						<Anchors>
+							<Anchor point="RIGHT">
+								<Offset x="3" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+
+							</OnClick>
+							<OnUpdate>
+
+							</OnUpdate>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\Ion\Images\AdjustOptionRight-Up"/>
+						<PushedTexture file="Interface\AddOns\Ion\Images\AdjustOptionRight-Down"/>
+						<HighlightTexture file="Interface\AddOns\Ion\Images\AdjustOptionRight-Highlight" alphaMode="ADD"/>
+					</Button>
+					<Button parentKey="sub" hidden="true">
+						<Size x="24" y="30"/>
+						<Anchors>
+							<Anchor point="LEFT">
+								<Offset x="-3" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+
+							</OnClick>
+							<OnUpdate>
+
+							</OnUpdate>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Up"/>
+						<PushedTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Down"/>
+						<HighlightTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Highlight" alphaMode="ADD"/>
+					</Button>
+					<EditBox parentKey="edit" inherits="IonEditBoxTemplateSmall" letters="4">
+						<Size x="50" y="24"/>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnTabPressed>
+
+							</OnTabPressed>
+							<OnEnterPressed>
+
+							</OnEnterPressed>
+							<OnEditFocusGained>
+								self.hasfocus = true
+								self:GetParent().add:Show()
+								self:GetParent().sub:Show()
+							</OnEditFocusGained>
+							<OnEditFocusLost>
+								self.hasfocus = nil
+							</OnEditFocusLost>
+						</Scripts>
+					</EditBox>
+				</Frames>
+			</Frame>
+			<Frame parentKey="method2" hidden="true">
+				<Size x="80" y="24"/>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="CENTER">
+						<Offset x="-5" y="0"/>
+					</Anchor>
+					<Anchor point="RIGHT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<EditBox parentKey="edit" inherits="IonDropDownOption">
+						<Size x="100" y="24"/>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnTabPressed>
+
+							</OnTabPressed>
+							<OnEnterPressed>
+
+							</OnEnterPressed>
+						</Scripts>
+					</EditBox>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnUpdate>
+				if (self.method1:IsShown()) then
+					if (not self.method1.edit.hasfocus) then
+						if (not self.shown and MouseIsOver(self)) then
+							self.method1.add:Show()
+							self.method1.sub:Show()
+							self.shown = true
+						elseif (self.shown and not MouseIsOver(self)) then
+							self.method1.add:Hide()
+							self.method1.sub:Hide()
+							self.shown = nil
+						end
+					end
+				end
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<!-- Not Templates -->
 
 	<Frame name="IonBarEditor" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent" clampedToScreen="true">
 		<Anchors>
@@ -247,7 +872,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						Ion.BarList_OnLoad(self)
+						Ion:BarList_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -255,50 +880,21 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			<Frame name="$parentBarOptions" parentKey="baropt">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
-						<Offset x="6" y="0"/>
+						<Offset x="3" y="-45"/>
 					</Anchor>
-					<Anchor point="BOTTOM" relativeTo="$parentBarList" relativePoint="BOTTOM" >
-						<Offset x="0" y="0"/>
-					</Anchor>
-					<Anchor point="RIGHT">
-						<Offset x="-10" y="0"/>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-10" y="45"/>
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Frame name="$parentAdjustableOptions" parentKey="adjopt">
+					<Frame name="$parentCheckOptions" parentKey="chkoptions">
 						<Anchors>
 							<Anchor point="TOPLEFT">
-								<Offset x="0" y="-45"/>
-							</Anchor>
-							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
-								<Offset x="235" y="0"/>
-							</Anchor>
-						</Anchors>
-						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="16"/>
-							</EdgeSize>
-							<TileSize>
-								<AbsValue val="16"/>
-							</TileSize>
-							<BackgroundInsets>
-								<AbsInset left="5" right="5" top="5" bottom="5"/>
-							</BackgroundInsets>
-						</Backdrop>
-						<Scripts>
-							<OnLoad>
-								--Ion.AdjustableOptions_OnLoad(self)
-							</OnLoad>
-						</Scripts>
-					</Frame>
-					<Frame name="$parentStateData" parentKey="statedata">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentAdjustableOptions" relativePoint="BOTTOMRIGHT">
-								<Offset x="6" y="90"/>
-							</Anchor>
-							<Anchor point="BOTTOMRIGHT">
 								<Offset x="0" y="0"/>
 							</Anchor>
+							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
+								<Offset x="160" y="0"/>
+							</Anchor>
 						</Anchors>
 						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 							<EdgeSize>
@@ -313,21 +909,33 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						</Backdrop>
 						<Scripts>
 							<OnLoad>
-								--Ion.AdjustableOptions_OnLoad(self)
+								Ion:BarOptions_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
+
 					<Frame name="$parentStateEditor" parentKey="editor">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentAdjustableOptions" relativePoint="BOTTOMRIGHT">
-								<Offset x="6" y="230"/>
+							<Anchor point="TOPLEFT" relativeTo="$parentCheckOptions" relativePoint="TOPRIGHT">
+								<Offset x="4" y="-30"/>
 							</Anchor>
-							<Anchor point="BOTTOMRIGHT" relativeTo="$parentStateData" relativePoint="TOPRIGHT">
-								<Offset x="0" y="45"/>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="0" y="155"/>
 							</Anchor>
 						</Anchors>
+						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="16"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="16"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="5" right="5" top="5" bottom="5"/>
+							</BackgroundInsets>
+						</Backdrop>
 						<Frames>
-							<Frame name="$parentPresets" parentKey="presets" hidden="true">
+							<Frame name="$parentPresets" parentKey="presets">
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset x="0" y="0"/>
@@ -357,13 +965,13 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 									</Layer>
 								</Layers>
 								<Frames>
-									<Frame>
+									<Frame parentKey="primary">
 										<Anchors>
 											<Anchor point="TOPLEFT">
-												<Offset x="0" y="0"/>
+												<Offset x="6" y="-6"/>
 											</Anchor>
 											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
-												<Offset x="100" y="0"/>
+												<Offset x="110" y="45"/>
 											</Anchor>
 										</Anchors>
 										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
@@ -384,13 +992,13 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 											</OnLoad>
 										</Scripts>
 									</Frame>
-									<Frame>
+									<Frame parentKey="secondary">
 										<Anchors>
 											<Anchor point="TOPLEFT">
-												<Offset x="103" y="0"/>
+												<Offset x="111" y="-6"/>
 											</Anchor>
 											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
-												<Offset x="0" y="0"/>
+												<Offset x="-6" y="45"/>
 											</Anchor>
 										</Anchors>
 										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
@@ -458,21 +1066,60 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 									</Frame>
 								</Frames>
 							</Frame>
+							<Frame name="$parentHidden" parentKey="hidden" hidden="true">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+								</Anchors>
+								<Frames>
+									<Frame>
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+										</Anchors>
+										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+											<EdgeSize>
+												<AbsValue val="16"/>
+											</EdgeSize>
+											<TileSize>
+												<AbsValue val="16"/>
+											</TileSize>
+											<BackgroundInsets>
+												<AbsInset left="5" right="5" top="5" bottom="5"/>
+											</BackgroundInsets>
+										</Backdrop>
+										<Scripts>
+											<OnLoad>
+												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+												self:SetBackdropColor(0,0,0,0.5)
+											</OnLoad>
+										</Scripts>
+									</Frame>
+								</Frames>
+							</Frame>
 						</Frames>
 						<Scripts>
 							<OnLoad>
-								--Ion.AdjustableOptions_OnLoad(self)
+								Ion:StateEditor_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
 
-					<Frame name="$parentMiscOptions" parentKey="miscopt">
+					<Frame name="$parentAdjustableOptions" parentKey="adjoptions">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentAdjustableOptions" relativePoint="TOPRIGHT">
-								<Offset x="6" y="0"/>
+							<Anchor point="TOPLEFT" relativeTo="$parentStateEditor" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-4"/>
 							</Anchor>
-							<Anchor point="BOTTOMRIGHT" relativeTo="$parentStateEditor" relativePoint="TOPRIGHT">
-								<Offset x="0" y="22"/>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="0" y="0"/>
 							</Anchor>
 						</Anchors>
 						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
@@ -491,7 +1138,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						</Frames>
 						<Scripts>
 							<OnLoad>
-								--Ion.AdjustableOptions_OnLoad(self)
+								Ion.AdjustableOptions_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -610,45 +1257,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Scripts>
 			</Button>
 
-			<Button name="$parentObjectEdit" parentKey="objedit" inherits="IonButtonTemplate1">
-				<Size x="60" y="25"/>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentObjectOptionsList" relativePoint="BOTTOMLEFT">
-						<Offset x="-1" y="-5"/>
-					</Anchor>
-					<Anchor point="TOPRIGHT" relativeTo="$parentObjectOptionsList" relativePoint="BOTTOMRIGHT">
-						<Offset x="1" y="-5"/>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						self.type = "editobjs"
-						--self.text:SetText(Ion.Strings.EDIT_BUTTONS)
-					</OnLoad>
-					<OnClick>
-						--Ion.BarEditor_EditObjects(self)
-					</OnClick>
-				</Scripts>
-			</Button>
-
-			<Button name="$parentBindEdit" parent="IonBarEditorBarOptions" parentKey="bindedit" inherits="IonButtonTemplate1">
-				<Size x="149" y="25"/>
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="IonBarEditorObjectEdit" relativePoint="RIGHT">
-						<Offset x="4" y="0"/>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						self.type = "editbindings"
-						--self.text:SetText(Ion.Strings.EDIT_BINDINGS)
-					</OnLoad>
-					<OnClick>
-						--Ion.ButtonBind()
-					</OnClick>
-				</Scripts>
-			</Button>
-
 			<Button name="$parentDelete" parent="IonBarEditorBarOptions" inherits="IonButtonTemplate1">
 				<Size x="150" y="25"/>
 				<Anchors>
@@ -685,13 +1293,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</Button>
 
 			<Frame name="$parentConfirm" parent="IonBarEditorBarOptions" hidden="true">
-				<Size x="240" y="25"/>
+				<Size x="200" y="25"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativeTo="IonBarEditor" relativePoint="BOTTOMRIGHT">
 						<Offset x="-10" y="15"/>
-					</Anchor>
-					<Anchor point="LEFT" relativeTo="IonBarEditorBarOptionsDeleteRaiseButtons" relativePoint="LEFT">
-						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
 				<Layers>
@@ -1004,11 +1609,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self:SetBackdropBorderColor(0.7, 0.7, 0.7)
-				self:SetBackdropColor(0,0,0,1)
-				self:RegisterEvent("ADDON_LOADED")
-				self:RegisterForDrag("LeftButton", "RightButton")
-				self.bottom = 0
+				Ion:BarEditor_OnLoad(self)
 			</OnLoad>
 			<OnEvent>
 
@@ -1027,6 +1628,163 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</OnDragStart>
 			<OnDragStop>
 				self:StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+
+	<Frame name="IonObjectEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" clampedToScreen="true" hidden="true">
+		<Size x="500" y="415"/>
+		<Anchors>
+			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
+				<Offset x="0" y="0"/>
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="22"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5"/>
+			</BackgroundInsets>
+		</Backdrop>
+		<Frames>
+			<Button name="$parentDone" toplevel="true" frameStrata="TOOLTIP">
+				<Size x="32" y="32"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="1" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.button = "close"
+					</OnLoad>
+					<OnClick>
+						self:GetParent():Hide()
+					</OnClick>
+				</Scripts>
+				<NormalTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Ion:ObjectEditor_OnLoad(self)
+			</OnLoad>
+			<OnShow>
+				Ion:ObjectEditor_OnShow(self)
+			</OnShow>
+			<OnHide>
+				Ion:ObjectEditor_OnHide(self)
+			</OnHide>
+			<OnUpdate>
+				--Ion.ObjectEditor_OnUpdate(self, elasped)
+			</OnUpdate>
+			<OnDragStart>
+				self:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+
+	<Frame name="IonButtonEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="IonObjectEditor" clampedToScreen="true" hidden="true">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="IonObjectEditor" relativePoint="TOPLEFT">
+				<Offset x="0" y="0"/>
+			</Anchor>
+			<Anchor point="BOTTOMRIGHT" relativeTo="IonObjectEditor" relativePoint="BOTTOMRIGHT">
+				<Offset x="0" y="0"/>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Frame name="$parentActionList" parentKey="actionlist">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="10" y="-10"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
+						<Offset x="135" y="10"/>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Frames>
+					<ScrollFrame name="$parentScrollFrame" inherits="IonScrollFrameTemplate1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="5" y="-5"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="-27" y="5"/>
+							</Anchor>
+						</Anchors>
+						<ScrollChild>
+							<Frame name="$parentScrollChildFrame">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="5" y="-5"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="-5" y="5"/>
+									</Anchor>
+								</Anchors>
+							</Frame>
+							<Scripts>
+								<OnShow>
+									--self:SetValue(0)
+								</OnShow>
+							</Scripts>
+						</ScrollChild>
+						<Scripts>
+							<OnLoad>
+								Ion:ActionListScrollFrame_OnLoad(self)
+							</OnLoad>
+							<OnShow>
+								Ion.ActionListScrollFrameUpdate()
+							</OnShow>
+							<OnVerticalScroll>
+								FauxScrollFrame_OnVerticalScroll(self, offset, 2, Ion.ActionListScrollFrameUpdate)
+							</OnVerticalScroll>
+						</Scripts>
+					</ScrollFrame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						Ion:ActionList_OnLoad(self)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Ion:ButtonEditor_OnLoad(self)
+			</OnLoad>
+			<OnShow>
+				Ion:ButtonEditor_OnShow(self)
+			</OnShow>
+			<OnHide>
+				Ion:ButtonEditor_OnHide(self)
+			</OnHide>
+			<OnDragStart>
+				self:GetParent():StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				self:GetParent():StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</Frame>

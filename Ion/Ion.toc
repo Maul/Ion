@@ -20,6 +20,7 @@ Ion__Core.lua
 Ion_States.lua
 Ion_Buttons.lua
 Ion_Bars.lua
+Ion_EditFrames.lua
 Ion_KeyBinder.lua
 Ion_SnapTo.lua
 

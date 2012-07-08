@@ -26,7 +26,7 @@ local alphaDir, alphaTimer = 0, 0
 local autoHideIndex, alphaupIndex = {}, {}
 
 local alphaUps = {
-	L.ALPHAUP_NONE,
+	L.OFF,
 	L.ALPHAUP_MOUSEOVER,
 	L.ALPHAUP_BATTLE,
 	L.ALPHAUP_BATTLEMOUSE,
@@ -56,7 +56,7 @@ ION.barGDEF = {
 	columns = false,
 	scale = 1,
 	alpha = 1,
-	alphaUp = "none",
+	alphaUp = 1,
 	fadeSpeed = 0.5,
 
 	barStrata = "MEDIUM",
@@ -377,7 +377,7 @@ function HANDLER:SetAutoHide(bar)
 		autoHideIndex[bar] = nil
 	end
 
-	if (bar.gdata.alphaUp == L.ALPHAUP_NONE) then
+	if (bar.gdata.alphaUp == L.OFF) then
 		alphaupIndex[bar] = nil
 	else
 		alphaupIndex[bar] = self; self.fadeSpeed = bar.gdata.fadeSpeed
@@ -801,6 +801,8 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-paged", [[
 
+						self:SetAttribute("assertstate", "paged")
+
 						self:SetAttribute("state-last", self:GetAttribute("state-paged"))
 
 						self:SetAttribute("state-current", self:GetAttribute("state-paged"))
@@ -814,6 +816,8 @@ function BAR:CreateHandler()
 						]])
 
 	handler:SetAttribute("_onstate-stance", [[
+
+						self:SetAttribute("assertstate", "stance")
 
 						self:SetAttribute("state-last", self:GetAttribute("state-stance"))
 
@@ -829,6 +833,8 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-pet", [[
 
+						self:SetAttribute("assertstate", "pet")
+
 						self:SetAttribute("state-last", self:GetAttribute("state-pet"))
 
 						self:SetAttribute("state-current", self:GetAttribute("state-pet"))
@@ -842,6 +848,8 @@ function BAR:CreateHandler()
 						]])
 
 	handler:SetAttribute("_onstate-stealth", [[
+
+						self:SetAttribute("assertstate", "stealth")
 
 						if (self:GetAttribute("state-stealth") == "laststate") then
 							self:SetAttribute("state-last", self:GetAttribute("state-last-stealth"))
@@ -859,6 +867,8 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-reaction", [[
 
+						self:SetAttribute("assertstate", "reaction")
+
 						if (self:GetAttribute("state-reaction") == "laststate") then
 							self:SetAttribute("state-last", self:GetAttribute("state-last-reaction"))
 							self:SetAttribute("state-current", self:GetAttribute("state-last"))
@@ -874,6 +884,8 @@ function BAR:CreateHandler()
 						]])
 
 	handler:SetAttribute("_onstate-combat", [[
+
+						self:SetAttribute("assertstate", "combat")
 
 						if (self:GetAttribute("state-combat") == "laststate") then
 							self:SetAttribute("state-last", self:GetAttribute("state-last-combat"))
@@ -891,6 +903,8 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-group", [[
 
+						self:SetAttribute("assertstate", "group")
+
 						if (self:GetAttribute("state-group") == "laststate") then
 							self:SetAttribute("state-last", self:GetAttribute("state-last-group"))
 							self:SetAttribute("state-current", self:GetAttribute("state-last"))
@@ -906,6 +920,8 @@ function BAR:CreateHandler()
 						]])
 
 	handler:SetAttribute("_onstate-fishing", [[
+
+						self:SetAttribute("assertstate", "fishing")
 
 						if (self:GetAttribute("state-fishing") == "laststate") then
 							self:SetAttribute("state-last", self:GetAttribute("state-last-fishing"))
@@ -923,6 +939,8 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-vehicle", [[
 
+						self:SetAttribute("assertstate", "vehicle")
+
 						if (self:GetAttribute("state-vehicle") == "laststate") then
 							self:SetAttribute("state-last", self:GetAttribute("state-last-vehicle"))
 							self:SetAttribute("state-current", self:GetAttribute("state-last"))
@@ -939,6 +957,8 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-alt", [[
 
+						self:SetAttribute("assertstate", "alt")
+
 						if (self:GetAttribute("state-alt") == "laststate") then
 							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
 							control:ChildUpdate("alt", self:GetAttribute("state-last") or "homestate")
@@ -950,6 +970,8 @@ function BAR:CreateHandler()
 						]])
 
 	handler:SetAttribute("_onstate-ctrl", [[
+
+						self:SetAttribute("assertstate", "ctrl")
 
 						if (self:GetAttribute("state-ctrl") == "laststate") then
 							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
@@ -963,6 +985,8 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-shift", [[
 
+						self:SetAttribute("assertstate", "shift")
+
 						if (self:GetAttribute("state-shift") == "laststate") then
 							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
 							control:ChildUpdate("shift", self:GetAttribute("state-last") or "homestate")
@@ -974,6 +998,8 @@ function BAR:CreateHandler()
 						]])
 
 	handler:SetAttribute("_onstate-custom", [[
+
+						self:SetAttribute("assertstate", "custom")
 
 						self:SetAttribute("state-last", self:GetAttribute("state-custom"))
 
@@ -992,8 +1018,6 @@ function BAR:CreateHandler()
 	handler:HookScript("OnAttributeChanged",
 
 			function(self,name,value)
-
-
 
 			end)
 
@@ -1072,8 +1096,8 @@ function BAR:Update(show, hide)
 
 	self:SaveData()
 
-	if (IonBarEditor and IonBarEditor:IsVisible()) then
-		ION:UpdateGUI()
+	if (not hide and IonBarEditor and IonBarEditor:IsVisible()) then
+		ION:UpdateBarGUI()
 	end
 end
 
@@ -1134,6 +1158,26 @@ function BAR:SetPosition()
 		end
 
 		self.posSet = true
+	end
+end
+
+function BAR:SetFauxState(state)
+
+	self.objCount = 0
+
+	self.handler:SetAttribute("fauxstate", state)
+
+	for objID in gmatch(self.gdata.objectList, "[^;]+") do
+
+		object = _G[self.objPrefix..objID]
+
+		if (object) then
+			object:SetFauxState(state)
+		end
+	end
+
+	if (IonObjectEditor and IonObjectEditor:IsVisible()) then
+		ION:UpdateObjectGUI()
 	end
 end
 
@@ -1471,8 +1515,8 @@ function BAR:OnClick(...)
 
 	end
 
-	if (IonBarEditor and IonBarEditor:IsVisible()) then
-		ION:UpdateGUI()
+	if (not down and IonBarEditor and IonBarEditor:IsVisible()) then
+		ION:UpdateBarGUI()
 	end
 
 end
@@ -1832,14 +1876,14 @@ function BAR:UpdateObjectData()
 	end
 end
 
-function BAR:UpdateObjectGrid()
+function BAR:UpdateObjectGrid(show)
 
 	for objID in gmatch(self.gdata.objectList, "[^;]+") do
 
 		object = _G[self.objPrefix..objID]
 
 		if (object) then
-			object:SetGrid(ION.BarsShown)
+			object:SetGrid(show)
 		end
 	end
 end
@@ -1906,7 +1950,7 @@ function BAR:DeleteBar()
 	self.CDB[self:GetID()] = nil
 
 	if (IonBarEditor and IonBarEditor:IsVisible()) then
-		ION:UpdateGUI()
+		ION:UpdateBarGUI()
 	end
 
 end
@@ -2055,360 +2099,6 @@ function BAR:RemoveObjects(num)
 				self:Update()
 			end
 		end
-	end
-end
-
-function BAR:ScaleBar(scale)
-
-	scale = tonumber(scale)
-
-	if (scale) then
-
-		self.gdata.scale = scale
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-	end
-end
-
-function BAR:SnapToBar(gui)
-
-	local toggle = self.gdata.snapTo
-
-	if (toggle) then
-
-		self.gdata.snapTo = false
-		self.gdata.snapToPoint = false
-		self.gdata.snapToFrame = false
-
-		self:SetUserPlaced(true)
-
-		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
-
-		self:SetPosition()
-
-	else
-		self.gdata.snapTo = true
-	end
-
-	self:Update()
-end
-
-function BAR:AutoHideBar(gui, checked)
-
-	local toggle = self.gdata.autoHide
-
-	if (toggle) then
-		self.gdata.autoHide = false
-	else
-		self.gdata.autoHide = true
-	end
-
-	self:Update()
-end
-
-function BAR:ConcealBar(gui)
-
-	if (InCombatLockdown()) then return end
-
-	local toggle = self.cdata.conceal
-
-	if (toggle) then
-
-		self.cdata.conceal = false
-
-		if (self.selected) then
-			self:SetBackdropColor(0,0,1,0.5)
-		else
-			self:SetBackdropColor(0,0,0,0.4)
-		end
-
-	else
-		self.cdata.conceal = true
-
-		if (self.selected) then
-			self:SetBackdropColor(1,0,0,0.6)
-		else
-			self:SetBackdropColor(1,0,0,0.4)
-		end
-	end
-
-	self:Update()
-end
-
-function BAR:ShapeBar(shape)
-
-	local shape = tonumber(shape)
-
-	if (shape and barShapes[shape]) then
-
-		self.gdata.shape = shape
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-	else
-		print(L.BAR_SHAPES)
-	end
-end
-
-function BAR:NameBar(name, gui)
-
-	if (name) then
-
-		self.gdata.name = name
-
-		self:Update()
-	end
-end
-
-function BAR:StrataSet(command)
-
-	local strata = tonumber(command)
-
-	if (strata and ION.Stratas[strata] and ION.Stratas[strata+1]) then
-
-		self.gdata.barStrata = ION.Stratas[strata+1]
-		self.gdata.objectStrata = ION.Stratas[strata]
-
-		self:SetPosition()
-
-		self:UpdateObjectData()
-
-		self:Update()
-	else
-		print(L.BAR_STRATAS)
-	end
-end
-
-function BAR:AlphaSet(command)
-
-	local alpha = tonumber(command)
-
-	if (alpha and alpha>=0 and alpha<=1) then
-
-		self.gdata.alpha = alpha
-
-		self:Update()
-	else
-		print(L.BAR_ALPHA)
-	end
-
-end
-
-function BAR:AlphaUpSet(command)
-
-	local alphaUp = tonumber(command)
-
-	if (alphaUp and alphaUps[alphaUp]) then
-
-		self.gdata.alphaUp = alphaUps[alphaUp]
-
-		self:Update()
-
-	else
-		local text = ""
-
-		for k,v in ipairs(alphaUps) do
-			text = text.."\n"..k.."="..v
-		end
-
-		print(text)
-	end
-end
-
-function BAR:ArcStartSet(command)
-
-	local start = tonumber(command)
-
-	if (start and start>=0 and start<=359) then
-
-		self.gdata.arcStart = start
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-	else
-		print(L.BAR_ARCSTART)
-	end
-end
-
-function BAR:ArcLengthSet(command)
-
-	local length = tonumber(command)
-
-	if (length and length>=0 and length<=359) then
-
-		self.gdata.arcLength = length
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-	else
-		print(L.BAR_ARCLENGTH)
-	end
-end
-
-function BAR:ColumnsSet(command)
-
-	local columns = tonumber(command)
-
-	if (columns and columns > 0) then
-
-		self.gdata.columns = columns
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-
-	elseif (not columns) then
-
-		self.gdata.columns = false
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-	else
-		print(L.BAR_COLUMNS)
-	end
-end
-
-function BAR:PadHSet(command)
-
-	local padh = tonumber(command)
-
-	if (padh) then
-
-		self.gdata.padH = padh
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-
-	else
-		print(L.BAR_PADH)
-	end
-end
-
-function BAR:PadVSet(command)
-
-	local padv = tonumber(command)
-
-	if (padv) then
-
-		self.gdata.padV = padv
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-
-	else
-		print(L.BAR_PADV)
-	end
-end
-
-function BAR:PadHVSet(command)
-
-	local padhv = tonumber(command)
-
-	if (padhv) then
-
-		self.gdata.padH = self.gdata.padH + padhv
-		self.gdata.padV = self.gdata.padV + padhv
-
-		self:SetObjectLoc()
-
-		self:SetPerimeter()
-
-		self:SetSize()
-
-		self:Update()
-
-	else
-		print(L.BAR_PADHV)
-	end
-end
-
-function BAR:XAxisSet(command)
-
-	local x = tonumber(command)
-
-	if (x) then
-
-		self.gdata.x = self.gdata.x + x
-
-		self.gdata.snapTo = false
-		self.gdata.snapToPoint = false
-		self.gdata.snapToFrame = false
-
-		self:SetPosition()
-
-		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
-
-		self.message:Show()
-		self.messagebg:Show()
-
-		self:Update()
-	else
-		print(L.BAR_XPOS)
-	end
-end
-
-function BAR:YAxisSet(command)
-
-	local y = tonumber(command)
-
-	if (y) then
-
-		self.gdata.y = self.gdata.y + y
-
-		self.gdata.snapTo = false
-		self.gdata.snapToPoint = false
-		self.gdata.snapToFrame = false
-
-		self:SetPosition()
-
-		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
-
-		self.message:Show()
-		self.messagebg:Show()
-
-		self:Update()
-	else
-		print(L.BAR_YPOS)
 	end
 end
 
@@ -2641,12 +2331,54 @@ function BAR:SetVisibility(msg, gui, silent)
 	end
 end
 
-function BAR:ShowGridSet()
+function BAR:AutoHideBar(msg, gui, checked, query)
 
-	if (self.gdata.showGrid) then
-		self.gdata.showGrid = false
+	if (query) then
+		return self.gdata.autoHide
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.gdata.autoHide = true
+		else
+			self.gdata.autoHide = false
+		end
+
 	else
-		self.gdata.showGrid = true
+
+		local toggle = self.gdata.autoHide
+
+		if (toggle) then
+			self.gdata.autoHide = false
+		else
+			self.gdata.autoHide = true
+		end
+	end
+
+	self:Update()
+end
+
+function BAR:ShowGridSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.gdata.showGrid
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.gdata.showGrid = true
+		else
+			self.gdata.showGrid = false
+		end
+	else
+
+		if (self.gdata.showGrid) then
+			self.gdata.showGrid = false
+		else
+			self.gdata.showGrid = true
+		end
 	end
 
 	self:UpdateObjectData()
@@ -2657,118 +2389,66 @@ function BAR:ShowGridSet()
 
 end
 
-function BAR:LockSet(modkey)
+local function spellGlowMod(self, msg, gui)
 
-	if (modkey) then
+	if (msg:lower() == "default") then
 
-		if (modkey:lower() == "alt") then
-
-			if (self.cdata.barLockAlt) then
-				self.cdata.barLockAlt = false
-			else
-				self.cdata.barLockAlt = true
-			end
-		elseif (modkey:lower() == "ctrl") then
-
-			if (self.cdata.barLockCtrl) then
-				self.cdata.barLockCtrl = false
-			else
-				self.cdata.barLockCtrl = true
-			end
-		elseif (modkey:lower() == "shift") then
-
-			if (self.cdata.barLockShift) then
-				self.cdata.barLockShift = false
-			else
-				self.cdata.barLockShift = true
-			end
+		if (self.cdata.spellGlowDef) then
+			self.cdata.spellGlowDef = false
 		else
-			print(L.BARLOCK_MOD)
+			self.cdata.spellGlowDef = true
+			self.cdata.spellGlowAlt = false
 		end
 
-	else
-		if (self.cdata.barLock) then
-			self.cdata.barLock = false
+		if (not self.cdata.spellGlowDef and not self.cdata.spellGlowAlt) then
+			self.cdata.spellGlowDef = true
+		end
+
+	elseif (msg:lower() == "alt") then
+
+		if (self.cdata.spellGlowAlt) then
+			self.cdata.spellGlowAlt = false
 		else
-			self.cdata.barLock = true
+			self.cdata.spellGlowAlt = true
+			self.cdata.spellGlowDef = false
+		end
+
+		if (not self.cdata.spellGlowDef and not self.cdata.spellGlowAlt) then
+			self.cdata.spellGlowDef = true
+		end
+	elseif (not gui) then
+		print(L.SPELLGLOWS)
+	end
+
+end
+
+function BAR:SpellGlowSet(msg, gui, checked, query)
+
+	if (query) then
+		if (msg == "default") then
+			return self.cdata.spellGlowDef
+		elseif(msg == "alt") then
+			return self.cdata.spellGlowAlt
+		else
+			return self.cdata.spellGlow
 		end
 	end
 
-	self:UpdateObjectData()
+	if (gui) then
 
-	self:Update()
-end
-
-function BAR:ToolTipSet(command)
-
-	if (command) then
-
-		if (modkey:lower() == "enhanced") then
-
-			if (self.cdata.tooltipsEnhanced) then
-				self.cdata.tooltipsEnhanced = false
-			else
-				self.cdata.tooltipsEnhanced = true
-			end
-		elseif (modkey:lower() == "comabt") then
-
-			if (self.cdata.tooltipsCombat) then
-				self.cdata.tooltipsCombat = false
-			else
-				self.cdata.tooltipsCombat = true
-			end
+		if (msg) then
+			spellGlowMod(self, msg, gui)
+		elseif (checked) then
+			self.cdata.spellGlow = true
 		else
-			print(L.TOOLTIPS)
+			self.cdata.spellGlow = false
 		end
 
 	else
-		if (self.cdata.tooltips) then
-			self.cdata.tooltips = false
-		else
-			self.cdata.tooltips = true
-		end
-	end
 
-	self:UpdateObjectData()
-
-	self:Update()
-end
-
-function BAR:SpellGlowSet(modkey)
-
-	if (modkey) then
-
-		if (modkey:lower() == "default") then
-
-			if (self.cdata.spellGlowDef) then
-				self.cdata.spellGlowDef = false
-			else
-				self.cdata.spellGlowDef = true
-				self.cdata.spellGlowAlt = false
-			end
-
-			if (not self.cdata.spellGlowDef and not self.cdata.spellGlowAlt) then
-				self.cdata.spellGlowDef = true
-			end
-
-		elseif (modkey:lower() == "alt") then
-
-			if (self.cdata.spellGlowAlt) then
-				self.cdata.spellGlowAlt = false
-			else
-				self.cdata.spellGlowAlt = true
-				self.cdata.spellGlowDef = false
-			end
-
-			if (not self.cdata.spellGlowDef and not self.cdata.spellGlowAlt) then
-				self.cdata.spellGlowDef = true
-			end
-		else
-			print(L.SPELLGLOWS)
-		end
-
-	else
-		if (self.cdata.spellGlow) then
+		if (msg) then
+			spellGlowMod(self, msg, gui)
+		elseif (self.cdata.spellGlow) then
 			self.cdata.spellGlow = false
 		else
 			self.cdata.spellGlow = true
@@ -2779,6 +2459,634 @@ function BAR:SpellGlowSet(modkey)
 
 	self:Update()
 
+end
+
+function BAR:SnapToBar(msg, gui, checked, query)
+
+	if (query) then
+		return self.gdata.snapTo
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.gdata.snapTo = true
+		else
+			self.gdata.snapTo = false
+		end
+	else
+
+		local toggle = self.gdata.snapTo
+
+		if (toggle) then
+
+			self.gdata.snapTo = false
+			self.gdata.snapToPoint = false
+			self.gdata.snapToFrame = false
+
+			self:SetUserPlaced(true)
+
+			self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
+
+			self:SetPosition()
+
+		else
+			self.gdata.snapTo = true
+		end
+	end
+
+	self:Update()
+end
+
+function BAR:DualSpecSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.cdata.dualSpec
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.dualSpec = true
+		else
+			self.cdata.dualSpec = false
+		end
+	else
+
+		local toggle = self.cdata.dualSpec
+
+		if (toggle) then
+			self.cdata.dualSpec = false
+		else
+			self.cdata.dualSpec = true
+		end
+	end
+
+	self:Update()
+end
+
+function BAR:ConcealBar(msg, gui, checked, query)
+
+	if (InCombatLockdown()) then return end
+
+	if (query) then
+		return self.cdata.conceal
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.conceal = true
+		else
+			self.cdata.conceal = false
+		end
+
+	else
+
+		local toggle = self.cdata.conceal
+
+		if (toggle) then
+			self.cdata.conceal = false
+		else
+			self.cdata.conceal = true
+		end
+	end
+
+	if (self.cdata.conceal) then
+
+		if (self.selected) then
+			self:SetBackdropColor(1,0,0,0.6)
+		else
+			self:SetBackdropColor(1,0,0,0.4)
+		end
+	else
+		if (self.selected) then
+			self:SetBackdropColor(0,0,1,0.5)
+		else
+			self:SetBackdropColor(0,0,0,0.4)
+		end
+	end
+
+	self:Update()
+end
+
+local function barLockMod(self, msg, gui)
+
+	if (msg:lower() == "alt") then
+
+		if (self.cdata.barLockAlt) then
+			self.cdata.barLockAlt = false
+		else
+			self.cdata.barLockAlt = true
+		end
+	elseif (msg:lower() == "ctrl") then
+
+		if (self.cdata.barLockCtrl) then
+			self.cdata.barLockCtrl = false
+		else
+			self.cdata.barLockCtrl = true
+		end
+	elseif (msg:lower() == "shift") then
+
+		if (self.cdata.barLockShift) then
+			self.cdata.barLockShift = false
+		else
+			self.cdata.barLockShift = true
+		end
+	elseif (not gui) then
+		print(L.BARLOCK_MOD)
+	end
+
+end
+
+function BAR:LockSet(msg, gui, checked, query)
+
+	if (query) then
+		if (msg == "shift") then
+			return self.cdata.barLockShift
+		elseif(msg == "ctrl") then
+			return self.cdata.barLockCtrl
+		elseif(msg == "alt") then
+			return self.cdata.barLockAlt
+		else
+			return self.cdata.barLock
+		end
+	end
+
+	if (gui) then
+
+		if (msg) then
+			barLockMod(self, msg, gui)
+		elseif (checked) then
+			self.cdata.barLock = true
+		else
+			self.cdata.barLock = false
+		end
+
+	else
+		if (msg) then
+			barLockMod(self, msg, gui)
+		else
+			if (self.cdata.barLock) then
+				self.cdata.barLock = false
+			else
+				self.cdata.barLock = true
+			end
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+end
+
+local function toolTipMod(self, msg, gui)
+
+	if (msg:lower() == "enhanced") then
+
+		if (self.cdata.tooltipsEnhanced) then
+			self.cdata.tooltipsEnhanced = false
+		else
+			self.cdata.tooltipsEnhanced = true
+		end
+	elseif (msg:lower() == "combat") then
+
+		if (self.cdata.tooltipsCombat) then
+			self.cdata.tooltipsCombat = false
+		else
+			self.cdata.tooltipsCombat = true
+		end
+	elseif (not gui) then
+		print(L.TOOLTIPS)
+	end
+
+end
+
+function BAR:ToolTipSet(msg, gui, checked, query)
+
+	if (query) then
+		if (msg == "enhanced") then
+			return self.cdata.tooltipsEnhanced
+		elseif(msg == "combat") then
+			return self.cdata.tooltipsCombat
+		else
+			return self.cdata.tooltips
+		end
+	end
+
+	if (gui) then
+
+		if (msg) then
+			toolTipMod(self, msg, gui)
+		elseif (checked) then
+			self.cdata.tooltips = true
+		else
+			self.cdata.tooltips = false
+		end
+
+	else
+
+		if (msg) then
+
+			toolTipMod(self, msg, gui)
+
+		else
+			if (self.cdata.tooltips) then
+				self.cdata.tooltips = false
+			else
+				self.cdata.tooltips = true
+			end
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+end
+
+function BAR:NameBar(name, gui)
+
+	if (name) then
+
+		self.gdata.name = name
+
+		self:Update()
+	end
+end
+
+function BAR:ShapeBar(shape, gui, query)
+
+	if (query) then
+		return barShapes[self.gdata.shape]
+	end
+
+	local shape = tonumber(shape)
+
+	if (shape and barShapes[shape]) then
+
+		self.gdata.shape = shape
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_SHAPES)
+	end
+end
+
+function BAR:ColumnsSet(command, gui, query)
+
+	if (query) then
+		if (self.gdata.columns) then
+			return self.gdata.columns
+		else
+			return L.OFF
+		end
+	end
+
+	local columns = tonumber(command)
+
+	if (columns and columns > 0) then
+
+		self.gdata.columns = columns
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+	elseif (not columns) then
+
+		self.gdata.columns = false
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_COLUMNS)
+	end
+end
+
+function BAR:ArcStartSet(command, gui, query)
+
+	if (query) then
+		return self.gdata.arcStart
+	end
+
+	local start = tonumber(command)
+
+	if (start and start>=0 and start<=359) then
+
+		self.gdata.arcStart = start
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_ARCSTART)
+	end
+end
+
+function BAR:ArcLengthSet(command, gui, query)
+
+	if (query) then
+		return self.gdata.arcLength
+	end
+
+	local length = tonumber(command)
+
+	if (length and length>=0 and length<=359) then
+
+		self.gdata.arcLength = length
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_ARCLENGTH)
+	end
+end
+
+function BAR:PadHSet(command, gui, query)
+
+	if (query) then
+		return self.gdata.padH
+	end
+
+	local padh = tonumber(command)
+
+	if (padh) then
+
+		self.gdata.padH = padh
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_PADH)
+	end
+end
+
+function BAR:PadVSet(command, gui, query)
+
+	if (query) then
+		return self.gdata.padV
+	end
+
+	local padv = tonumber(command)
+
+	if (padv) then
+
+		self.gdata.padV = padv
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_PADV)
+	end
+end
+
+function BAR:PadHVSet(command, gui, query)
+
+	if (query) then
+		return "---"
+	end
+
+	local padhv = tonumber(command)
+
+	if (padhv) then
+
+		self.gdata.padH = self.gdata.padH + padhv
+		self.gdata.padV = self.gdata.padV + padhv
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_PADHV)
+	end
+end
+
+function BAR:ScaleBar(scale, gui, query)
+
+	if (query) then
+		return self.gdata.scale
+	end
+
+	scale = tonumber(scale)
+
+	if (scale) then
+
+		self.gdata.scale = scale
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+	end
+end
+
+function BAR:StrataSet(command, gui, query)
+
+	if (query) then
+		return self.gdata.objectStrata
+	end
+
+	local strata = tonumber(command)
+
+	if (strata and ION.Stratas[strata] and ION.Stratas[strata+1]) then
+
+		self.gdata.barStrata = ION.Stratas[strata+1]
+		self.gdata.objectStrata = ION.Stratas[strata]
+
+		self:SetPosition()
+
+		self:UpdateObjectData()
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_STRATAS)
+	end
+end
+
+function BAR:AlphaSet(command, gui, query)
+
+	if (query) then
+		return self.gdata.alpha
+	end
+
+	local alpha = tonumber(command)
+
+	if (alpha and alpha>=0 and alpha<=1) then
+
+		self.gdata.alpha = alpha
+
+		self:Update()
+
+	elseif (not gui) then
+
+		print(L.BAR_ALPHA)
+	end
+
+end
+
+function BAR:AlphaUpSet(command, gui, query)
+
+	if (query) then
+
+		--temp fix
+		if (self.gdata.alphaUp == "none" or self.gdata.alphaUp == 1) then
+			self.gdata.alphaUp = alphaUps[1]
+		end
+
+		return self.gdata.alphaUp
+	end
+
+	local alphaUp = tonumber(command)
+
+	if (alphaUp and alphaUps[alphaUp]) then
+
+		self.gdata.alphaUp = alphaUps[alphaUp]
+
+		self:Update()
+
+	elseif (not gui) then
+		local text = ""
+
+		for k,v in ipairs(alphaUps) do
+			text = text.."\n"..k.."="..v
+		end
+
+		print(text)
+	end
+end
+
+function BAR:AlphaUpSpeedSet(command, gui, query)
+
+	if (query) then
+		return (self.gdata.fadeSpeed*100).."%"
+	end
+
+	local speed = tonumber(command)
+
+	if (speed) then
+
+		self.gdata.fadeSpeed = self.gdata.fadeSpeed + speed
+
+		if (self.gdata.fadeSpeed > 1) then
+			self.gdata.fadeSpeed = 1
+		end
+
+		if (self.gdata.fadeSpeed < 0.01) then
+			self.gdata.fadeSpeed = 0.01
+		end
+
+		self:Update()
+
+	elseif (not gui) then
+
+	end
+end
+
+function BAR:XAxisSet(command)
+
+	local x = tonumber(command)
+
+	if (x) then
+
+		self.gdata.x = self.gdata.x + x
+
+		self.gdata.snapTo = false
+		self.gdata.snapToPoint = false
+		self.gdata.snapToFrame = false
+
+		self:SetPosition()
+
+		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
+
+		self.message:Show()
+		self.messagebg:Show()
+
+		self:Update()
+	else
+		print(L.BAR_XPOS)
+	end
+end
+
+function BAR:YAxisSet(command)
+
+	local y = tonumber(command)
+
+	if (y) then
+
+		self.gdata.y = self.gdata.y + y
+
+		self.gdata.snapTo = false
+		self.gdata.snapToPoint = false
+		self.gdata.snapToFrame = false
+
+		self:SetPosition()
+
+		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
+
+		self.message:Show()
+		self.messagebg:Show()
+
+		self:Update()
+	else
+		print(L.BAR_YPOS)
+	end
 end
 
 function BAR:BindTextSet()
@@ -2929,6 +3237,8 @@ local function controlOnEvent(self, event, ...)
 		barCDB = CDB.bars
 
 		ION:RegisterBarClass("bar", "Action Bar", "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
+
+		ION:RegisterGUIOptions("bar",	{ AUTOHIDE = true, SHOWGRID = true,	SPELLGLOW = true,	SNAPTO = true, DUALSPEC = true, HIDDEN = true, LOCKBAR = true, TOOLTIPS = true }, true)
 
 		if (GDB.firstRun) then
 

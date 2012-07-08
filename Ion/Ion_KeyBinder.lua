@@ -427,7 +427,7 @@ function BUTTON:CreateBindFrame(index)
 
 end
 
-function ION.ToggleBindings(show, hide)
+function ION:ToggleBindings(show, hide)
 
 	if (editmode or hide) then
 
@@ -441,6 +441,8 @@ function ION.ToggleBindings(show, hide)
 		ION:ToggleButtonGrid()
 
 	else
+
+		ION:ToggleEditFrames(nil, true)
 
 		editmode = true
 
