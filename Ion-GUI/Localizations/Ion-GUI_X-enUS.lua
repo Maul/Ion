@@ -13,7 +13,7 @@ L.CONFIRM_NO = "No"
 
 L.MACRO_NAME = "-macro name-"
 L.MACRO_EDITNOTE = "Click here to edit macro note"
-L.MACRO_USENOTE = "   Use macro note as button tooltip"
+L.MACRO_USENOTE = "Use macro note as button tooltip"
 
 L.AUTOHIDE = "Auto Hide"
 L.SHOWGRID = "Show Grid"

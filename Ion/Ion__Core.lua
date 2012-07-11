@@ -788,14 +788,25 @@ function ION:UpdateStanceStrings()
 
 		local _, name
 
+		local states = "[stance:0] stance0; "
+
+		for i=1,8 do
+			ION.STATES["stance"..i] = nil
+		end
+
 		for i=1,GetNumShapeshiftForms() do
 
 			_, name = GetShapeshiftFormInfo(i)
 
 			if (name) then
+
 				ION.STATES["stance"..i] = name
+
+				states = states.."[stance:"..i.."] stance"..i.."; "
 			end
 		end
+
+		states = states:gsub("; $", "")
 
 		if (not stanceStringsUpdated) then
 
@@ -1726,7 +1737,23 @@ function ION:SetTimerLimit(msg)
 	end
 end
 
+local function runUpdater(self, elapsed)
 
+	self.elapsed = elapsed
+
+	if (self.elapsed > 0) then
+
+		ION:UpdateSpellIndex()
+		ION:UpdateStanceStrings()
+
+		self:Hide()
+	end
+end
+
+local updater = CreateFrame("Frame", nil, UIParent)
+updater:SetScript("OnUpdate", runUpdater)
+updater.elapsed = 0
+updater:Hide()
 
 local events = {}
 
@@ -1753,7 +1780,7 @@ local function control_OnEvent(self, event, ...)
 
 		BAR = ION.BAR
 
-		ION.player, ION.class, ION.realm = UnitName("player"), select(2, UnitClass("player")), GetRealmName()
+		ION.player, ION.class, ION.level, ION.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
 
 		if (ION.class == "SHAMAN") then
 			ION.maxActionID = 144
@@ -1812,12 +1839,12 @@ local function control_OnEvent(self, event, ...)
 		ION:UpdateCompanionData()
 		ION:UpdateIconIndex()
 
-		ION:ToggleMainMenu(GDB.mainbar)
-		ION:ToggleVehicleBar(GDB.vehicle)
+		--ION:ToggleMainMenu(GDB.mainbar)
+		--ION:ToggleVehicleBar(GDB.vehicle)
 
 		collectgarbage(); PEW = true
 
-	elseif (event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_LOGOUT" or event == "PLAYER_LEAVING_WORLD") then
+	elseif (event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_LOGOUT" or event == "PLAYER_LEAVING_WORLD") then
 
 		SPEC.cSpec = GetActiveSpecGroup()
 
@@ -1826,12 +1853,16 @@ local function control_OnEvent(self, event, ...)
 		  event == "LEARNED_SPELL_IN_TAB" or
 		  event == "CHARACTER_POINTS_CHANGED") then
 
-		ION:UpdateSpellIndex()
-		ION:UpdateStanceStrings()
+		updater.elapsed = 0
+		updater:Show()
 
 	elseif (event == "PET_UI_CLOSE" or event == "COMPANION_LEARNED" or event == "COMPANION_UPDATE") then
 
 		ION:UpdateCompanionData()
+
+	elseif (event == "UNIT_LEVEL" and ... == "player") then
+
+		ION.level = UnitLevel("player")
 	end
 end
 
@@ -1846,6 +1877,7 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("PLAYER_LEAVING_WORLD")
 frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 frame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 frame:RegisterEvent("SKILL_LINES_CHANGED")
 frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
@@ -1854,6 +1886,7 @@ frame:RegisterEvent("CURSOR_UPDATE")
 frame:RegisterEvent("PET_UI_CLOSE")
 frame:RegisterEvent("COMPANION_LEARNED")
 frame:RegisterEvent("COMPANION_UPDATE")
+frame:RegisterEvent("UNIT_LEVEL")
 --frame:RegisterAllEvents()
 
 frame = CreateFrame("GameTooltip", "IonTooltipScan", UIParent, "GameTooltipTemplate")

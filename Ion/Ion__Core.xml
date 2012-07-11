@@ -281,26 +281,6 @@
 				</Layers>
 			</Frame>
 		</Frames>
-		<Scripts>
-			<OnLoad>
-				--Macaroon.EditFrame_OnLoad(self)
-			</OnLoad>
-			<OnClick>
-				--Macaroon.EditFrame_OnClick(self, button, down, self:GetParent())
-			</OnClick>
-			<OnMouseWheel>
-				--Macaroon.EditFrame_OnMouseWheel(self, delta, self:GetParent())
-			</OnMouseWheel>
-			<OnEnter>
-				--Macaroon.EditFrame_OnEnter(self:GetParent())
-			</OnEnter>
-			<OnLeave>
-				--Macaroon.EditFrame_OnLeave(self:GetParent())
-			</OnLeave>
-			<OnUpdate>
-				--Macaroon.EditFrame_OnUpdate(self, elapsed)
-			</OnUpdate>
-		</Scripts>
 	</Button>
 
 	<CheckButton name="IonActionButtonTemplate" inherits="SecureActionButtonTemplate, SecureHandlerEnterLeaveTemplate" virtual="true" clampedToScreen="false">

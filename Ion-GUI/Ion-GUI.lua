@@ -407,6 +407,10 @@ function ION.BarListScrollFrame_OnLoad(self)
 
 							ION:ChangeBar(self.bar)
 
+							if (IonBarEditor and IonBarEditor:IsVisible()) then
+								ION:UpdateBarGUI()
+							end
+
 						end
 					else
 						button:SetChecked(nil)
@@ -639,9 +643,6 @@ function ION:BarEditor_ConfirmNo(button)
 	IonBarEditorBarOptionsDelete:Click()
 end
 
-
---local barOpt = { chk = {}, adj = {}, pri = {}, sec = {} }
-
 function ION:BarOptions_OnLoad(frame)
 
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
@@ -668,7 +669,6 @@ function ION:BarOptions_OnLoad(frame)
 		tinsert(barOpt.chk, f)
 	end
 end
-
 
 function ION:StateEditor_OnLoad(frame)
 
@@ -1078,7 +1078,7 @@ end
 
 function ION:MacroEditorUpdate()
 
-	if (ION.CurrentObject) then
+	if (ION.CurrentObject and ION.CurrentObject.objType == "ACTIONBUTTON") then
 
 		local button, spec, IBTNE = ION.CurrentObject, IonSpec.cSpec, IonButtonEditor
 		local state = button.bar.handler:GetAttribute("fauxstate")
@@ -1126,6 +1126,22 @@ function ION:ButtonEditor_OnHide(frame)
 
 end
 
+function macroText_OnEditFocusLost(self)
+
+	self.hasfocus = nil
+
+	local button = ION.CurrentObject
+
+	if (button) then
+
+		button:UpdateFlyout()
+		button:BuildStateData()
+		button:SetType()
+
+		ION:MacroEditorUpdate()
+	end
+end
+
 function macroText_OnTextChanged(self)
 
 	if (self.hasfocus) then
@@ -1143,8 +1159,6 @@ function macroNameEdit_OnTextChanged(self)
 
 	if (strlen(self:GetText()) > 0) then
 		self.text:Hide()
-	else
-		self.text:Show()
 	end
 
 	if (self.hasfocus) then
@@ -1164,7 +1178,6 @@ function macroNoteEdit_OnTextChanged(self)
 		self.text:Hide()
 		self.cb:Show()
 	else
-		self.text:Show()
 		self.cb:Hide()
 	end
 
@@ -1179,21 +1192,6 @@ function macroNoteEdit_OnTextChanged(self)
 	end
 end
 
-function macroText_OnEditFocusLost(self)
-
-	self.hasfocus = nil
-
-	local button = ION.CurrentObject
-
-	if (button) then
-
-		button:BuildStateData()
-		button:SetType()
-
-		ION:MacroEditorUpdate()
-	end
-end
-
 function macroOnEditFocusLost(self)
 
 	self.hasfocus = nil
@@ -1202,6 +1200,10 @@ function macroOnEditFocusLost(self)
 
 	if (button) then
 		button:MACRO_UpdateAll(true)
+	end
+
+	if (self.text and strlen(self:GetText()) <= 0) then
+		self.text:Show()
 	end
 end
 
@@ -1220,15 +1222,6 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetPoint("BOTTOMRIGHT", -10, 10)
 	f:SetScript("OnUpdate", function(self,elapsed) if (self.elapsed == 0) then ION:UpdateObjectGUI(true) end self.elapsed = elapsed end)
 	f.elapsed = 0
-	--f:SetBackdrop({
-	--	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-	--	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-	--	tile = true,
-	--	tileSize = 16,
-	--	edgeSize = 16,
-	--	insets = { left = 5, right = 5, top = 5, bottom = 5 },})
-	--f:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	--f:SetBackdropColor(0,0,0,0.5)
 	frame.macro = f
 
 	tinsert(frame.panels, f)
@@ -1280,7 +1273,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetFontObject("GameFontHighlight")
 	f:SetJustifyH("CENTER")
 	f:SetPoint("TOPLEFT", frame.macroicon, "TOPRIGHT", 5, 2)
-	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOP", -5, 25)
+	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOP", -20, 25)
 	f:SetScript("OnTextChanged", macroNameEdit_OnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
 	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
@@ -1309,8 +1302,8 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetBackdropColor(0,0,0,0.5)
 
 	f = CreateFrame("EditBox", nil, frame.macro)
-	f:SetMultiLine(true)
-	f:SetMaxLetters(75)
+	f:SetMultiLine(false)
+	f:SetMaxLetters(50)
 	f:SetNumeric(false)
 	f:SetAutoFocus(false)
 	f:SetJustifyH("CENTER")
@@ -1318,7 +1311,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetTextInsets(5,5,5,5)
 	f:SetFontObject("GameFontHighlightSmall")
 	f:SetPoint("TOPLEFT", frame.nameedit, "TOPRIGHT", 0, 0)
-	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOPRIGHT",0, 3)
+	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOPRIGHT",-15, 25)
 	f:SetScript("OnTextChanged", macroNoteEdit_OnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
 	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
@@ -1327,14 +1320,14 @@ function ION:ButtonEditor_OnLoad(frame)
 	frame.noteedit = f
 
 	fontStr = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
-	fontStr:SetPoint("CENTER")
+	fontStr:SetPoint("CENTER", 10, 0)
 	fontStr:SetJustifyH("CENTER")
 	fontStr:SetText(LGUI.MACRO_EDITNOTE)
 	f.text = fontStr
 
 	f = CreateFrame("Frame", nil, frame.noteedit)
 	f:SetPoint("TOPLEFT", 0, 0)
-	f:SetPoint("BOTTOMRIGHT", 0, 0)
+	f:SetPoint("BOTTOMRIGHT", 15, 0)
 	f:SetFrameLevel(frame.noteedit:GetFrameLevel()-1)
 	f:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -1345,24 +1338,17 @@ function ION:ButtonEditor_OnLoad(frame)
 		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
 	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	f:SetBackdropColor(0,0,0,0.5)
-	--f.line = f:CreateTexture(nil, "OVERLAY")
-	--f.line:SetHeight(1)
-	--f.line:SetPoint("LEFT", 8, -8)
-	--f.line:SetPoint("RIGHT", -8, -8)
-	--f.line:SetTexture(0.3, 0.3, 0.3)
-	--frame.noteeditLN = f
-	--frame.noteedit.ln = f
 
-	f = CreateFrame("CheckButton", nil, frame.macro, "UICheckButtonTemplate")
+	f = CreateFrame("CheckButton", nil, frame.macro, "IonOptionsCheckButtonTemplate")
 	f:SetID(0)
-	f:SetWidth(20)
-	f:SetHeight(20)
+	f:SetWidth(16)
+	f:SetHeight(16)
 	f:SetScript("OnShow", function() end)
 	f:SetScript("OnClick", function() end)
-	f.text:SetText(LGUI.MACRO_USENOTE)
-	f:SetPoint("BOTTOMLEFT", frame.noteedit, "BOTTOMLEFT", 2, 1)
+	f:SetPoint("RIGHT", frame.noteedit, "RIGHT", 12, 0)
 	f:SetFrameLevel(frame.noteedit:GetFrameLevel()+1)
 	f:Hide()
+	f.tooltipText = LGUI.MACRO_USENOTE
 	frame.usenote = f
 	frame.noteedit.cb = f
 
@@ -1373,12 +1359,30 @@ local function hookHandler(handler)
 
 	handler:HookScript("OnAttributeChanged", function(self,name,value)
 
-		if (IonObjectEditor:IsVisible() and self == ION.CurrentObject.bar.handler and name == "activestate") then
+		if (IonObjectEditor:IsVisible() and self == ION.CurrentObject.bar.handler and name == "activestate" and not IonButtonEditor.macroedit.edit.hasfocus) then
 			IonButtonEditor.macro.elapsed = 0
 		end
 
 	end)
 end
+
+local function runUpdater(self, elapsed)
+
+	self.elapsed = elapsed
+
+	if (self.elapsed > 0) then
+
+		ION:UpdateBarGUI()
+		ION:UpdateObjectGUI()
+
+		self:Hide()
+	end
+end
+
+local updater = CreateFrame("Frame", nil, UIParent)
+updater:SetScript("OnUpdate", runUpdater)
+updater.elapsed = 0
+updater:Hide()
 
 local function controlOnEvent(self, event, ...)
 
@@ -1396,6 +1400,11 @@ local function controlOnEvent(self, event, ...)
 			hookHandler(bar.handler)
 		end
 
+	elseif (event == "PLAYER_SPECIALIZATION_CHANGED") then
+
+		updater.elapsed = 0
+		updater:Show()
+
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 
 		PEW = true
@@ -1407,3 +1416,4 @@ frame:SetScript("OnEvent", controlOnEvent)
 frame:SetScript("OnUpdate", controlOnUpdate)
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")

@@ -149,7 +149,7 @@ L.INVALID_INDEX = "Invalid index"
 L.STATE_HIDE = "hide"
 L.STATE_SHOW = "show"
 
-L.HOMESTATE = "Normal"
+L.HOMESTATE = "Home State"
 L.LASTSTATE = "Should not see!"
 
 L.PAGED = "paged" -- keep in lower case

@@ -275,13 +275,13 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</OnClick>
 			<OnEnter>
 				if ( self.tooltipText ) then
-					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
-					GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, 1);
+					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+					GameTooltip:SetText(self.tooltipText)
 				end
 				if ( self.tooltipRequirement ) then
-					GameTooltip:AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, 1.0);
-					GameTooltip:Show();
+					GameTooltip:AddLine(self.tooltipRequirement)
 				end
+				GameTooltip:Show();
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -595,15 +595,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 	</ScrollFrame>
 
 	<ScrollFrame name="IonScrollFrameTemplate2" inherits="UIPanelScrollFrameTemplate" virtual="true">
-		<Frames>
-			<Button name="$parentFocusButton" parentKey="focus" setAllPoints="true">
-				<Scripts>
-					<OnClick>
-						self:GetParent().edit:SetFocus()
-					</OnClick>
-				</Scripts>
-			</Button>
-		</Frames>
 		<ScrollChild>
 			<EditBox name="$parentEditBox" parentKey="edit" multiLine="true" letters="1023" countInvisibleLetters="true" autoFocus="false">
 				<Size x="330" y="1"/>
@@ -621,12 +612,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 					<OnHide>
 						self:ClearFocus()
 					</OnHide>
-					<OnEditFocusLost>
-						self:GetParent().focus:Show()
-					</OnEditFocusLost>
-					<OnEditFocusGained>
-						self:GetParent().focus:Hide()
-					</OnEditFocusGained>
 					<OnUpdate>
 						ScrollingEdit_OnUpdate(self, elapsed, self:GetParent())
 					</OnUpdate>
@@ -640,7 +625,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
 				self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
 
-				self.scrollbar:SetFrameLevel(self.focus:GetFrameLevel() + 2)
 				self.scrollbar:ClearAllPoints()
 				self.scrollbar:SetPoint("TOPLEFT", self, "TOPRIGHT", -18, -10)
 				self.scrollbar:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", -18, 8)

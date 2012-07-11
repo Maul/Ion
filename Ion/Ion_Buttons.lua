@@ -74,6 +74,8 @@ local sIndex = ION.sIndex
 local cIndex = ION.cIndex
 local iIndex = ION.iIndex
 
+local ItemCache = IonItemCache
+
 local STANDARD_TEXT_FONT = STANDARD_TEXT_FONT
 
 local tooltipScan = IonTooltipScan
@@ -89,7 +91,6 @@ local configData = {
 	clickAnchor = false,
 	anchorDelay = false,
 	anchoredBar = false,
-	flyoutDock = false,
 
 	upClicks = true,
 	downClicks = false,
@@ -777,6 +778,7 @@ function BUTTON:MACRO_SetSpellIcon(spell)
 			end
 
 		else
+
 			self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 		end
 
@@ -821,13 +823,10 @@ function BUTTON:MACRO_SetItemIcon(item)
 
 		_, link, _, _, _, _, _, _, _, texture = GetItemInfo(item)
 
-		if (link and not ItemCache[item]) then
+		_, itemID = link:match("(item:)(%d+)")
 
-			_, itemID = (":"):split(link)
-
-			if (itemID) then
-				ItemCache[item] = itemID
-			end
+		if (itemID and not ItemCache[itemID]) then
+			ItemCache[itemID] = item
 		end
 
 		if (not texture) then
@@ -918,16 +917,9 @@ function BUTTON:MACRO_UpdateIcon(...)
 
 		texture = self:MACRO_SetItemIcon(item)
 
-	elseif (self:GetAttribute("macroShow")) then
+	elseif (#self.data.macro_Text > 0) then
 
-		show = self:GetAttribute("macroShow")
-
-    		if(GetItemInfo(show) or ItemCache[show]) then
-			texture = self:MACRO_SetItemIcon(show)
-    		else
-			texture = self:MACRO_SetSpellIcon(show)
-    		end
-
+		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	else
 		self.iconframeicon:SetTexture("")
 		self.iconframeicon:Hide()
@@ -1571,6 +1563,7 @@ function BUTTON:MACRO_ACTIVE_TALENT_GROUP_CHANGED(...)
 	self:Show()
 
 	self:LoadData(spec, self:GetParent():GetAttribute("activestate") or "homestate")
+	self:UpdateFlyout()
 	self:SetType()
 	self:SetGrid()
 end
@@ -1622,6 +1615,15 @@ function BUTTON:MACRO_UPDATE_MACROS(...)
 	end
 end
 
+function BUTTON:MACRO_UPDATE_VEHICLE_ACTIONBAR(...)
+
+	if (self.vehicleID) then
+		self:MACRO_UpdateAll(true)
+	end
+end
+
+BUTTON.MACRO_UPDATE_POSSESS_BAR = BUTTON.MACRO_UPDATE_VEHICLE_ACTIONBAR
+
 function BUTTON:MACRO_OnEvent(...)
 
 	local event = "MACRO_"..select(1,...)
@@ -1648,6 +1650,8 @@ function BUTTON:MACRO_PlaceMacro()
 	MacroDrag[0] = false
 
 	ClearCursor(); SetCursor(nil)
+
+	self:UpdateFlyout()
 
 	ION:ToggleButtonGrid(nil, true)
 end
@@ -1781,10 +1785,61 @@ end
 
 function BUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 
-	MacroDrag[0] = false
+	if (action1 == 0) then
+		return
+	else
 
-	ClearCursor(); SetCursor(nil)
+		local count = self.bar.objCount
+		local columns = self.bar.gdata.columns or count
+		local rows = count/columns
 
+		local point = self:GetPosition(UIParent)
+
+		if (columns/rows > 1) then
+
+			if ((point):find("BOTTOM")) then
+				point = "b:t:1"
+			elseif ((point):find("TOP")) then
+				point = "t:b:1"
+			elseif ((point):find("RIGHT")) then
+				point = "r:l:12"
+			elseif ((point):find("LEFT")) then
+				point = "l:r:12"
+			else
+				point = "r:l:12"
+			end
+		else
+			if ((point):find("RIGHT")) then
+				point = "r:l:12"
+			elseif ((point):find("LEFT")) then
+				point = "l:r:12"
+			elseif ((point):find("BOTTOM")) then
+				point = "b:t:1"
+			elseif ((point):find("TOP")) then
+				point = "t:b:1"
+			else
+				point = "r:l:12"
+			end
+		end
+
+		self.data.macro_Text = "/flyout blizz:"..action1..":l:"..point..":c"
+	 	self.data.macro_Icon = false
+	 	self.data.macro_Name = ""
+		self.data.macro_Auto = false
+		self.data.macro_Watch = false
+		self.data.macro_Note = ""
+		self.data.macro_UseNote = false
+
+		self:UpdateFlyout(true)
+
+		if (not self.cursor) then
+			self:SetType(true)
+		end
+
+		MacroDrag[0] = false
+
+		ClearCursor(); SetCursor(nil)
+	end
 end
 
 function BUTTON:MACRO_PickUpMacro()
@@ -1843,6 +1898,8 @@ function BUTTON:MACRO_PickUpMacro()
 			self.macroitem = nil
 			self.macroshow = nil
 			self.macroicon = nil
+
+			self:UpdateFlyout()
 
 			self:SetType(true)
 
@@ -2028,6 +2085,8 @@ function BUTTON:MACRO_PreClick(button)
 
 		end
 	end
+
+	ION.ClickedButton = self
 end
 
 function BUTTON:MACRO_PostClick(button)
@@ -2187,6 +2246,11 @@ function BUTTON:MACRO_OnEnter(...)
 
 			GameTooltip:Show()
 		end
+
+		if (self.flyout) then
+			self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX/0.625, self.flyout.arrowY/0.625)
+		end
+
 	end
 end
 
@@ -2196,6 +2260,9 @@ function BUTTON:MACRO_OnLeave(...)
 
 	GameTooltip:Hide()
 
+	if (self.flyout) then
+		self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX, self.flyout.arrowY)
+	end
 end
 
 function BUTTON:MACRO_OnShow(...)
@@ -2241,6 +2308,11 @@ function BUTTON:MACRO_OnShow(...)
 
 	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
 	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+
+	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+	self:RegisterEvent("UPDATE_POSSESS_BAR")
+
+
 
 end
 
@@ -2673,6 +2745,7 @@ end
 function BUTTON:SetAux()
 
 	self:SetSkinned()
+	self:UpdateFlyout(true)
 
 end
 
@@ -2739,11 +2812,12 @@ function BUTTON:SetType(save, kill, init)
 		self:SetScript("OnDragStart", BUTTON.MACRO_OnDragStart)
 		self:SetScript("OnDragStop", BUTTON.MACRO_OnDragStop)
 		self:SetScript("OnUpdate", BUTTON.MACRO_OnUpdate)
-		self:SetScript("OnEnter", BUTTON.MACRO_OnEnter)
-		self:SetScript("OnLeave", BUTTON.MACRO_OnLeave)
 		self:SetScript("OnShow", BUTTON.MACRO_OnShow)
 		self:SetScript("OnHide", BUTTON.MACRO_OnHide)
 		self:SetScript("OnAttributeChanged", BUTTON.MACRO_OnAttributeChanged)
+
+		self:HookScript("OnEnter", BUTTON.MACRO_OnEnter)
+		self:HookScript("OnLeave", BUTTON.MACRO_OnLeave)
 
 		self:WrapScript(self, "OnShow", [[
 						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
@@ -2770,7 +2844,7 @@ function BUTTON:SetType(save, kill, init)
 							self:SetAttribute("type", "macro")
 
 							if (UnitHasVehicleUI("player")) then
-								self:SetAttribute("*macrotext*", "/click VehicleMenuBarLeaveButton")
+								self:SetAttribute("*macrotext*", "/click OverrideActionBarLeaveFrameLeaveButton")
 							else
 								self:SetAttribute("*macrotext*", "/click PossessButton2")
 							end
@@ -2781,7 +2855,10 @@ function BUTTON:SetType(save, kill, init)
 
 							self:SetAttribute("type", "action")
 
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+120)
+							--new action ID's for possess 157-162
+
+							--new action ID's for vehicle 133-138
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+132)
 						end
 
 						self:Show()
@@ -2834,7 +2911,7 @@ function BUTTON:SetFauxState(state)
 				self:SetAttribute("type", "macro")
 
 				if (UnitHasVehicleUI("player")) then
-					self:SetAttribute("*macrotext*", "/click VehicleMenuBarLeaveButton")
+					self:SetAttribute("*macrotext*", "/click OverrideActionBarLeaveFrameLeaveButton")
 				else
 					self:SetAttribute("*macrotext*", "/click PossessButton2")
 				end
@@ -2886,6 +2963,38 @@ function BUTTON:AutoWriteMacro(spell, subName)
 	else
 		return "#autowrite\n/cast"..modifier..spell.."()"
 	end
+end
+
+function BUTTON:GetPosition(oFrame)
+
+	local relFrame, point
+
+	if (oFrame) then
+		relFrame = oFrame
+	else
+		relFrame = self:GetParent()
+	end
+
+	local s = self:GetScale()
+	local w, h = relFrame:GetWidth()/s, relFrame:GetHeight()/s
+	local x, y = self:GetCenter()
+	local vert = (y>h/1.5) and "TOP" or (y>h/3) and "CENTER" or "BOTTOM"
+	local horz = (x>w/1.5) and "RIGHT" or (x>w/3) and "CENTER" or "LEFT"
+
+	if (vert == "CENTER") then
+		point = horz
+	elseif (horz == "CENTER") then
+		point = vert
+	else
+		point = vert..horz
+	end
+
+	if (vert:find("CENTER")) then y = y - h/2 end
+	if (horz:find("CENTER")) then x = x - w/2 end
+	if (point:find("RIGHT")) then x = x - w end
+	if (point:find("TOP")) then y = y - h end
+
+	return point, x, y
 end
 
 local function controlOnEvent(self, event, ...)

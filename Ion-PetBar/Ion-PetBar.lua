@@ -9,7 +9,9 @@ local PETIndex = ION.PETIndex
 
 local petbarsGDB, petbarsCDB, petbtnsGDB, petbtnsCDB
 
-local BUTTON = setmetatable({}, { __index = CreateFrame("CheckButton") })
+local BUTTON = ION.BUTTON
+
+local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -61,6 +63,14 @@ local configData = {
 	stored = false,
 }
 
+local keyData = {
+
+	hotKeys = ":",
+	hotKeyText = ":",
+	hotKeyLock = false,
+	hotKeyPri = false,
+}
+
 local alphaTimer, alphaDir = 0, 0
 
 local function controlOnUpdate(self, elapsed)
@@ -100,7 +110,7 @@ local function HasPetAction(id, icon)
 	end
 end
 
-function BUTTON:PET_UpdateIcon(spell, subtext, texture, isToken)
+function PETBTN:PET_UpdateIcon(spell, subtext, texture, isToken)
 
 	self.isToken = isToken
 
@@ -127,7 +137,7 @@ function BUTTON:PET_UpdateIcon(spell, subtext, texture, isToken)
 	end
 end
 
-function BUTTON:PET_UpdateState(isActive, allowed, enabled)
+function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 
 	if (isActive) then
 
@@ -169,9 +179,9 @@ function BUTTON:PET_UpdateState(isActive, allowed, enabled)
 	end
 end
 
-BUTTON.SetTimer = ION.SetTimer
+PETBTN.SetTimer = ION.SetTimer
 
-function BUTTON:PET_UpdateCooldown()
+function PETBTN:PET_UpdateCooldown()
 
 	local actionID = self.actionID
 
@@ -189,7 +199,7 @@ function BUTTON:PET_UpdateCooldown()
 	end
 end
 
-function BUTTON:PET_UpdateTexture(force)
+function PETBTN:PET_UpdateTexture(force)
 
 	local actionID = self.actionID
 
@@ -205,7 +215,7 @@ function BUTTON:PET_UpdateTexture(force)
 	end
 end
 
-function BUTTON:PET_UpdateOnEvent(state)
+function PETBTN:PET_UpdateOnEvent(state)
 
 	local actionID = self.actionID
 
@@ -234,16 +244,18 @@ function BUTTON:PET_UpdateOnEvent(state)
 
 end
 
-function BUTTON:PET_UpdateButton(actionID)
+function PETBTN:PET_UpdateButton(actionID)
 
-	if (GetPetActionSlotUsable(actionID)) then
+	if (self.editmode) then
+		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+	elseif (GetPetActionSlotUsable(actionID)) then
 		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 	else
 		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 
-function BUTTON:OnUpdate(elapsed)
+function PETBTN:OnUpdate(elapsed)
 
 	if (self.mac_flash) then
 
@@ -283,17 +295,17 @@ function BUTTON:OnUpdate(elapsed)
 	end
 end
 
-function BUTTON:PET_BAR_UPDATE(event, ...)
+function PETBTN:PET_BAR_UPDATE(event, ...)
 
 	self:PET_UpdateOnEvent()
 
 end
 
-BUTTON.PLAYER_CONTROL_LOST = BUTTON.PET_BAR_UPDATE
-BUTTON.PLAYER_CONTROL_GAINED = BUTTON.PET_BAR_UPDATE
-BUTTON.PLAYER_FARSIGHT_FOCUS_CHANGED = BUTTON.PET_BAR_UPDATE
+PETBTN.PLAYER_CONTROL_LOST = PETBTN.PET_BAR_UPDATE
+PETBTN.PLAYER_CONTROL_GAINED = PETBTN.PET_BAR_UPDATE
+PETBTN.PLAYER_FARSIGHT_FOCUS_CHANGED = PETBTN.PET_BAR_UPDATE
 
-function BUTTON:UNIT_PET(event, ...)
+function PETBTN:UNIT_PET(event, ...)
 
 	if (select(1,...) ==  "player") then
 		self:PET_UpdateOnEvent()
@@ -301,7 +313,7 @@ function BUTTON:UNIT_PET(event, ...)
 
 end
 
-function BUTTON:UNIT_FLAGS(event, ...)
+function PETBTN:UNIT_FLAGS(event, ...)
 
 	if (select(1,...) ==  "pet") then
 		self:PET_UpdateOnEvent()
@@ -309,43 +321,45 @@ function BUTTON:UNIT_FLAGS(event, ...)
 
 end
 
-BUTTON.UNIT_AURA = BUTTON.UNIT_FLAGS
+PETBTN.UNIT_AURA = PETBTN.UNIT_FLAGS
 
-function BUTTON:PET_BAR_UPDATE_COOLDOWN(event, ...)
+function PETBTN:PET_BAR_UPDATE_COOLDOWN(event, ...)
 
 	self:PET_UpdateCooldown()
 
 end
 
-function BUTTON:PET_BAR_SHOWGRID(event, ...)
+function PETBTN:PET_BAR_SHOWGRID(event, ...)
 
 end
 
-function BUTTON:PET_BAR_HIDEGRID(event, ...)
+function PETBTN:PET_BAR_HIDEGRID(event, ...)
 
 end
 
-function BUTTON:PLAYER_ENTERING_WORLD(event, ...)
+function PETBTN:PLAYER_ENTERING_WORLD(event, ...)
+
+	self.binder:ApplyBindings(self)
 
 	self.updateRightClick = true
 end
 
-BUTTON.PET_TALENT_UPDATE = BUTTON.PLAYER_ENTERING_WORLD
+PETBTN.PET_TALENT_UPDATE = PETBTN.PLAYER_ENTERING_WORLD
 
-function BUTTON:PET_OnEvent(event, ...)
+function PETBTN:PET_OnEvent(event, ...)
 
-	if (BUTTON[event]) then
-		BUTTON[event](self, event, ...)
+	if (PETBTN[event]) then
+		PETBTN[event](self, event, ...)
 	end
 end
 
-function BUTTON:PostClick()
+function PETBTN:PostClick()
 
 	self:PET_UpdateOnEvent(true)
 
 end
 
-function BUTTON:OnDragStart()
+function PETBTN:OnDragStart()
 
 	if (not self.barLock) then
 		self.drag = true
@@ -367,7 +381,7 @@ function BUTTON:OnDragStart()
 	end
 end
 
-function BUTTON:OnReceiveDrag()
+function PETBTN:OnReceiveDrag()
 
 	local cursorType = GetCursorInfo()
 
@@ -381,7 +395,7 @@ function BUTTON:OnReceiveDrag()
 	end
 end
 
-function BUTTON:PET_SetTooltip()
+function PETBTN:PET_SetTooltip()
 
 	local actionID = self.actionID
 
@@ -409,12 +423,12 @@ function BUTTON:PET_SetTooltip()
 
 	elseif (edit) then
 
-		GameTooltip:SetText(L.EMPTY_BUTTON)
+		GameTooltip:SetText(L.EMPTY_PETBTN)
 	end
 
 end
 
-function BUTTON:OnEnter(...)
+function PETBTN:OnEnter(...)
 
 	if (self.bar) then
 
@@ -439,12 +453,12 @@ function BUTTON:OnEnter(...)
 	end
 end
 
-function BUTTON:OnLeave ()
+function PETBTN:OnLeave ()
 	GameTooltip:Hide()
 end
 
 
-function BUTTON:SetData(bar)
+function PETBTN:SetData(bar)
 
 	if (bar) then
 
@@ -452,6 +466,8 @@ function BUTTON:SetData(bar)
 
 		self.upClicks = bar.cdata.upClicks
 		self.downClicks = bar.cdata.downClicks
+
+		self.bindText = bar.cdata.bindText
 
 		self.tooltips = bar.cdata.tooltips
 		self.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
@@ -480,13 +496,13 @@ function BUTTON:SetData(bar)
 	self:GetSkinned()
 end
 
-function BUTTON:SaveData()
+function PETBTN:SaveData()
 
 	-- empty
 
 end
 
-function BUTTON:LoadData(spec, state)
+function PETBTN:LoadData(spec, state)
 
 	local id = self.id
 
@@ -503,51 +519,79 @@ function BUTTON:LoadData(spec, state)
 			self.GDB[id].config = CopyTable(configData)
 		end
 
+		if (not self.GDB[id].keys) then
+			self.GDB[id].keys = CopyTable(keyData)
+		end
+
 		if (not self.CDB[id]) then
 			self.CDB[id] = {}
+		end
+
+		if (not self.CDB[id].keys) then
+			self.CDB[id].keys = CopyTable(keyData)
 		end
 
 		if (not self.CDB[id].data) then
 			self.CDB[id].data = {}
 		end
 
+		ION:UpdateData(self.GDB[id].config, configData)
+		ION:UpdateData(self.GDB[id].keys, keyData)
+
 		self.config = self.GDB [id].config
+
+		if (CDB.perCharBinds) then
+			self.keys = self.CDB[id].keys
+		else
+			self.keys = self.GDB[id].keys
+		end
 
 		self.data = self.CDB[id].data
 	end
 end
 
-function BUTTON:SetGrid(show, hide)
+function PETBTN:SetGrid(show, hide)
 
-	--empty
+	if (true) then return end
 
+	if (not InCombatLockdown()) then
+
+		self:SetAttribute("isshown", self.showGrid)
+		self:SetAttribute("showgrid", show)
+
+		if (show or self.showGrid) then
+			self:Show()
+		elseif (not (self:IsMouseOver() and self:IsVisible()) and not HasPetAction(self.actionID)) then
+			self:Hide()
+		end
+	end
 end
 
-function BUTTON:SetAux()
+function PETBTN:SetAux()
 
 	self:SetSkinned()
 
 end
 
-function BUTTON:LoadAux()
+function PETBTN:LoadAux()
+
+	self:CreateBindFrame(self.objTIndex)
+
+end
+
+function PETBTN:SetDefaults()
 
 	-- empty
 
 end
 
-function BUTTON:SetDefaults()
-
-	-- empty
-
-end
-
-function BUTTON:GetDefaults()
+function PETBTN:GetDefaults()
 
 	--empty
 
 end
 
-function BUTTON:SetType(save)
+function PETBTN:SetType(save)
 
 	self:RegisterEvent("PET_BAR_UPDATE")
 	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
@@ -571,13 +615,13 @@ function BUTTON:SetType(save)
 	self:SetAttribute("useparent-unit", false)
 	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
-	self:SetScript("OnEvent", BUTTON.PET_OnEvent)
-	self:SetScript("PostClick", BUTTON.PostClick)
-	self:SetScript("OnDragStart", BUTTON.OnDragStart)
-	self:SetScript("OnReceiveDrag", BUTTON.OnReceiveDrag)
-	self:SetScript("OnEnter", BUTTON.OnEnter)
-	self:SetScript("OnLeave", BUTTON.OnLeave)
-	self:SetScript("OnUpdate", BUTTON.OnUpdate)
+	self:SetScript("OnEvent", PETBTN.PET_OnEvent)
+	self:SetScript("PostClick", PETBTN.PostClick)
+	self:SetScript("OnDragStart", PETBTN.OnDragStart)
+	self:SetScript("OnReceiveDrag", PETBTN.OnReceiveDrag)
+	self:SetScript("OnEnter", PETBTN.OnEnter)
+	self:SetScript("OnLeave", PETBTN.OnLeave)
+	self:SetScript("OnUpdate", PETBTN.OnUpdate)
 	self:SetScript("OnAttributeChanged", nil)
 
 end
@@ -586,9 +630,10 @@ local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Ion-PetBar") then
 
-		BUTTON.SetTimer = ION.SetTimer
-		BUTTON.SetSkinned = ION.SetSkinned
-		BUTTON.GetSkinned = ION.GetSkinned
+		PETBTN.SetTimer = ION.SetTimer
+		PETBTN.SetSkinned = ION.SetSkinned
+		PETBTN.GetSkinned = ION.GetSkinned
+		PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
 		GDB = IonPetGDB; CDB = IonPetCDB
 
@@ -610,7 +655,7 @@ local function controlOnEvent(self, event, ...)
 		petbtnsGDB = GDB.petbtns
 		petbtnsCDB = CDB.petbtns
 
-		ION:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, ION.maxPetID, false, STORAGE, gDef, nil, true)
+		ION:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "IonActionButtonTemplate", { __index = PETBTN }, ION.maxPetID, false, STORAGE, gDef, nil, true)
 
 		ION:RegisterGUIOptions("pet", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
 

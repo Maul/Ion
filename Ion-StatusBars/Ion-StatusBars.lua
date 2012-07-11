@@ -98,7 +98,7 @@ local BarRepColors = {
 	[8] = { l="i_Exalted", r=0.58, g=0.0, b=0.55, a=1.0 },
 }
 
-FACTION_BAR_COLORS = BarRepColors
+--FACTION_BAR_COLORS = BarRepColors
 
 local CastWatch, XPWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}, {}
 

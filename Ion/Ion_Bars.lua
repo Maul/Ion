@@ -392,7 +392,7 @@ function HANDLER:AddVisibilityDriver(bar, state, conditions)
 
 	if (self:GetAttribute("activestates"):find(state)) then
 		self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-"..state)..";"))
-	else
+	elseif (self:GetAttribute("state-"..state)) then
 		self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-"..state)..";")
 	end
 
@@ -466,6 +466,13 @@ function HANDLER:BuildStateMap(bar, remapState)
 		if (map == "1" and bar.cdata.prowl and remapState == "stance") then
 			statemap = statemap.."[stance:2/3,stealth] stance8; "
 		end
+
+	end
+
+	--temp fix for Druid Incarnation, it should not shift the bar.
+	if (ION.class == "DRUID" and GetSpecialization() == 4) then
+		local index = GetNumShapeshiftForms() + 1
+		statemap = statemap:gsub("%[stance:"..index.."%] stance"..index, "%[stance:"..index.."%] homestate")
 	end
 
 	statemap = gsub(statemap, "; $", "")

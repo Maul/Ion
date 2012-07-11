@@ -190,9 +190,9 @@ function BINDER:ProcessBinding(key, button)
 
 	elseif (key) then
 
-		for index,btn in pairs(BTNIndex) do
-			if (button ~= btn and btn.keys and not btn.keys.hotKeyLock) then
-				btn.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then self:ClearBindings(btn, binding) self:ApplyBindings(btn) end end)
+		for index,binder in pairs(BINDIndex) do
+			if (button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
+				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then self:ClearBindings(binder.button, binding) self:ApplyBindings(binder.button) end end)
 			end
 		end
 
@@ -421,7 +421,7 @@ function BUTTON:CreateBindFrame(index)
 	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
 	self:SetAttribute("hotkeys", self.keys.hotKeys)
 
-	BINDIndex[index] = binder
+	BINDIndex[self.class..index] = binder
 
 	binder:Hide()
 
@@ -436,9 +436,10 @@ function ION:ToggleBindings(show, hide)
 		for index, binder in pairs(BINDIndex) do
 			binder:Hide(); binder.button.editmode = editmode
 			binder:SetFrameStrata("LOW")
+			if (not ION.BarsShown) then
+				binder.button:SetGrid()
+			end
 		end
-
-		ION:ToggleButtonGrid()
 
 	else
 
@@ -452,11 +453,8 @@ function ION:ToggleBindings(show, hide)
 			if (binder.button.bar) then
 				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
 				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
+				binder.button:SetGrid(true)
 			end
-
-			ION:ToggleButtonGrid(true)
 		end
-
-		ION:ToggleBars(nil, true)
 	end
 end
