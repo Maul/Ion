@@ -1084,17 +1084,33 @@ function ION:MacroEditorUpdate()
 		local state = button.bar.handler:GetAttribute("fauxstate")
 		local data = button.specdata[spec][state]
 
-		IBTNE.macroedit.edit:SetText(data.macro_Text)
+		if (data) then
 
-		if (not data.macro_Icon) then
-			IBTNE.macroicon.icon:SetTexture(button.iconframeicon:GetTexture())
+			IBTNE.macroedit.edit:SetText(data.macro_Text)
+
+			if (not data.macro_Icon) then
+				IBTNE.macroicon.icon:SetTexture(button.iconframeicon:GetTexture())
+			else
+				IBTNE.macroicon.icon:SetTexture(data.macro_Icon)
+			end
+
+			IBTNE.nameedit:SetText(data.macro_Name)
+			IBTNE.noteedit:SetText(data.macro_Note)
+			IBTNE.usenote:SetChecked(data.macro_UseNote)
+
 		else
-			IBTNE.macroicon.icon:SetTexture(data.macro_Icon)
-		end
+			if (state) then
+				print("State: "..state)
+			else
+				print("no state")
+			end
 
-		IBTNE.nameedit:SetText(data.macro_Name)
-		IBTNE.noteedit:SetText(data.macro_Note)
-		IBTNE.usenote:SetChecked(data.macro_UseNote)
+			if (spec) then
+				print("Spec: "..spec)
+			else
+				print("no spec")
+			end
+		end
 	end
 end
 

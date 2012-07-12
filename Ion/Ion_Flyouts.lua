@@ -171,8 +171,8 @@ function BUTTON:GetItemFromLink(data, link)
 
 		local _, itemID = link:match("(item:)(%d+)")
 
-		if (itemID and not ItemCache[itemID]) then
-			ItemCache[itemID] = name
+		if (itemID and not ItemCache[name]) then
+			ItemCache[name] = itemID
 		end
 
 		for ckey in gmatch(keys, "[^,]+") do
@@ -210,10 +210,10 @@ function BUTTON:GetItemFromTooltip(data, link)
 
 	if (name) then
 
-		local _, itemID = link:match("(item:)(%d+)")
+		_, itemID = link:match("(item:)(%d+)")
 
-		if (itemID and not ItemCache[itemID]) then
-			ItemCache[itemID] = name
+		if (itemID and not ItemCache[name]) then
+			ItemCache[name] = itemID
 		end
 	end
 
@@ -862,7 +862,7 @@ function BUTTON:Flyout_SetData(bar)
 
 	self.hotkey:Hide()
 	self.macroname:Hide()
-	self.count:Hide()
+	self.count:Show()
 
 	self:RegisterForClicks("AnyUp")
 
@@ -957,8 +957,8 @@ function BUTTON:Flyout_GetButton()
 	button:SetScript("OnEvent", self:GetScript("OnEvent"))
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
-	button:HookScript("OnShow", function(self) self:MACRO_UpdateState() end)
-	button:HookScript("OnHide", function(self) self:MACRO_UpdateState() end)
+	button:HookScript("OnShow", function(self) self:MACRO_UpdateButton() self:MACRO_UpdateState() end)
+	button:HookScript("OnHide", function(self) self:MACRO_UpdateButton() self:MACRO_UpdateState() end)
 
 	button:WrapScript(button, "OnClick", [[
 
@@ -1180,34 +1180,43 @@ local anchorUpdater = CreateFrame("Frame", nil, UIParent)
 
 local function linkScanOnUpdate(self, elapsed)
 
-	self.link = itemLinks[self.index]
+	self.elapsed = self.elapsed + elapsed
 
-	if (self.link) then
+	-- scan X items per frame draw, where X is the for limit
+	for i=1,5 do
 
-		local name = GetItemInfo(self.link)
+		self.link = itemLinks[self.index]
 
-		if (name) then
+		if (self.link) then
 
-			local tooltip, text = " "
+			local name = GetItemInfo(self.link)
 
-			tooltipScan:SetOwner(control,"ANCHOR_NONE")
-			tooltipScan:SetHyperlink(self.link)
+			if (name) then
 
-			for i,string in ipairs(tooltipStrings) do
-				text = string:GetText()
-				if (text) then
-					tooltip = tooltip..text..","
+				local tooltip, text = " "
+
+				tooltipScan:SetOwner(control,"ANCHOR_NONE")
+				tooltipScan:SetHyperlink(self.link)
+
+				for i,string in ipairs(tooltipStrings) do
+					text = string:GetText()
+					if (text) then
+						tooltip = tooltip..text..","
+					end
 				end
+
+				itemTooltips[name:lower()] = tooltip:lower()
+
+				self.count = self.count + 1
 			end
-
-			itemTooltips[name:lower()] = tooltip:lower()
 		end
-	end
 
-	self.index = next(itemLinks, self.index)
+		self.index = next(itemLinks, self.index)
 
-	if not (self.index) then
-		self:Hide(); anchorUpdater:Show()
+		if not (self.index) then
+			--print("Scanned "..self.count.." items in "..self.elapsed.." seconds")
+			self:Hide(); anchorUpdater:Show()
+		end
 	end
 end
 
@@ -1243,6 +1252,9 @@ function ION:ItemTooltips_Update()
 	end
 
 	itemScanner.index = next(itemLinks)
+
+	itemScanner.count = 0
+	itemScanner.elapsed = 0
 
 	itemScanner:Show()
 end

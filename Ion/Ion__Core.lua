@@ -179,7 +179,7 @@ local slashFunctions = {
 	[4] = "ToggleBars",
 	[5] = "AddObjects",
 	[6] = "RemoveObjects",
-	[7] = "",
+	[7] = "ToggleEditFrames",
 	[8] = "ToggleBindings",
 	[9] = "ScaleBar",
 	[10] = "SnapToBar",
@@ -216,6 +216,8 @@ local slashFunctions = {
 	[41] = "SetTimerLimit",
 	[42] = "PrintStateList",
 	[43] = "PrintBarTypes",
+	[44] = "BlizzBar",
+	[45] = "",
 }
 
 local count = 1
@@ -781,7 +783,7 @@ end
 function ION:UpdateStanceStrings()
 
 	if (ION.class == "DRUID" or
-	    ION.class == "PRIEST" or
+	    ION.class == "MONK" or
 	    ION.class == "ROGUE" or
 	    ION.class == "WARRIOR" or
 	    ION.class == "WARLOCK") then
@@ -818,17 +820,18 @@ function ION:UpdateStanceStrings()
 
 			end
 
-			if (ION.class == "PRIEST") then
+			if (ION.class == "MONK") then
 
-				ION.STATES.stance0 = L.PRIEST_HEALER
+				ION.STATES.stance0 = ATTRIBUTE_NOOP
 
+				ION.MAS.stance.homestate = "stance1"
 			end
 
 			if (ION.class == "ROGUE") then
 
-				ION.STATES.stance0 = L.ROGUE_ATTACK
+				ION.STATES.stance0 = L.ROGUE_MELEE
 
-				ION.MAS.stance.states = ION.MAS.stance.states:gsub("%[stance:1%]", "[stance:1/2]")
+				states = states.."[stance:3] stance1; "
 
 			end
 
@@ -847,6 +850,8 @@ function ION:UpdateStanceStrings()
 
 			stanceStringsUpdated = true
 		end
+
+		ION.MAS.stance.states = states
 	end
 end
 
@@ -1032,27 +1037,27 @@ function ION:PopUp_Update(popupFrame)
 	end
 end
 
---From wowwiki.com
+--From http://www.wowpedia.org/GetMinimapShape
 local minimapShapes = {
 
 	-- quadrant booleans (same order as SetTexCoord)
 	-- {upper-left, lower-left, upper-right, lower-right}
 	-- true = rounded, false = squared
 
-	["ROUND"] 			= {true, true, true, true},
-	["SQUARE"] 			= {false, false, false, false},
+	["ROUND"] 				= {true, true, true, true},
+	["SQUARE"] 				= {false, false, false, false},
 	["CORNER-TOPLEFT"] 		= {true, false, false, false},
 	["CORNER-TOPRIGHT"] 		= {false, false, true, false},
 	["CORNER-BOTTOMLEFT"] 		= {false, true, false, false},
-	["CORNER-BOTTOMRIGHT"]	 	= {false, false, false, true},
+	["CORNER-BOTTOMRIGHT"]		= {false, false, false, true},
 	["SIDE-LEFT"] 			= {true, true, false, false},
 	["SIDE-RIGHT"] 			= {false, false, true, true},
 	["SIDE-TOP"] 			= {true, false, true, false},
-	["SIDE-BOTTOM"] 		= {false, true, false, true},
+	["SIDE-BOTTOM"] 			= {false, true, false, true},
 	["TRICORNER-TOPLEFT"] 		= {true, true, true, false},
 	["TRICORNER-TOPRIGHT"] 		= {true, false, true, true},
-	["TRICORNER-BOTTOMLEFT"] 	= {true, true, false, true},
-	["TRICORNER-BOTTOMRIGHT"] 	= {false, true, true, true},
+	["TRICORNER-BOTTOMLEFT"]	= {true, true, false, true},
+	["TRICORNER-BOTTOMRIGHT"]	= {false, true, true, true},
 }
 
 local function updatePoint(self, elapsed)
@@ -1281,48 +1286,7 @@ function ION:UpdateData(data, defaults)
 	-- Kill old vars
 end
 
-function ION:ToggleMainMenu(on)
-
-	if (ION.OpDep) then return end
-
-	if (on) then
-
-		ActionBarButtonEventsFrame_OnLoad(ActionBarButtonEventsFrame)
-		ActionBarActionEventsFrame_OnLoad(ActionBarActionEventsFrame)
-
-		MainMenuBar:SetPoint("BOTTOM", 0, 0)
-		MainMenuBar_OnLoad(MainMenuBar)
-		MainMenuBar:Show()
-
-		MainMenuBar_OnLoad(MainMenuBarArtFrame)
-
-		PossessBar_OnLoad(PossessBarFrame)
-
-		UnregisterStateDriver(MainMenuBar, "visibility")
-		UnregisterStateDriver(PossessBarFrame, "visibility")
-
-	else
-
-		ActionBarButtonEventsFrame:UnregisterAllEvents()
-		ActionBarActionEventsFrame:UnregisterAllEvents()
-
-		MainMenuBar:SetPoint("BOTTOM", 0, -200)
-		MainMenuBar:UnregisterAllEvents()
-		MainMenuBar:Hide()
-
-		MainMenuBarArtFrame:UnregisterEvent("BAG_UPDATE");
-		MainMenuBarArtFrame:UnregisterEvent("ACTIONBAR_PAGE_CHANGED");
-
-		PossessBarFrame:UnregisterAllEvents()
-		PossessBarFrame:Hide()
-
-		RegisterStateDriver(MainMenuBar, "visibility", "hide")
-		RegisterStateDriver(PossessBarFrame, "visibility", "hide")
-
-	end
-end
-
-function ION:ToggleVehicleBar(on)
+function ION:ToggleBlizzBar(on)
 
 	if (ION.OpDep) then return end
 
@@ -1345,11 +1309,13 @@ function ION:ToggleVehicleBar(on)
 			]])
 		end
 
-		MainMenuBarArtFrame:RegisterEvent("UNIT_ENTERING_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_ENTERED_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_EXITING_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_EXITED_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+		ActionBarController_OnLoad(ActionBarController)
+		ActionBarButtonEventsFrame_OnLoad(ActionBarButtonEventsFrame)
+		ActionBarActionEventsFrame_OnLoad(ActionBarActionEventsFrame)
+
+		MainMenuBar:SetPoint("BOTTOM", 0, 0)
+		MainMenuBar_OnLoad(MainMenuBar)
+		MainMenuBar:Show()
 
 	else
 
@@ -1360,12 +1326,26 @@ function ION:ToggleVehicleBar(on)
 			handler:UnwrapScript(button, "OnHide")
 		end
 
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERING_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERED_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITING_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITED_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+		ActionBarController:UnregisterAllEvents()
+		ActionBarButtonEventsFrame:UnregisterAllEvents()
+		ActionBarActionEventsFrame:UnregisterAllEvents()
+
+		MainMenuBar:SetPoint("BOTTOM", 0, -200)
+		MainMenuBar:UnregisterAllEvents()
+		MainMenuBar:Hide()
+
 	end
+end
+
+function ION:BlizzBar()
+
+	if (GDB.mainbar) then
+		GDB.mainbar = false
+	else
+		GDB.mainbar = true
+	end
+
+	ION:ToggleBlizzBar(GDB.mainbar)
 
 end
 
@@ -1755,15 +1735,7 @@ updater:SetScript("OnUpdate", runUpdater)
 updater.elapsed = 0
 updater:Hide()
 
-local events = {}
-
-local firstevent = false
-
 local function control_OnEvent(self, event, ...)
-
-	--if (not IonDB.debug.events) then IonDB.debug.events = {}
-	--elseif (not firstevent) then wipe(IonDB.debug.events) firstevent = true end
-	--tinsert(IonDB.debug.events, { event, GetActiveSpecGroup() })
 
 	ION.CurrEvent = event
 
@@ -1781,10 +1753,6 @@ local function control_OnEvent(self, event, ...)
 		BAR = ION.BAR
 
 		ION.player, ION.class, ION.level, ION.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
-
-		if (ION.class == "SHAMAN") then
-			ION.maxActionID = 144
-		end
 
 		if (ION.class == "DRUID") then
 			ION.MAS.stealth = { states = "[nostance:3,stealth] stealth1; laststate", rangeStart = 1, rangeStop = 1, order = 7 }
@@ -1839,7 +1807,7 @@ local function control_OnEvent(self, event, ...)
 		ION:UpdateCompanionData()
 		ION:UpdateIconIndex()
 
-		--ION:ToggleMainMenu(GDB.mainbar)
+		ION:ToggleBlizzBar(GDB.mainbar)
 		--ION:ToggleVehicleBar(GDB.vehicle)
 
 		collectgarbage(); PEW = true
@@ -1887,7 +1855,6 @@ frame:RegisterEvent("PET_UI_CLOSE")
 frame:RegisterEvent("COMPANION_LEARNED")
 frame:RegisterEvent("COMPANION_UPDATE")
 frame:RegisterEvent("UNIT_LEVEL")
---frame:RegisterAllEvents()
 
 frame = CreateFrame("GameTooltip", "IonTooltipScan", UIParent, "GameTooltipTemplate")
 frame:SetOwner(UIParent, "ANCHOR_NONE")

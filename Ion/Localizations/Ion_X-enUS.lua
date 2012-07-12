@@ -136,6 +136,12 @@ L.SLASH_CMD42_DESC = "Print a list of valid states"
 L.SLASH_CMD43 = "BarTypes"
 L.SLASH_CMD43_DESC = "Print a list of avilable bar types to make"
 
+L.SLASH_CMD44 = "BlizzBar"
+L.SLASH_CMD44_DESC = "Toggle Blizzard's Action Bar"
+
+L.SLASH_CMD45 = "VehicleBar"
+L.SLASH_CMD45_DESC = "Toggle Blizzard's Vehicle Bar"
+
 L.BARTYPES_USAGE = "Usage: |cffffff00/ion create <type>|r\n"
 L.BARTYPES_TYPES = "     Types -\n"
 L.BARTYPES_LINE = "Creates a bar for %ss"
@@ -199,7 +205,7 @@ L.CUSTOM0 = "Custom States"
 L.DRUID_STANCE0 = "Caster Form"
 L.DRUID_PROWL = "Prowl"
 L.PRIEST_HEALER = "Healer Form"
-L.ROGUE_ATTACK = "Attack"
+L.ROGUE_MELEE = "Melee"
 L.WARLOCK_CASTER = "Caster Form"
 
 L.KEYBIND_TOOLTIP1 = "\nHit a key to bind it to |cff00ff00%s "

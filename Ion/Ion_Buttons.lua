@@ -176,8 +176,8 @@ local stateData = {
 }
 
 ION.VehicleActions = {
-	--exit_veh = { "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up", { 0.140625, 0.859375, 0.140625, 0.859375 }, "vehicle_exit" },
-	exit_veh = { "Interface\\PlayerActionBarAlt\\DarkMoon", { 0.0859375, 0.1679688, 0.359375, 0.4414063 }, "vehicle_exit" },
+	exit_veh = { "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up", { 0.140625, 0.859375, 0.140625, 0.859375 }, "vehicle_exit" },
+	--exit_veh = { "Interface\\PlayerActionBarAlt\\DarkMoon", { 0.0859375, 0.1679688, 0.359375, 0.4414063 }, "vehicle_exit" },
 	exit_pos = { "Interface\\Icons\\Spell_Shadow_SacrificialShield", { 0, 1, 0, 1 }, "possess_exit" },
 }
 
@@ -823,10 +823,13 @@ function BUTTON:MACRO_SetItemIcon(item)
 
 		_, link, _, _, _, _, _, _, _, texture = GetItemInfo(item)
 
-		_, itemID = link:match("(item:)(%d+)")
+		if (link) then
 
-		if (itemID and not ItemCache[itemID]) then
-			ItemCache[itemID] = item
+			_, itemID = link:match("(item:)(%d+)")
+
+			if (itemID and not ItemCache[item]) then
+				ItemCache[item] = itemID
+			end
 		end
 
 		if (not texture) then

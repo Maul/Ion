@@ -392,7 +392,7 @@ function HANDLER:AddVisibilityDriver(bar, state, conditions)
 
 	if (self:GetAttribute("activestates"):find(state)) then
 		self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-"..state)..";"))
-	elseif (self:GetAttribute("state-"..state)) then
+	else
 		self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-"..state)..";")
 	end
 
@@ -467,12 +467,6 @@ function HANDLER:BuildStateMap(bar, remapState)
 			statemap = statemap.."[stance:2/3,stealth] stance8; "
 		end
 
-	end
-
-	--temp fix for Druid Incarnation, it should not shift the bar.
-	if (ION.class == "DRUID" and GetSpecialization() == 4) then
-		local index = GetNumShapeshiftForms() + 1
-		statemap = statemap:gsub("%[stance:"..index.."%] stance"..index, "%[stance:"..index.."%] homestate")
 	end
 
 	statemap = gsub(statemap, "; $", "")
@@ -823,6 +817,8 @@ function BAR:CreateHandler()
 						]])
 
 	handler:SetAttribute("_onstate-stance", [[
+
+						--print(self:GetAttribute("state-stance"))
 
 						self:SetAttribute("assertstate", "stance")
 
@@ -1395,7 +1391,7 @@ function BAR:SetRemap_Stance()
 
 		self.cdata.remap = ""
 
-		for i=start,7 do
+		for i=start,GetNumShapeshiftForms() do
 			self.cdata.remap = self.cdata.remap..i..":"..i..";"
 		end
 
@@ -1405,6 +1401,10 @@ function BAR:SetRemap_Stance()
 			self.cdata.remap = gsub(self.cdata.remap, "2:2", "2:0")
 			self.cdata.remap = gsub(self.cdata.remap, "4:4", "4:0")
 			self.cdata.remap = gsub(self.cdata.remap, "5:5", "5:0")
+		end
+
+		if (ION.class == "ROGUE") then
+			self.cdata.remap = self.cdata.remap..";3:1"
 		end
 	end
 end
@@ -1442,6 +1442,10 @@ function BAR:ACTIVE_TALENT_GROUP_CHANGED(...)
 	self.stateschanged = true
 
 	self.vischanged = true
+
+	if (self.cdata.stance) then
+		self:SetRemap_Stance()
+	end
 
 	self:Update()
 
