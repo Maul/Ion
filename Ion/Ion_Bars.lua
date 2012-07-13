@@ -169,8 +169,8 @@ local function IsMouseOverSelfOrWatchFrame(frame)
 	end
 
 	if (frame.watchframes) then
-		for k,v in pairs(frame.watchframes) do
-			if (v:IsMouseOver() and v:IsVisible()) then
+		for handler in pairs(frame.watchframes) do
+			if (handler:IsMouseOver() and handler:IsVisible()) then
 				return true
 			end
 		end
@@ -1512,10 +1512,12 @@ function BAR:OnClick(...)
 			LoadAddOn("Ion-GUI")
 		end
 
-		if (not self.newBar and IonBarEditor:IsVisible()) then
-			IonBarEditor:Hide()
-		else
-			IonBarEditor:Show()
+		if (IonBarEditor) then
+			if (not self.newBar and IonBarEditor:IsVisible()) then
+				IonBarEditor:Hide()
+			else
+				IonBarEditor:Show()
+			end
 		end
 
 	elseif (not down) then
@@ -2394,7 +2396,7 @@ function BAR:ShowGridSet(msg, gui, checked, query)
 
 	self:UpdateObjectData()
 
-	self:UpdateObjectGrid()
+	self:UpdateObjectGrid(ION.BarsShown)
 
 	self:Update()
 
@@ -2751,7 +2753,7 @@ function BAR:ShapeBar(shape, gui, query)
 	end
 end
 
-function BAR:ColumnsSet(command, gui, query)
+function BAR:ColumnsSet(command, gui, query, skipupdate)
 
 	if (query) then
 		if (self.gdata.columns) then
@@ -2765,7 +2767,7 @@ function BAR:ColumnsSet(command, gui, query)
 
 	if (columns and columns > 0) then
 
-		self.gdata.columns = columns
+		self.gdata.columns = round(columns, 0)
 
 		self:SetObjectLoc()
 
@@ -2773,9 +2775,11 @@ function BAR:ColumnsSet(command, gui, query)
 
 		self:SetSize()
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 
-	elseif (not columns) then
+	elseif (not columns or columns <= 0) then
 
 		self.gdata.columns = false
 
@@ -2785,7 +2789,9 @@ function BAR:ColumnsSet(command, gui, query)
 
 		self:SetSize()
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 
 	elseif (not gui) then
 
@@ -2793,7 +2799,7 @@ function BAR:ColumnsSet(command, gui, query)
 	end
 end
 
-function BAR:ArcStartSet(command, gui, query)
+function BAR:ArcStartSet(command, gui, query, skipupdate)
 
 	if (query) then
 		return self.gdata.arcStart
@@ -2811,7 +2817,9 @@ function BAR:ArcStartSet(command, gui, query)
 
 		self:SetSize()
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 
 	elseif (not gui) then
 
@@ -2819,7 +2827,7 @@ function BAR:ArcStartSet(command, gui, query)
 	end
 end
 
-function BAR:ArcLengthSet(command, gui, query)
+function BAR:ArcLengthSet(command, gui, query, skipupdate)
 
 	if (query) then
 		return self.gdata.arcLength
@@ -2837,7 +2845,9 @@ function BAR:ArcLengthSet(command, gui, query)
 
 		self:SetSize()
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 
 	elseif (not gui) then
 
@@ -2845,7 +2855,7 @@ function BAR:ArcLengthSet(command, gui, query)
 	end
 end
 
-function BAR:PadHSet(command, gui, query)
+function BAR:PadHSet(command, gui, query, skipupdate)
 
 	if (query) then
 		return self.gdata.padH
@@ -2855,7 +2865,7 @@ function BAR:PadHSet(command, gui, query)
 
 	if (padh) then
 
-		self.gdata.padH = padh
+		self.gdata.padH = round(padh, 1)
 
 		self:SetObjectLoc()
 
@@ -2863,7 +2873,9 @@ function BAR:PadHSet(command, gui, query)
 
 		self:SetSize()
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 
 	elseif (not gui) then
 
@@ -2871,7 +2883,7 @@ function BAR:PadHSet(command, gui, query)
 	end
 end
 
-function BAR:PadVSet(command, gui, query)
+function BAR:PadVSet(command, gui, query, skipupdate)
 
 	if (query) then
 		return self.gdata.padV
@@ -2881,7 +2893,7 @@ function BAR:PadVSet(command, gui, query)
 
 	if (padv) then
 
-		self.gdata.padV = padv
+		self.gdata.padV = round(padv, 1)
 
 		self:SetObjectLoc()
 
@@ -2889,7 +2901,9 @@ function BAR:PadVSet(command, gui, query)
 
 		self:SetSize()
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 
 	elseif (not gui) then
 
@@ -2897,7 +2911,7 @@ function BAR:PadVSet(command, gui, query)
 	end
 end
 
-function BAR:PadHVSet(command, gui, query)
+function BAR:PadHVSet(command, gui, query, skipupdate)
 
 	if (query) then
 		return "---"
@@ -2907,8 +2921,8 @@ function BAR:PadHVSet(command, gui, query)
 
 	if (padhv) then
 
-		self.gdata.padH = self.gdata.padH + padhv
-		self.gdata.padV = self.gdata.padV + padhv
+		self.gdata.padH = round(self.gdata.padH + padhv, 1)
+		self.gdata.padV = round(self.gdata.padV + padhv, 1)
 
 		self:SetObjectLoc()
 
@@ -2916,7 +2930,9 @@ function BAR:PadHVSet(command, gui, query)
 
 		self:SetSize()
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 
 	elseif (not gui) then
 
@@ -2924,7 +2940,7 @@ function BAR:PadHVSet(command, gui, query)
 	end
 end
 
-function BAR:ScaleBar(scale, gui, query)
+function BAR:ScaleBar(scale, gui, query, skipupdate)
 
 	if (query) then
 		return self.gdata.scale
@@ -2934,7 +2950,7 @@ function BAR:ScaleBar(scale, gui, query)
 
 	if (scale) then
 
-		self.gdata.scale = scale
+		self.gdata.scale = round(scale, 2)
 
 		self:SetObjectLoc()
 
@@ -2942,7 +2958,9 @@ function BAR:ScaleBar(scale, gui, query)
 
 		self:SetSize()
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 	end
 end
 
@@ -2971,7 +2989,7 @@ function BAR:StrataSet(command, gui, query)
 	end
 end
 
-function BAR:AlphaSet(command, gui, query)
+function BAR:AlphaSet(command, gui, query, skipupdate)
 
 	if (query) then
 		return self.gdata.alpha
@@ -2981,9 +2999,13 @@ function BAR:AlphaSet(command, gui, query)
 
 	if (alpha and alpha>=0 and alpha<=1) then
 
-		self.gdata.alpha = alpha
+		self.gdata.alpha = round(alpha, 2)
 
-		self:Update()
+		self.handler:SetAlpha(self.gdata.alpha)
+
+		if (not skipupdate) then
+			self:Update()
+		end
 
 	elseif (not gui) then
 
@@ -3023,7 +3045,7 @@ function BAR:AlphaUpSet(command, gui, query)
 	end
 end
 
-function BAR:AlphaUpSpeedSet(command, gui, query)
+function BAR:AlphaUpSpeedSet(command, gui, query, skipupdate)
 
 	if (query) then
 		return (self.gdata.fadeSpeed*100).."%"
@@ -3043,7 +3065,9 @@ function BAR:AlphaUpSpeedSet(command, gui, query)
 			self.gdata.fadeSpeed = 0.01
 		end
 
-		self:Update()
+		if (not skipupdate) then
+			self:Update()
+		end
 
 	elseif (not gui) then
 

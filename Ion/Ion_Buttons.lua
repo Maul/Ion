@@ -382,10 +382,18 @@ local function controlOnUpdate(self, elapsed)
 		end
 	end
 
+end
+
+
+local function mDragOnUpdate()
 	if (MacroDrag[0]) then
 		SetCursor(MacroDrag.texture)
 	end
 end
+
+local mDrag = CreateFrame("Frame", nil, UIParent)
+mDrag:SetScript("OnUpdate", mDragOnUpdate)
+mDrag:Show()
 
 local function cooldownsOnUpdate(self, elapsed)
 
@@ -1627,6 +1635,9 @@ end
 
 BUTTON.MACRO_UPDATE_POSSESS_BAR = BUTTON.MACRO_UPDATE_VEHICLE_ACTIONBAR
 
+--for 4.x compatibility
+BUTTON.MACRO_UPDATE_BONUS_ACTIONBAR = BUTTON.MACRO_UPDATE_VEHICLE_ACTIONBAR
+
 function BUTTON:MACRO_OnEvent(...)
 
 	local event = "MACRO_"..select(1,...)
@@ -2314,7 +2325,7 @@ function BUTTON:MACRO_OnShow(...)
 
 	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 	self:RegisterEvent("UPDATE_POSSESS_BAR")
-
+	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 
 
 end
@@ -2362,6 +2373,10 @@ function BUTTON:MACRO_OnHide(...)
 
 	self:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
 	self:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+
+	self:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+	self:UnregisterEvent("UPDATE_POSSESS_BAR")
+	self:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
 
 end
 
@@ -2427,9 +2442,7 @@ function BUTTON:MACRO_UpdateParse()
 
 end
 
-local btnData = {}
-
-function BUTTON:SetSkinned()
+function BUTTON:SetSkinned(flyout)
 
 	if (SKIN) then
 
@@ -2437,18 +2450,22 @@ function BUTTON:SetSkinned()
 
 		if (bar) then
 
-			wipe(btnData)
+			local btnData = {
+				Normal = self.normaltexture,
+				Icon = self.iconframeicon,
+				Cooldown = self.iconframecooldown,
+				HotKey = self.hotkey,
+				Count = self.count,
+				Name = self.name,
+				Border = self.border,
+				AutoCast = false,
+			}
 
-			btnData.Normal = self.normaltexture
-			btnData.Icon = self.iconframeicon
-			btnData.Cooldown = self.iconframecooldown
-			btnData.HotKey = self.hotkey
-			btnData.Count = self.count
-			btnData.Name = self.name
-			btnData.Border = self.border
-			btnData.AutoCast = false
-
-			SKIN:Group("Ion", bar.gdata.name):AddButton(self, btnData)
+			if (flyout) then
+				SKIN:Group("Ion", self.anchor.bar.gdata.name):AddButton(self, btnData)
+			else
+				SKIN:Group("Ion", bar.gdata.name):AddButton(self, btnData)
+			end
 		end
 	end
 end
@@ -2573,7 +2590,13 @@ end
 
 function BUTTON:SaveData(state)
 
-	local index, spec = self.id, GetActiveSpecGroup()
+	local index, spec = self.id
+
+	if (ION.TOCVersion < 50000) then
+		spec = GetActiveTalentGroup()
+	else
+		spec = GetActiveSpecGroup()
+	end
 
 	if (not state) then
 		state = self:GetParent():GetAttribute("activestate") or "homestate"
@@ -2834,6 +2857,14 @@ function BUTTON:SetType(save, kill, init)
 						end
 						]])
 
+		if (ION.TOCVersion < 50000) then
+			self:SetAttribute("vehicleID_Offset", 120)
+			self:SetAttribute("vehicleExit_Macro", "/click VehicleMenuBarLeaveButton")
+		else
+			self:SetAttribute("vehicleID_Offset", 132)
+			self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
+		end
+
 		self:SetAttribute("_childupdate", [[
 
 				if (message)  then
@@ -2847,7 +2878,7 @@ function BUTTON:SetType(save, kill, init)
 							self:SetAttribute("type", "macro")
 
 							if (UnitHasVehicleUI("player")) then
-								self:SetAttribute("*macrotext*", "/click OverrideActionBarLeaveFrameLeaveButton")
+								self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
 							else
 								self:SetAttribute("*macrotext*", "/click PossessButton2")
 							end
@@ -2861,7 +2892,8 @@ function BUTTON:SetType(save, kill, init)
 							--new action ID's for possess 157-162
 
 							--new action ID's for vehicle 133-138
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+132)
+
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
 
 						self:Show()
@@ -3000,6 +3032,14 @@ function BUTTON:GetPosition(oFrame)
 	return point, x, y
 end
 
+--callback(arg and arg, Group, SkinID, Gloss, Backdrop, Colors, Fonts)
+
+function ION:SKINCallback(...)
+
+	--print(...)
+
+end
+
 local function controlOnEvent(self, event, ...)
 
 	if (event:find("UNIT_")) then
@@ -3077,6 +3117,10 @@ local function controlOnEvent(self, event, ...)
 		ION.SetTimer = BUTTON.SetTimer
 		ION.SetSkinned = BUTTON.SetSkinned
 		ION.GetSkinned = BUTTON.GetSkinned
+
+		if (SKIN) then
+			SKIN:Register("Ion", ION.SKINCallback, true)
+		end
 
 	elseif (event == "VARIABLES_LOADED") then
 

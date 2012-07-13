@@ -69,6 +69,10 @@ local BARIndex, BARNameIndex, BTNIndex, ICONS = ION.BARIndex, ION.BARNameIndex, 
 
 local icons = {}
 
+ION.GameVersion, ION.GameBuild, ION.GameDate, ION.TOCVersion = GetBuildInfo()
+
+ION.GameVersion = tonumber(ION.GameVersion); ION.TOCVersion = tonumber(ION.TOCVersion)
+
 ION.Points = { R = "RIGHT", L = "LEFT", T = "TOP", B = "BOTTOM", TL = "TOPLEFT", TR = "TOPRIGHT", BL = "BOTTOMLEFT", BR = "BOTTOMRIGHT", C = "CENTER" }
 
 ION.Stratas = { "BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP" }
@@ -784,6 +788,7 @@ function ION:UpdateStanceStrings()
 
 	if (ION.class == "DRUID" or
 	    ION.class == "MONK" or
+	    ION.class == "PRIEST" or
 	    ION.class == "ROGUE" or
 	    ION.class == "WARRIOR" or
 	    ION.class == "WARLOCK") then
@@ -814,7 +819,7 @@ function ION:UpdateStanceStrings()
 
 			if (ION.class == "DRUID") then
 
-				ION.STATES.stance0 = L.DRUID_STANCE0
+				ION.STATES.stance0 = L.DRUID_CASTER
 
 				ION.STATES.stance8 = L.DRUID_PROWL
 
@@ -825,6 +830,12 @@ function ION:UpdateStanceStrings()
 				ION.STATES.stance0 = ATTRIBUTE_NOOP
 
 				ION.MAS.stance.homestate = "stance1"
+			end
+
+			if (ION.class == "PRIEST") then
+
+				ION.STATES.stance0 = L.PRIEST_HEALER
+
 			end
 
 			if (ION.class == "ROGUE") then
@@ -1320,6 +1331,7 @@ function ION:ToggleBlizzBar(on)
 	else
 
 		local button
+
 		for i=1, NUM_OVERRIDE_BUTTONS do
 			button = _G["OverrideActionBarButton"..i]
 			handler:UnwrapScript(button, "OnShow")
@@ -1337,6 +1349,93 @@ function ION:ToggleBlizzBar(on)
 	end
 end
 
+function ION:ToggleMainMenu(on)
+
+	if (ION.OpDep) then return end
+
+	if (on) then
+
+		MainMenuBar:SetPoint("BOTTOM", 0, 0)
+		MainMenuBar_OnLoad(MainMenuBar)
+		MainMenuBar:Show()
+
+		MainMenuBar_OnLoad(MainMenuBarArtFrame)
+
+		if (GetNumShapeshiftForms() > 0) then
+			ShapeshiftBar_OnLoad(ShapeshiftBarFrame)
+		else
+			ShapeshiftBarFrame:UnregisterAllEvents()
+		end
+
+		BonusActionBar_OnLoad(BonusActionBarFrame)
+
+		PossessBar_OnLoad(PossessBarFrame)
+
+		UnregisterStateDriver(MainMenuBar, "visibility")
+		UnregisterStateDriver(ShapeshiftBarFrame, "visibility")
+		UnregisterStateDriver(PossessBarFrame, "visibility")
+
+		local button
+		for i=1, VEHICLE_MAX_ACTIONBUTTONS do
+			button = _G["VehicleMenuBarActionButton"..i]
+			handler:WrapScript(button, "OnShow", [[
+				local key = GetBindingKey("ACTIONBUTTON"..self:GetID())
+				if (key) then
+					self:SetBindingClick(true, key, self:GetName())
+				end
+			]])
+			handler:WrapScript(button, "OnHide", [[
+				local key = GetBindingKey("ACTIONBUTTON"..self:GetID())
+				if (key) then
+					self:ClearBinding(key)
+				end
+			]])
+		end
+
+		MainMenuBarArtFrame:RegisterEvent("UNIT_ENTERING_VEHICLE")
+		MainMenuBarArtFrame:RegisterEvent("UNIT_ENTERED_VEHICLE")
+		MainMenuBarArtFrame:RegisterEvent("UNIT_EXITING_VEHICLE")
+		MainMenuBarArtFrame:RegisterEvent("UNIT_EXITED_VEHICLE")
+		MainMenuBarArtFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+	else
+
+		MainMenuBar:SetPoint("BOTTOM", 0, -200)
+		MainMenuBar:UnregisterAllEvents()
+		MainMenuBar:Hide()
+
+		MainMenuBarArtFrame:UnregisterEvent("BAG_UPDATE");
+		MainMenuBarArtFrame:UnregisterEvent("ACTIONBAR_PAGE_CHANGED");
+
+		ShapeshiftBarFrame:UnregisterAllEvents()
+		ShapeshiftBarFrame:Hide()
+
+		BonusActionBarFrame:UnregisterAllEvents()
+		BonusActionBarFrame:Hide()
+
+		PossessBarFrame:UnregisterAllEvents()
+		PossessBarFrame:Hide()
+
+		RegisterStateDriver(MainMenuBar, "visibility", "hide")
+		RegisterStateDriver(ShapeshiftBarFrame, "visibility", "hide")
+		RegisterStateDriver(PossessBarFrame, "visibility", "hide")
+
+		local button
+		for i=1, VEHICLE_MAX_ACTIONBUTTONS do
+			button = _G["VehicleMenuBarActionButton"..i]
+			handler:UnwrapScript(button, "OnShow")
+			handler:UnwrapScript(button, "OnHide")
+		end
+
+		MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERING_VEHICLE")
+		MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERED_VEHICLE")
+		MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITING_VEHICLE")
+		MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITED_VEHICLE")
+		MainMenuBarArtFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+
+	end
+end
+
 function ION:BlizzBar()
 
 	if (GDB.mainbar) then
@@ -1345,7 +1444,11 @@ function ION:BlizzBar()
 		GDB.mainbar = true
 	end
 
-	ION:ToggleBlizzBar(GDB.mainbar)
+	if (ION.TOCVersion < 50000) then
+		ION:ToggleMainMenu(GDB.mainbar)
+	else
+		ION:ToggleBlizzBar(GDB.mainbar)
+	end
 
 end
 
@@ -1398,7 +1501,10 @@ function ION:CreateBar(index, class, id)
 		bar:SetID(id)
 		bar:SetWidth(375)
 		bar:SetHeight(40)
-		bar:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background", edgeFile = "Interface/Tooltips/UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 12, insets = { left = 4, right = 4, top = 4, bottom = 4 } })
+		bar:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		                  edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		                  tile = true, tileSize = 16, edgeSize = 12,
+		                  insets = { left = 4, right = 4, top = 4, bottom = 4 } })
 		bar:SetBackdropColor(0,0,0,0.4)
 		bar:SetBackdropBorderColor(0,0,0,0)
 		bar:SetFrameLevel(2)
@@ -1499,7 +1605,12 @@ function ION:CreateNewObject(class, id, firstRun)
 		object.objTIndex = index
 		object.objType = data.objType:gsub("%s", ""):upper()
 
-		object:LoadData(GetActiveSpecGroup(), "homestate")
+		--if statement for 4.x compatibility
+		if (ION.TOCVersion < 50000) then
+			object:LoadData(GetActiveTalentGroup(), "homestate")
+		else
+			object:LoadData(GetActiveSpecGroup(), "homestate")
+		end
 
 		if (firstRun) then
 			object:SetDefaults(object:GetDefaults())
@@ -1589,6 +1700,8 @@ function ION:ToggleBars(show, hide)
 			if (IonBarEditor)then
 				IonBarEditor:Hide()
 			end
+
+			collectgarbage()
 		else
 
 			ION:ToggleEditFrames(nil, true)
@@ -1797,6 +1910,20 @@ local function control_OnEvent(self, event, ...)
 
 	elseif (event == "PLAYER_LOGIN") then
 
+		local function hideAlerts(frame)
+			if (not GDB.mainbar) then
+				frame:Hide()
+			end
+		end
+
+		-- if statements for 4.x compatibility
+		if (TalentMicroButtonAlert) then
+			TalentMicroButtonAlert:HookScript("OnShow", hideAlerts)
+		end
+
+		if (CompanionsMicroButtonAlert) then
+			CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
+		end
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 
@@ -1807,14 +1934,22 @@ local function control_OnEvent(self, event, ...)
 		ION:UpdateCompanionData()
 		ION:UpdateIconIndex()
 
-		ION:ToggleBlizzBar(GDB.mainbar)
-		--ION:ToggleVehicleBar(GDB.vehicle)
+		if (ION.TOCVersion < 50000) then
+			ION:ToggleMainMenu(GDB.mainbar)
+		else
+			ION:ToggleBlizzBar(GDB.mainbar)
+		end
 
 		collectgarbage(); PEW = true
 
 	elseif (event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_LOGOUT" or event == "PLAYER_LEAVING_WORLD") then
 
-		SPEC.cSpec = GetActiveSpecGroup()
+		--if statement for 4.x compatibility
+		if (ION.TOCVersion < 50000) then
+			SPEC.cSpec = GetActiveTalentGroup()
+		else
+			SPEC.cSpec = GetActiveSpecGroup()
+		end
 
 	elseif (event == "ACTIVE_TALENT_GROUP_CHANGED" or
 		  event == "SKILL_LINES_CHANGED" or

@@ -64,10 +64,12 @@ function OBJEDITOR:OnClick(button)
 			LoadAddOn("Ion-GUI")
 		end
 
-		if (not newObj and IonObjectEditor:IsVisible()) then
-			IonObjectEditor:Hide()
-		else
-			IonObjectEditor:Show()
+		if (IonObjectEditor) then
+			if (not newObj and IonObjectEditor:IsVisible()) then
+				IonObjectEditor:Hide()
+			else
+				IonObjectEditor:Show()
+			end
 		end
 
 	else
@@ -175,6 +177,8 @@ function ION:ToggleEditFrames(show, hide)
 		if (IsAddOnLoaded("Ion-GUI")) then
 			IonObjectEditor:Hide()
 		end
+
+		collectgarbage()
 
 	else
 

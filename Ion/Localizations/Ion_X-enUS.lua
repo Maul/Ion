@@ -202,7 +202,7 @@ L.VEHICLE1 = "Vehicle/Possess"
 L.CUSTOM0 = "Custom States"
 
 --class specific state names
-L.DRUID_STANCE0 = "Caster Form"
+L.DRUID_CASTER = "Caster Form"
 L.DRUID_PROWL = "Prowl"
 L.PRIEST_HEALER = "Healer Form"
 L.ROGUE_MELEE = "Melee"

@@ -240,20 +240,41 @@ local function updateMicroButtons()
 
 	end
 
-	if (IonCompanionButton and PetJournalParent and PetJournalParent:IsShown())  then
+	if (ION.TOCVersion >= 50000) then
 
-		IonCompanionButton:SetButtonState("PUSHED", 1)
+		if (IonCompanionButton and PetJournalParent and PetJournalParent:IsShown())  then
 
-	elseif (IonCompanionButton) then
+			IonCompanionButton:SetButtonState("PUSHED", 1)
 
-		IonCompanionButton:GetNormalTexture():SetDesaturated(nil)
-		IonCompanionButton:GetNormalTexture():SetVertexColor(1,1,1)
-		IonCompanionButton:GetPushedTexture():SetDesaturated(nil)
-		IonCompanionButton:SetPushedTexture("Interface\\Buttons\\UI-MicroButton-Mounts-Down")
-		IonCompanionButton:SetHighlightTexture("Interface\\Buttons\\UI-MicroButton-Hilight")
-		IonCompanionButton:SetButtonState("NORMAL")
-		IonCompanionButton.disabledTooltip = nil
+		elseif (IonCompanionButton) then
 
+			IonCompanionButton:GetNormalTexture():SetDesaturated(nil)
+			IonCompanionButton:GetNormalTexture():SetVertexColor(1,1,1)
+			IonCompanionButton:GetPushedTexture():SetDesaturated(nil)
+			IonCompanionButton:SetPushedTexture("Interface\\Buttons\\UI-MicroButton-Mounts-Down")
+			IonCompanionButton:SetHighlightTexture("Interface\\Buttons\\UI-MicroButton-Hilight")
+			IonCompanionButton:SetButtonState("NORMAL")
+			IonCompanionButton.disabledTooltip = nil
+
+		end
+
+	else
+
+		if (IonRaidButton and RaidFrame and RaidFrame:IsShown() and FriendsFrame and FriendsFrame:IsShown())  then
+
+			IonRaidButton:SetButtonState("PUSHED", 1)
+
+		elseif (IonRaidButton) then
+
+			IonRaidButton:GetNormalTexture():SetDesaturated(nil)
+			IonRaidButton:GetNormalTexture():SetVertexColor(1,1,1)
+			IonRaidButton:GetPushedTexture():SetDesaturated(nil)
+			IonRaidButton:SetPushedTexture("Interface\\Buttons\\UI-MicroButton-Raid-Down")
+			IonRaidButton:SetHighlightTexture("Interface\\Buttons\\UI-MicroButton-Hilight")
+			IonRaidButton:SetButtonState("NORMAL")
+			IonRaidButton.disabledTooltip = nil
+
+		end
 	end
 
 	if (IonEJButton and EncounterJournal and EncounterJournal:IsShown())  then
@@ -639,28 +660,74 @@ end
 
 function ION.CompanionButton_OnLoad(self)
 
-	self:RegisterEvent("UPDATE_BINDINGS")
-	self.tooltipText = MicroButtonTooltipText(MOUNTS_AND_PETS, "TOGGLEMOUNTJOURNAL")
-	self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+	if (ION.TOCVersion >= 50000) then
 
-	LoadMicroButtonTextures(self, "Mounts")
+		self:RegisterEvent("UPDATE_BINDINGS")
+		self.tooltipText = MicroButtonTooltipText(MOUNTS_AND_PETS, "TOGGLEMOUNTJOURNAL")
+		self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
 
-	self:HookScript("OnEnter", function(self) if (self.disabledTooltip) then GameTooltip:AddLine(self.disabledTooltip, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true) GameTooltip:Show() end end)
+		LoadMicroButtonTextures(self, "Mounts")
 
-	menuElements[#menuElements+1] = self
+		self:HookScript("OnEnter", function(self) if (self.disabledTooltip) then GameTooltip:AddLine(self.disabledTooltip, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true) GameTooltip:Show() end end)
+
+		menuElements[#menuElements+1] = self
+
+	else
+		self:Hide()
+	end
 
 end
 
 function ION.CompanionButton_OnEvent(self, event, ...)
 
-	self.tooltipText = MicroButtonTooltipText(MOUNTS_AND_PETS, "TOGGLEMOUNTJOURNAL")
-	self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+	if (ION.TOCVersion >= 50000) then
+
+		self.tooltipText = MicroButtonTooltipText(MOUNTS_AND_PETS, "TOGGLEMOUNTJOURNAL")
+		self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+	end
 
 end
 
 function ION.CompanionButton_OnClick(self)
 
-	TogglePetJournal()
+	if (ION.TOCVersion >= 50000) then
+		TogglePetJournal()
+	end
+end
+
+function ION.RaidButton_OnLoad(self)
+
+	if (ION.TOCVersion < 50000) then
+
+		self:RegisterEvent("UPDATE_BINDINGS")
+		self.tooltipText = MicroButtonTooltipText(RAID, "TOGGLERAIDTAB")
+		self.newbieText = NEWBIE_TOOLTIP_RAID
+
+		LoadMicroButtonTextures(self, "Raid")
+
+		self:HookScript("OnEnter", function(self) if (self.disabledTooltip) then GameTooltip:AddLine(self.disabledTooltip, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true) GameTooltip:Show() end end)
+
+		menuElements[#menuElements+1] = self
+	else
+		self:Hide()
+	end
+end
+
+function ION.RaidButton_OnEvent(self, event, ...)
+
+	if (ION.TOCVersion < 50000) then
+
+		self.tooltipText = MicroButtonTooltipText(RAID, "TOGGLERAIDTAB")
+		self.newbieText = NEWBIE_TOOLTIP_RAID
+	end
+
+end
+
+function ION.RaidButton_OnClick(self)
+
+	if (ION.TOCVersion < 50000) then
+		ToggleRaidFrame()
+	end
 end
 
 function ION.EJButton_OnLoad(self)

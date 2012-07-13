@@ -289,7 +289,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		</Scripts>
 		<NormalTexture file="Interface\Addons\Ion\Images\RoundCheckBox.tga"/>
 		<CheckedTexture file="Interface\Addons\Ion\Images\RoundCheck.tga"/>
-		<DisabledTexture file="Interface\Addons\Ion\Images\RoundCheckDisabled.tga"/>
+		<DisabledTexture file="Interface\Addons\Ion\Images\RoundCheckBox.tga"/>
 		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
 	</CheckButton>
 
@@ -335,27 +335,13 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						end
 						PlaySound("igMainMenuOptionCheckBoxOn")
 					</OnClick>
+					<OnEnter>
+						self:GetParent():SetBackdropBorderColor(1, 0.82, 0, 1)
+					</OnEnter>
+					<OnLeave>
+						self:GetParent():SetBackdropBorderColor(0, 0, 0, 0)
+					</OnLeave>
 				</Scripts>
-				<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="6" y="-2"/>
-						</Anchor>
-						<Anchor point="BOTTOMRIGHT">
-							<Offset x="-6" y="2"/>
-						</Anchor>
-					</Anchors>
-				</HighlightTexture>
-				<PushedTexture file="" alphaMode="ADD">
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="4" y="-4"/>
-						</Anchor>
-						<Anchor point="BOTTOMRIGHT">
-							<Offset x="-8" y="0"/>
-						</Anchor>
-					</Anchors>
-				</PushedTexture>
 			</Button>
 			<Frame name="$parentPopUp" parentkey="popup" toplevel="true" clampedToScreen="true">
 				<Anchors>
@@ -651,7 +637,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		</Layers>
 		<Frames>
 			<Frame parentKey="method1" enableMouse="true" hidden="true">
-				<Size x="80" y="24"/>
+				<Size x="100" y="24"/>
 				<Anchors>
 					<Anchor point="LEFT" relativePoint="CENTER">
 						<Offset x="5" y="0"/>
@@ -665,15 +651,19 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						<Size x="24" y="30"/>
 						<Anchors>
 							<Anchor point="RIGHT">
-								<Offset x="3" y="0"/>
+								<Offset x="10" y="0"/>
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnLoad>
+								self.elapsed = 0
+								self:RegisterForClicks("AnyUp","AnyDown")
+							</OnLoad>
 							<OnClick>
-
+								Ion.IonAdjustOption_AddOnClick(self, button, down)
 							</OnClick>
 							<OnUpdate>
-
+								Ion.IonAdjustOption_AddOnUpdate(self, elapsed)
 							</OnUpdate>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\Ion\Images\AdjustOptionRight-Up"/>
@@ -684,15 +674,19 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						<Size x="24" y="30"/>
 						<Anchors>
 							<Anchor point="LEFT">
-								<Offset x="-3" y="0"/>
+								<Offset x="-10" y="0"/>
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnLoad>
+								self.elapsed = 0
+								self:RegisterForClicks("AnyUp","AnyDown")
+							</OnLoad>
 							<OnClick>
-
+								Ion.IonAdjustOption_SubOnClick(self, button, down)
 							</OnClick>
 							<OnUpdate>
-
+								Ion.IonAdjustOption_SubOnUpdate(self, elapsed)
 							</OnUpdate>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Up"/>
@@ -700,13 +694,28 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						<HighlightTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Highlight" alphaMode="ADD"/>
 					</Button>
 					<EditBox parentKey="edit" inherits="IonEditBoxTemplateSmall" letters="4">
-						<Size x="50" y="24"/>
+						<Size x="70" y="24"/>
+						<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="14"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="20"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="3" right="3" top="2" bottom="2"/>
+							</BackgroundInsets>
+						</Backdrop>
 						<Anchors>
 							<Anchor point="CENTER">
 								<Offset x="0" y="0"/>
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnLoad>
+								self:SetBackdropColor(0, 0, 0, 0)
+								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+							</OnLoad>
 							<OnTabPressed>
 
 							</OnTabPressed>
@@ -726,7 +735,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Frames>
 			</Frame>
 			<Frame parentKey="method2" hidden="true">
-				<Size x="80" y="24"/>
+				<Size x="100" y="24"/>
 				<Anchors>
 					<Anchor point="LEFT" relativePoint="CENTER">
 						<Offset x="-5" y="0"/>
@@ -738,12 +747,27 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				<Frames>
 					<EditBox parentKey="edit" inherits="IonDropDownOption">
 						<Size x="100" y="24"/>
+						<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="14"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="20"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="3" right="3" top="2" bottom="2"/>
+							</BackgroundInsets>
+						</Backdrop>
 						<Anchors>
 							<Anchor point="CENTER">
 								<Offset x="0" y="0"/>
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnLoad>
+								self:SetBackdropColor(0, 0, 0, 0)
+								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+							</OnLoad>
 							<OnTabPressed>
 
 							</OnTabPressed>
@@ -762,10 +786,12 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						if (not self.shown and MouseIsOver(self)) then
 							self.method1.add:Show()
 							self.method1.sub:Show()
+							self.method1.edit:SetBackdropBorderColor(1, 0.82, 0, 1)
 							self.shown = true
 						elseif (self.shown and not MouseIsOver(self)) then
 							self.method1.add:Hide()
 							self.method1.sub:Hide()
+							self.method1.edit:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							self.shown = nil
 						end
 					end

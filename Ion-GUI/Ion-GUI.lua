@@ -49,17 +49,17 @@ local chkOptions = {
 local adjOptions = {
 
 	[1] = { [0] = "SHAPE", LGUI.SHAPE, 2, "ShapeBar" },
-	[2] = { [0] = "COLUMNS", LGUI.COLUMNS, 1, "ColumnsSet" },
-	[3] = { [0] = "ARCSTART", LGUI.ARCSTART, 1, "ArcStartSet" },
-	[4] = { [0] = "ARCLENGTH", LGUI.ARCLENGTH, 1, "ArcLengthSet" },
-	[5] = { [0] = "HPAD", LGUI.HPAD, 1, "PadHSet" },
-	[6] = { [0] = "VPAD", LGUI.VPAD, 1, "PadVSet" },
-	[7] = { [0] = "HVPAD", LGUI.HVPAD, 1, "PadHVSet" },
-	[8] = { [0] = "SCALE", LGUI.SCALE, 1, "ScaleBar" },
+	[2] = { [0] = "COLUMNS", LGUI.COLUMNS, 1, "ColumnsSet", 1 , 0},
+	[3] = { [0] = "ARCSTART", LGUI.ARCSTART, 1, "ArcStartSet", 1, 0, 359 },
+	[4] = { [0] = "ARCLENGTH", LGUI.ARCLENGTH, 1, "ArcLengthSet", 1, 0, 359 },
+	[5] = { [0] = "HPAD", LGUI.HPAD, 1, "PadHSet", 0.1 },
+	[6] = { [0] = "VPAD", LGUI.VPAD, 1, "PadVSet", 0.1 },
+	[7] = { [0] = "HVPAD", LGUI.HVPAD, 1, "PadHVSet", 0.1 },
+	[8] = { [0] = "SCALE", LGUI.SCALE, 1, "ScaleBar", 0.01, 0.1, 4 },
 	[9] = { [0] = "STRATA", LGUI.STRATA, 2, "StrataSet" },
-	[10] = { [0] = "ALPHA", LGUI.ALPHA, 1, "AlphaSet" },
+	[10] = { [0] = "ALPHA", LGUI.ALPHA, 1, "AlphaSet", 0.01, 0, 1 },
 	[11] = { [0] = "ALPHAUP", LGUI.ALPHAUP, 2, "AlphaUpSet" },
-	[12] = { [0] = "ALPHAUP", LGUI.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet" },
+	[12] = { [0] = "ALPHAUP", LGUI.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1 },
 }
 
 --[[
@@ -252,18 +252,35 @@ function ION:UpdateBarGUI()
 
 				if (GUIData[bar.class].chkOpt[f.option]) then
 
-					if (f:GetScale() < 1) then
-						f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 30, (yoff/f:GetScale())+3)
-						yoff = yoff-f:GetHeight()-5
-					else
-						f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
-						yoff = yoff-f:GetHeight()-8
+					if (bar[f.func]) then
+						if (f.primary) then
+							if (f.primary:GetChecked()) then
+								f:Enable()
+								f:SetChecked(bar[f.func](bar, f.modtext, true, nil, true))
+								f.text:SetTextColor(1,0.82,0)
+								f.disabled = nil
+							else
+								f:SetChecked(nil)
+								f:Disable()
+								f.text:SetTextColor(0.5,0.5,0.5)
+								f.disabled = true
+							end
+						else
+							f:SetChecked(bar[f.func](bar, f.modtext, true, nil, true))
+						end
 					end
 
-					f:Show()
+					if (not f.disabled) then
 
-					if (bar[f.func]) then
-						f:SetChecked(bar[f.func](bar, f.modtext, true, nil, true))
+						if (f:GetScale() < 1) then
+							f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 30, (yoff/f:GetScale())+3)
+							yoff = yoff-f:GetHeight()-5
+						else
+							f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
+							yoff = yoff-f:GetHeight()-8
+						end
+
+						f:Show()
 					end
 				end
 			end
@@ -643,12 +660,21 @@ function ION:BarEditor_ConfirmNo(button)
 	IonBarEditorBarOptionsDelete:Click()
 end
 
+local function chkOptionOnClick(button)
+
+	local bar = ION.CurrentBar
+
+	if (bar and button.func) then
+		bar[button.func](bar, button.modtext, true, button:GetChecked())
+	end
+end
+
 function ION:BarOptions_OnLoad(frame)
 
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	frame:SetBackdropColor(0,0,0,0.5)
 
-	local f, last
+	local f, primary
 
 	for index, options in ipairs(chkOptions) do
 
@@ -656,8 +682,7 @@ function ION:BarOptions_OnLoad(frame)
 		f:SetID(index)
 		f:SetWidth(18)
 		f:SetHeight(18)
-		f:SetScript("OnShow", function() end)
-		f:SetScript("OnClick", function() end)
+		f:SetScript("OnClick", chkOptionOnClick)
 		f:SetScale(options[2])
 
 		f.text:SetText(options[1])
@@ -665,6 +690,12 @@ function ION:BarOptions_OnLoad(frame)
 		f.func = options[3]
 		f.modtext = options[4]
 		f.parent = frame
+
+		if (f.modtext) then
+			f.primary = primary
+		else
+			primary = f
+		end
 
 		tinsert(barOpt.chk, f)
 	end
@@ -817,6 +848,80 @@ function ION:StateEditor_OnLoad(frame)
 	frame.remapto = f
 end
 
+local function adjOptionOnTextChanged(frame)
+
+
+
+end
+
+local function adjOptionAdd(frame, onupdate)
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+
+		local num = bar[frame.func](bar, nil, true, true)
+
+		if (num == L.OFF or num == "---") then
+			num = 0
+		else
+			num = tonumber(num)
+		end
+
+		if (num) then
+
+			if (frame.max and num >= frame.max) then
+
+				bar[frame.func](bar, frame.max, true, nil, onupdate)
+
+				if (onupdate) then
+					frame.edit:SetText(frame.max)
+				end
+			else
+				bar[frame.func](bar, num+frame.inc, true, nil, onupdate)
+
+				if (onupdate) then
+					frame.edit:SetText(num+frame.inc)
+				end
+			end
+		end
+	end
+end
+
+local function adjOptionSub(frame, onupdate)
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+
+		local num = bar[frame.func](bar, nil, true, true)
+
+		if (num == L.OFF or num == "---") then
+			num = 0
+		else
+			num = tonumber(num)
+		end
+
+		if (num) then
+
+			if (frame.min and num <= frame.min) then
+
+				bar[frame.func](bar, frame.min, true, nil, onupdate)
+
+				if (onupdate) then
+					frame.edit:SetText(frame.min)
+				end
+			else
+				bar[frame.func](bar, num-frame.inc, true, nil, onupdate)
+
+				if (onupdate) then
+					frame.edit:SetText(num-frame.inc)
+				end
+			end
+		end
+	end
+end
+
 function ION.AdjustableOptions_OnLoad(frame)
 
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
@@ -833,14 +938,69 @@ function ION.AdjustableOptions_OnLoad(frame)
 		f.text:SetText(options[1]..":")
 		f["method"..options[2]]:Show()
 		f.edit = f["method"..options[2]].edit
+		f.edit.frame = f
 		f.option = options[0]
 		f.func = options[3]
+		f.inc = options[4]
+		f.min = options[5]
+		f.max = options[6]
 		f.parent = frame
+
+		f.edit:SetScript("OnTextChanged", function(self) adjOptionOnTextChanged(self.frame) end)
+		f.addfunc = adjOptionAdd
+		f.subfunc = adjOptionSub
 
 		tinsert(barOpt.adj, f)
 	end
 end
 
+function ION.IonAdjustOption_AddOnClick(frame, button, down)
+
+	frame.elapsed = 0
+	frame.pushed = frame:GetButtonState()
+
+	if (not down) then
+		if (frame:GetParent():GetParent().addfunc) then
+			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent())
+		end
+	end
+end
+
+function ION.IonAdjustOption_AddOnUpdate(frame, elapsed)
+
+	frame.elapsed = frame.elapsed + elapsed
+
+	if (frame.pushed == "NORMAL") then
+
+		if (frame.elapsed > 1 and frame:GetParent():GetParent().addfunc) then
+			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent(), true)
+		end
+	end
+end
+
+function ION.IonAdjustOption_SubOnClick(frame, button, down)
+
+	frame.elapsed = 0
+	frame.pushed = frame:GetButtonState()
+
+	if (not down) then
+		if (frame:GetParent():GetParent().subfunc) then
+			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent())
+		end
+	end
+end
+
+function ION.IonAdjustOption_SubOnUpdate(frame, elapsed)
+
+	frame.elapsed = frame.elapsed + elapsed
+
+	if (frame.pushed == "NORMAL") then
+
+		if (frame.elapsed > 1 and frame:GetParent():GetParent().subfunc) then
+			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent(), true)
+		end
+	end
+end
 
 function ION:ObjectEditor_OnLoad(frame)
 
@@ -1429,7 +1589,7 @@ end
 
 local frame = CreateFrame("Frame", nil, UIParent)
 frame:SetScript("OnEvent", controlOnEvent)
-frame:SetScript("OnUpdate", controlOnUpdate)
+--frame:SetScript("OnUpdate", controlOnUpdate)
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")

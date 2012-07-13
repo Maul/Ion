@@ -484,8 +484,14 @@ function BUTTON:GetBlizzData(data)
 
 		visible = true
 
-		spellID, _, isKnown = GetFlyoutSlotInfo(self.flyout.keys, i)
-		petIndex, petName = GetCallPetSpellInfo(spellID)
+		--for 4.x compatibility
+		if (ION.TOCVersion < 50000) then
+			spellID, isKnown = GetFlyoutSlotInfo(self.flyout.keys, i)
+			petIndex, petName = GetCallPetSpellInfo(spellID)
+		else
+			spellID, _, isKnown = GetFlyoutSlotInfo(self.flyout.keys, i)
+			petIndex, petName = GetCallPetSpellInfo(spellID)
+		end
 
 		if (petIndex and (not petName or petName == "")) then
 			visible = false
@@ -813,6 +819,12 @@ function BUTTON:UpdateFlyout(init)
 		self:Flyout_UpdateButtons(init)
 		self:Flyout_UpdateBar()
 
+		if (not self.bar.watchframes) then
+			self.bar.watchframes = {}
+		end
+
+		self.bar.watchframes[flyout.bar.handler] = true
+
 		ANCHORIndex[self] = true
 
 	else
@@ -974,6 +986,8 @@ function BUTTON:Flyout_GetButton()
 
 	button:SetData(self.flyout.bar)
 
+	button:SetSkinned(true)
+
 	button:Show()
 
 	self.flyout.buttons[id] = button
@@ -996,6 +1010,8 @@ function BUTTON:Flyout_ReleaseBar(bar)
 	bar:ClearAllPoints()
 	bar:SetParent(STORAGE)
 	bar:SetPoint("CENTER")
+
+	self.bar.watchframes[bar.handler] = nil
 
 end
 
