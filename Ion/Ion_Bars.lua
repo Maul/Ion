@@ -25,7 +25,7 @@ local alphaDir, alphaTimer = 0, 0
 
 local autoHideIndex, alphaupIndex = {}, {}
 
-local alphaUps = {
+ION.AlphaUps = {
 	L.OFF,
 	L.ALPHAUP_MOUSEOVER,
 	L.ALPHAUP_BATTLE,
@@ -34,11 +34,15 @@ local alphaUps = {
 	L.ALPHAUP_RETREATMOUSE,
 }
 
-local barShapes = {
+local alphaUps = ION.AlphaUps
+
+ION.BarShapes = {
 	L.BAR_SHAPE1,
 	L.BAR_SHAPE2,
 	L.BAR_SHAPE3,
 }
+
+local barShapes = ION.BarShapes
 
 ION.barGDEF = {
 
@@ -1054,6 +1058,19 @@ function BAR:CreateHandler()
 	handler:SetAllPoints(self)
 
 	self.handler = handler; handler.bar = self
+
+end
+
+function BAR:CreateWatcher()
+
+	local watcher = CreateFrame("Frame", "IonBarWatcher"..self:GetID(), self.handler, "SecureHandlerAttributeTemplate")
+
+	setmetatable(watcher, { __index = HANDLER })
+
+	watcher:SetID(self:GetID())
+
+	watcher:SetAttribute("_onattributechanged", [[ print(message) ]])
+
 
 end
 
@@ -3048,14 +3065,14 @@ end
 function BAR:AlphaUpSpeedSet(command, gui, query, skipupdate)
 
 	if (query) then
-		return (self.gdata.fadeSpeed*100).."%"
+		return self.gdata.fadeSpeed
 	end
 
 	local speed = tonumber(command)
 
 	if (speed) then
 
-		self.gdata.fadeSpeed = self.gdata.fadeSpeed + speed
+		self.gdata.fadeSpeed = round(speed, 2)
 
 		if (self.gdata.fadeSpeed > 1) then
 			self.gdata.fadeSpeed = 1

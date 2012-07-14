@@ -717,15 +717,18 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
 							<OnTabPressed>
-
+								self.hasfocus = nil
+								self:ClearFocus()
 							</OnTabPressed>
 							<OnEnterPressed>
-
+								self.hasfocus = nil
+								self:ClearFocus()
 							</OnEnterPressed>
 							<OnEditFocusGained>
 								self.hasfocus = true
 								self:GetParent().add:Show()
 								self:GetParent().sub:Show()
+								self:HighlightText()
 							</OnEditFocusGained>
 							<OnEditFocusLost>
 								self.hasfocus = nil

@@ -43,20 +43,6 @@
 	</Button>
 
 	<Button name="IonPopupButtonTemplate" virtual="true">
-		<Layers>
-			<Layer level="ARTWORK">
-				<FontString name="$parentText" inherits="GameFontNormalSmall" justifyH="CENTER" nonspacewrap="false">
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="2" y="0"/>
-						</Anchor>
-						<Anchor point="BOTTOMRIGHT">
-							<Offset x="-4" y="0"/>
-						</Anchor>
-					</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
 		<CheckedTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
 			<Anchors>
 				<Anchor point="TOPLEFT">
@@ -83,10 +69,10 @@
 				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnClick>
-				local text = _G[self:GetName().."Text"]:GetText()
+				local text = self.text:GetText()
 				local parent = self:GetParent()
 				local parentparent = self:GetParent():GetParent()
-				local edit = _G[parentparent:GetName().."Edit"]
+				local edit = parentparent.edit
 
 				if (text) then
 
@@ -103,10 +89,14 @@
 
 					elseif (edit and self.value) then
 
+						print("hit2")
+
 						edit:SetText("")
 						edit:SetText(self.value)
 
 					elseif (edit) then
+
+						print("hit3")
 
 						edit:SetText("")
 						edit:SetText(text)
@@ -125,6 +115,12 @@
 				GameTooltip:Hide()
 			</OnLeave>
 		</Scripts>
+		<ButtonText name="$parentText" inherits="GameFontNormalSmall" justifyH="CENTER" parentKey="text">
+			<Anchors>
+				<Anchor point="TOPLEFT"/>
+				<Anchor point="BOTTOMRIGHT"/>
+			</Anchors>
+		</ButtonText>
 	</Button>
 
 	<Button name="IonBarTemplate" enableMouse="true" movable="true" frameStrata="MEDIUM" virtual="true" inherits="SecureHandlerStateTemplate" clampedToScreen="false">

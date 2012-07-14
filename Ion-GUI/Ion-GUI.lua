@@ -29,6 +29,8 @@ local defGDB, defCDB = CopyTable(IonGUIGDB), CopyTable(IonGUICDB)
 
 local barOpt = { chk = {}, adj = {}, pri = {}, sec = {} }
 
+local popupData = {}
+
 local chkOptions = {
 
 	[1] = { [0] = "AUTOHIDE", LGUI.AUTOHIDE, 1, "AutoHideBar" },
@@ -48,7 +50,7 @@ local chkOptions = {
 
 local adjOptions = {
 
-	[1] = { [0] = "SHAPE", LGUI.SHAPE, 2, "ShapeBar" },
+	[1] = { [0] = "SHAPE", LGUI.SHAPE, 2, "ShapeBar", nil, nil, nil, ION.BarShapes },
 	[2] = { [0] = "COLUMNS", LGUI.COLUMNS, 1, "ColumnsSet", 1 , 0},
 	[3] = { [0] = "ARCSTART", LGUI.ARCSTART, 1, "ArcStartSet", 1, 0, 359 },
 	[4] = { [0] = "ARCLENGTH", LGUI.ARCLENGTH, 1, "ArcLengthSet", 1, 0, 359 },
@@ -56,10 +58,10 @@ local adjOptions = {
 	[6] = { [0] = "VPAD", LGUI.VPAD, 1, "PadVSet", 0.1 },
 	[7] = { [0] = "HVPAD", LGUI.HVPAD, 1, "PadHVSet", 0.1 },
 	[8] = { [0] = "SCALE", LGUI.SCALE, 1, "ScaleBar", 0.01, 0.1, 4 },
-	[9] = { [0] = "STRATA", LGUI.STRATA, 2, "StrataSet" },
+	[9] = { [0] = "STRATA", LGUI.STRATA, 2, "StrataSet", nil, nil, nil, ION.Stratas },
 	[10] = { [0] = "ALPHA", LGUI.ALPHA, 1, "AlphaSet", 0.01, 0, 1 },
-	[11] = { [0] = "ALPHAUP", LGUI.ALPHAUP, 2, "AlphaUpSet" },
-	[12] = { [0] = "ALPHAUP", LGUI.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1 },
+	[11] = { [0] = "ALPHAUP", LGUI.ALPHAUP, 2, "AlphaUpSet", nil, nil, nil, ION.AlphaUps },
+	[12] = { [0] = "ALPHAUP", LGUI.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
 }
 
 --[[
@@ -299,6 +301,17 @@ function ION:UpdateBarGUI()
 						yoff1 = (adjHeight)/7
 					end
 				end
+
+				if (f.optData) then
+
+					wipe(popupData)
+
+					for k,v in pairs(f.optData) do
+						popupData[k.."_"..v] = tostring(k)
+					end
+
+					ION.EditBox_PopUpInitialize(f.edit.popup, popupData)
+				end
 			end
 
 			yoff = -(yoff1/2)
@@ -344,7 +357,11 @@ function ION:UpdateBarGUI()
 				end
 
 				if (bar[f.func]) then
-					f.edit:SetText(bar[f.func](bar, nil, true, true))
+					if (f.format) then
+						f.edit:SetText(format(f.format, bar[f.func](bar, nil, true, true)*f.mult)..f.endtext)
+					else
+						f.edit:SetText(bar[f.func](bar, nil, true, true))
+					end
 					f.edit:SetCursorPosition(0)
 				end
 			end
@@ -848,10 +865,38 @@ function ION:StateEditor_OnLoad(frame)
 	frame.remapto = f
 end
 
-local function adjOptionOnTextChanged(frame)
+local function adjOptionOnTextChanged(edit, frame)
 
+	local bar = ION.CurrentBar
 
+	if (bar) then
 
+		if (frame.method == 1) then
+
+		elseif (frame.method == 2) then
+
+			bar[frame.func](bar, edit.value, true)
+
+		end
+	end
+end
+
+local function adjOptionOnEditFocusLost(edit, frame)
+
+	edit.hasfocus = nil
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+
+		if (frame.method == 1) then
+
+			bar[frame.func](bar, edit:GetText(), true)
+
+		elseif (frame.method == 2) then
+
+		end
+	end
 end
 
 local function adjOptionAdd(frame, onupdate)
@@ -875,13 +920,21 @@ local function adjOptionAdd(frame, onupdate)
 				bar[frame.func](bar, frame.max, true, nil, onupdate)
 
 				if (onupdate) then
-					frame.edit:SetText(frame.max)
+					if (frame.format) then
+						frame.edit:SetText(format(frame.format, frame.max*frame.mult)..frame.endtext)
+					else
+						frame.edit:SetText(frame.max)
+					end
 				end
 			else
 				bar[frame.func](bar, num+frame.inc, true, nil, onupdate)
 
 				if (onupdate) then
-					frame.edit:SetText(num+frame.inc)
+					if (frame.format) then
+						frame.edit:SetText(format(frame.format, (num+frame.inc)*frame.mult)..frame.endtext)
+					else
+						frame.edit:SetText(num+frame.inc)
+					end
 				end
 			end
 		end
@@ -909,13 +962,21 @@ local function adjOptionSub(frame, onupdate)
 				bar[frame.func](bar, frame.min, true, nil, onupdate)
 
 				if (onupdate) then
-					frame.edit:SetText(frame.min)
+					if (frame.format) then
+						frame.edit:SetText(format(frame.format, frame.min*frame.mult)..frame.endtext)
+					else
+						frame.edit:SetText(frame.min)
+					end
 				end
 			else
 				bar[frame.func](bar, num-frame.inc, true, nil, onupdate)
 
 				if (onupdate) then
-					frame.edit:SetText(num-frame.inc)
+					if (frame.format) then
+						frame.edit:SetText(format(frame.format, (num-frame.inc)*frame.mult)..frame.endtext)
+					else
+						frame.edit:SetText(num-frame.inc)
+					end
 				end
 			end
 		end
@@ -929,13 +990,14 @@ function ION.AdjustableOptions_OnLoad(frame)
 
 	for index, options in ipairs(adjOptions) do
 
-		f = CreateFrame("Frame", nil, frame, "IonAdjustOptionTemplate")
+		f = CreateFrame("Frame", "IonGUIAdjOpt"..index, frame, "IonAdjustOptionTemplate")
 		f:SetID(index)
 		f:SetWidth(200)
 		f:SetHeight(24)
 		f:SetScript("OnShow", function() end)
 
 		f.text:SetText(options[1]..":")
+		f.method = options[2]
 		f["method"..options[2]]:Show()
 		f.edit = f["method"..options[2]].edit
 		f.edit.frame = f
@@ -944,9 +1006,15 @@ function ION.AdjustableOptions_OnLoad(frame)
 		f.inc = options[4]
 		f.min = options[5]
 		f.max = options[6]
+		f.optData = options[7]
+		f.format = options[8]
+		f.mult = options[9]
+		f.endtext = options[10]
 		f.parent = frame
 
-		f.edit:SetScript("OnTextChanged", function(self) adjOptionOnTextChanged(self.frame) end)
+		f.edit:SetScript("OnTextChanged", function(self) adjOptionOnTextChanged(self, self.frame) end)
+		f.edit:SetScript("OnEditFocusLost", function(self) adjOptionOnEditFocusLost(self, self.frame) end)
+
 		f.addfunc = adjOptionAdd
 		f.subfunc = adjOptionSub
 

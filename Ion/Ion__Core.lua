@@ -930,7 +930,7 @@ local function slashHandler(msg)
 end
 
 
-function ION:EditBox_PopUpInitialize(popupFrame, data)
+function ION.EditBox_PopUpInitialize(popupFrame, data)
 
 	popupFrame.func = ION.PopUp_Update
 	popupFrame.data = data
@@ -938,18 +938,21 @@ function ION:EditBox_PopUpInitialize(popupFrame, data)
 	ION.PopUp_Update(popupFrame)
 end
 
-function ION:PopUp_Update(popupFrame)
+function ION.PopUp_Update(popupFrame)
 
-	local data, columns, optionText = popupFrame.data, 1
-	local count, height, width, widthMult, option, lastOption, lastAnchor = 1,0, popupFrame:GetParent():GetWidth(), 1, nil, nil, nil
+	local data, count, height, width, option, anchor, last, text = popupFrame.data, 1, 0, 0
 
 	if (popupFrame.options) then
 		for k,v in pairs(popupFrame.options) do
-			v:Hide()
+			v.text:SetText(""); v:Hide()
 		end
 	end
 
-	popupFrame.array = {}
+	if (not popupFrame.array) then
+		popupFrame.array = {}
+	else
+		wipe(popupFrame.array)
+	end
 
 	if (not data) then
 		return
@@ -968,18 +971,15 @@ function ION:PopUp_Update(popupFrame)
 
 	table.sort(popupFrame.array)
 
-	count = 1
-
-	columns = (math.ceil(#popupFrame.array/20)) or 1
-
 	for i=1,#popupFrame.array do
 
 		popupFrame.array[i] = gsub(popupFrame.array[i], "%s+", " ")
 		popupFrame.array[i] = gsub(popupFrame.array[i], "^%s+", "")
 
 		if (not popupFrame.options[i]) then
+
 			option = CreateFrame("Button", popupFrame:GetName().."Option"..i, popupFrame, "IonPopupButtonTemplate")
-			option:SetHeight(14)
+			option:SetHeight(20)
 
 			popupFrame.options[i] = option
 		else
@@ -987,65 +987,39 @@ function ION:PopUp_Update(popupFrame)
 			popupFrame.options[i] = option
 		end
 
-		optionText = _G[option:GetName().."Text"]
+		text = popupFrame.array[i]:match("^[^,]+") or ""
 
-		local text = popupFrame.array[i]:match("^[^,]+") or ""
-
-		text = text:gsub("^%d+_", "")
-
-		optionText:SetText(text)
+		option:SetText(text:gsub("^%d+_", ""))
 
 		option.value = popupFrame.array[i]:match("[^,]+$")
 
-		if (optionText:GetWidth()+20 > width and optionText:GetWidth()+20 < 250) then
-			width = _G[option:GetName().."Text"]:GetWidth() + 20
+		if (option:GetTextWidth() > width) then
+			width = option:GetTextWidth()
 		end
 
 		option:ClearAllPoints()
 
-		if (count == 1) then
-			if (lastAnchor) then
-				option:SetPoint("LEFT", lastAnchor, "RIGHT", 0, 0)
-				lastOption = option
-				lastAnchor = option
-
-			else
-				option:SetPoint("TOPLEFT", popupFrame, "TOPLEFT", 0, -5)
-				lastOption = option
-				lastAnchor = option
-			end
+		if (not anchor) then
+			option:SetPoint("TOP", popupFrame, "TOP", 0, -5); anchor = option
 		else
-			option:SetPoint("TOP", lastOption, "BOTTOM", 0, -1)
-			lastOption = option
+			option:SetPoint("TOP", last, "BOTTOM", 0, -1)
 		end
 
-		if (widthMult == 1) then
-			height = height + 15
-		end
+		last = option
 
-		count = count + 1
-
-		if (count > math.ceil(#popupFrame.array/columns) and widthMult < columns and columns > 1) then
-			widthMult = widthMult + 1
-			count = 1
-		end
+		height = height + 21
 
 		option:Show()
 	end
 
 	if (popupFrame.options) then
 		for k,v in pairs(popupFrame.options) do
-			v:SetWidth(width)
+			v:SetWidth(width+40)
 		end
 	end
 
-	popupFrame:SetWidth(width * widthMult)
-
-	if (popupFrame:GetParent():GetHeight() > height + 10) then
-		popupFrame:SetHeight(popupFrame:GetParent():GetHeight())
-	else
-		popupFrame:SetHeight(height + 10)
-	end
+	popupFrame:SetWidth(width+40)
+	popupFrame:SetHeight(height + 10)
 end
 
 --From http://www.wowpedia.org/GetMinimapShape
@@ -1533,6 +1507,7 @@ function ION:CreateBar(index, class, id)
 
 		bar:CreateDriver()
 		bar:CreateHandler()
+		bar:CreateWatcher()
 
 		bar:LoadData()
 
@@ -1899,6 +1874,10 @@ local function control_OnEvent(self, event, ...)
 
 		ION:UpdateStanceStrings()
 
+		if (ION.TOCVersion >= 50000) then
+
+		end
+
 	elseif (event == "VARIABLES_LOADED") then
 
 		local index, button, texture = 1
@@ -1925,6 +1904,10 @@ local function control_OnEvent(self, event, ...)
 			CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
 		end
 
+		if (ION.TOCVersion >= 50000) then
+			SecureHandler_OnLoad(PetBattleFrame)
+		end
+
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 
 		GDB.firstRun = false
@@ -1938,6 +1921,11 @@ local function control_OnEvent(self, event, ...)
 			ION:ToggleMainMenu(GDB.mainbar)
 		else
 			ION:ToggleBlizzBar(GDB.mainbar)
+		end
+
+		if (ION.TOCVersion >= 50000) then
+			PetBattleFrame:HookScript("OnShow", function() for index, bar in pairs(BARIndex) do if (bar.handler:IsShown()) then bar.handler:Hide() bar.handler.pethide = true end end end)
+			PetBattleFrame:HookScript("OnHide", function() for index, bar in pairs(BARIndex) do if (bar.handler.pethide) then bar.handler:Show() bar.handler.pethide = nil end end end)
 		end
 
 		collectgarbage(); PEW = true

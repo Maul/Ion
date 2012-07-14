@@ -324,8 +324,10 @@ local function controlOnEvent(self, event, ...)
 		MiniMapMailFrame:SetPoint("RIGHT", "MinimapBackdrop", -32, 90)
 		GameTimeFrame:SetParent("MinimapBackdrop")
 
-		self.coord = self:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-		self.coord:SetPoint("BOTTOM", "Minimap", 0, 10)
+		Minimap.coord = Minimap:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+		Minimap.coord:SetPoint("BOTTOM", "Minimap", 0, 10)
+
+		self.coord = Minimap.coord
 
 		GDB = IonMiniMapGDB; CDB = IonMiniMapCDB
 
