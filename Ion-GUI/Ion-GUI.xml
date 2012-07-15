@@ -26,6 +26,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		<HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</HighlightTexture>
+		<CheckedTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</CheckedTexture>
 		<DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</DisabledTexture>
@@ -111,6 +114,68 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 	</Button>
 
 	<!-- CheckButton Templates -->
+
+	<CheckButton name="IonCheckButtonTemplate1" virtual="true">
+		<Size x="60" y="20"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" parentKey="text" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</NormalTexture>
+		<PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</PushedTexture>
+		<HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</HighlightTexture>
+		<CheckedTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</CheckedTexture>
+		<DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</DisabledTexture>
+		<NormalFont inherits="GameFontNormalSmall"/>
+		<HighlightFont inherits="GameFontHighlightSmall"/>
+		<DisabledFont inherits="GameFontDisableSmall"/>
+	</CheckButton>
+
+	<CheckButton name="IonCheckButtonTemplateGrey" virtual="true">
+		<Size x="60" y="20"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" parentKey="text" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<NormalTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</NormalTexture>
+		<PushedTexture file="Interface\Buttons\UI-Panel-Button-Disabled-Down">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</PushedTexture>
+		<HighlightTexture file="Interface\Buttons\UI-Panel-Button-YellowHighlight" alphaMode="ADD">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</HighlightTexture>
+		<CheckedTexture file="Interface\Buttons\UI-Panel-Button-YellowHighlight" alphaMode="ADD">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</CheckedTexture>
+		<DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
+		</DisabledTexture>
+		<NormalFont inherits="GameFontNormalSmall"/>
+		<HighlightFont inherits="GameFontHighlightSmall"/>
+		<DisabledFont inherits="GameFontDisableSmall"/>
+	</CheckButton>
 
 	<CheckButton name="IonScrollFrameButtonTemplate" virtual="true">
 		<!--
@@ -202,10 +267,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 	</CheckButton>
 
 	<CheckButton name="IonMacroIconButtonTemplate" virtual="true">
-		<Size x="28" y="28"/>
+		<Size x="30" y="30"/>
 		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture file="Interface\Buttons\UI-EmptySlot" parentKey="bg">
+			<Layer level="OVERLAY">
+				<Texture file="Interface\Buttons\UI-Quickslot2" parentKey="slot">
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset x="-2" y="2"/>
@@ -238,13 +303,13 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		<NormalTexture name="$parentIcon" parentKey="icon">
 			<Anchors>
 				<Anchor point="TOPLEFT">
-					<Offset x="1" y="-1"/>
+					<Offset x="2" y="-2"/>
 				</Anchor>
 				<Anchor point="BOTTOMRIGHT">
-					<Offset x="1" y="-1"/>
+					<Offset x="-2" y="2"/>
 				</Anchor>
 			</Anchors>
-			<TexCoords left="0.01" right="0.99" top="0.01" bottom="0.99"/>
+			<TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>
 		</NormalTexture>
 		<CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight"/>
 	</CheckButton>
@@ -345,7 +410,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</Button>
 			<Frame name="$parentPopUp" parentkey="popup" toplevel="true" clampedToScreen="true">
 				<Anchors>
-					<Anchor point="RIGHT">
+					<Anchor point="CENTER">
 						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
@@ -366,7 +431,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						self.options = {}
 						self:RegisterEvent("ADDON_LOADED")
 						self:SetBackdropColor(0, 0, 0)
-						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+						self:SetBackdropBorderColor(1, 0.82, 0)
 						self:Hide()
 					</OnLoad>
 					<OnShow>
@@ -516,7 +581,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		<Scripts>
 			<OnLoad>
 				self:RegisterEvent("PLAYER_LOGIN")
-				self:SetBackdropColor(0, 0, 0)
+				self:SetBackdropColor(0, 0, 0, 0)
 				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnTabPressed>
@@ -693,7 +758,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						<PushedTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Down"/>
 						<HighlightTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Highlight" alphaMode="ADD"/>
 					</Button>
-					<EditBox parentKey="edit" inherits="IonEditBoxTemplateSmall" letters="4">
+					<EditBox parentKey="edit" inherits="IonEditBoxTemplateSmall" letters="6">
 						<Size x="70" y="24"/>
 						<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 							<EdgeSize>
@@ -893,7 +958,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			<Frame name="$parentBarOptions" parentKey="baropt">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
-						<Offset x="3" y="-45"/>
+						<Offset x="3" y="-30"/>
 					</Anchor>
 					<Anchor point="BOTTOMRIGHT">
 						<Offset x="-10" y="45"/>
@@ -930,10 +995,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 					<Frame name="$parentStateEditor" parentKey="editor">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentCheckOptions" relativePoint="TOPRIGHT">
-								<Offset x="4" y="-30"/>
+								<Offset x="3" y="-30"/>
 							</Anchor>
 							<Anchor point="BOTTOMRIGHT">
-								<Offset x="0" y="155"/>
+								<Offset x="0" y="165"/>
 							</Anchor>
 						</Anchors>
 						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
@@ -984,7 +1049,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 												<Offset x="6" y="-6"/>
 											</Anchor>
 											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
-												<Offset x="110" y="45"/>
+												<Offset x="110" y="50"/>
 											</Anchor>
 										</Anchors>
 										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
@@ -1001,7 +1066,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 										<Scripts>
 											<OnLoad>
 												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-												self:SetBackdropColor(0,0,0,0.5)
+												self:SetBackdropColor(0,0,0,0)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -1011,7 +1076,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 												<Offset x="111" y="-6"/>
 											</Anchor>
 											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
-												<Offset x="-6" y="45"/>
+												<Offset x="-6" y="50"/>
 											</Anchor>
 										</Anchors>
 										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
@@ -1028,7 +1093,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 										<Scripts>
 											<OnLoad>
 												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-												self:SetBackdropColor(0,0,0,0.5)
+												self:SetBackdropColor(0,0,0,0)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -1073,7 +1138,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 										<Scripts>
 											<OnLoad>
 												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-												self:SetBackdropColor(0,0,0,0.5)
+												self:SetBackdropColor(0,0,0,0)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -1112,7 +1177,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 										<Scripts>
 											<OnLoad>
 												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-												self:SetBackdropColor(0,0,0,0.5)
+												self:SetBackdropColor(0,0,0,0)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -1158,23 +1223,63 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						--Ion.AdjustableOptions_OnLoad(self)
+
 					</OnLoad>
 				</Scripts>
 			</Frame>
 
-			<Frame name="$parentObjectOptions" parentKey="objopt" hidden="true">
+			<Frame name="$parentBarVis" parentKey="barvis" hidden="true">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
-						<Offset x="6" y="0"/>
+						<Offset x="3" y="-30"/>
 					</Anchor>
-					<Anchor point="BOTTOM" relativeTo="$parentBarList" relativePoint="BOTTOM" >
-						<Offset x="0" y="0"/>
-					</Anchor>
-					<Anchor point="RIGHT">
-						<Offset x="-10" y="0"/>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-10" y="45"/>
 					</Anchor>
 				</Anchors>
+				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Frames>
+
+
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+						self:SetBackdropColor(0,0,0,0.5)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
+			<Frame name="$parentBarGroups" parentKey="bargroups" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
+						<Offset x="3" y="-30"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-10" y="45"/>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
 				<Frames>
 					<Frame name="$parentList" parentKey="list">
 						<Anchors>
@@ -1225,27 +1330,28 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 								</ScrollChild>
 								<Scripts>
 									<OnLoad>
-										--Ion.ObjectListScrollFrame_OnLoad(self)
+										--Ion.BarGroupScrollFrame_OnLoad(self)
 									</OnLoad>
 									<OnShow>
-										--Ion.ObjectListScrollFrameUpdate()
+										--Ion.BarGroupScrollFrameUpdate()
 									</OnShow>
 									<OnVerticalScroll>
-										--FauxScrollFrame_OnVerticalScroll(self, offset, 2, Ion.ObjectListScrollFrameUpdate)
+										--FauxScrollFrame_OnVerticalScroll(self, offset, 2, Ion.BarGroupScrollFrameUpdate)
 									</OnVerticalScroll>
 								</Scripts>
 							</ScrollFrame>
 						</Frames>
 						<Scripts>
 							<OnLoad>
-								--Ion.ObjectList_OnLoad(self)
+								--Ion.BarGroup_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						IonObjectOptions = self
+						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+						self:SetBackdropColor(0,0,0,0.5)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1283,24 +1389,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 					</OnLoad>
 					<OnClick>
 						Ion:BarEditor_DeleteBar(self)
-					</OnClick>
-				</Scripts>
-			</Button>
-
-			<Button name="$parentRaiseButtons" parent="IonBarEditorBarOptionsDelete" parentKey="raise" inherits="IonButtonTemplate1">
-				<Size x="149" y="25"/>
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="IonBarEditorBarOptionsBindEdit" relativePoint="RIGHT">
-						<Offset x="4" y="0"/>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						self.type = "raise"
-						--self.text:SetText(Ion.Strings.RAISE_BUTTONS)
-					</OnLoad>
-					<OnClick>
-						--Ion.RaiseButtons()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -1383,259 +1471,11 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
 				<HighlightTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
-
-			<ColorSelect name="IonColorPicker" parent="UIParent" frameStrata="TOOLTIP" enableMouse="true" movable="true" enableKeyboard="true">
-				<Size x="200" y="120"/>
-				<Backdrop bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="3" right="3" top="3" bottom="3"/>
-					</BackgroundInsets>
-				</Backdrop>
-				<ColorWheelTexture name="$parentColorPickerWheel">
-					<Size x="80" y="80"/>
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="10" y="-10"/>
-						</Anchor>
-					</Anchors>
-				</ColorWheelTexture>
-				<ColorWheelThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
-					<Size x="10" y="10"/>
-					<TexCoords left="0" right="0.15625" top="0" bottom="0.625"/>
-				</ColorWheelThumbTexture>
-				<ColorValueTexture>
-					<Size x="20" y="80"/>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentColorPickerWheel" relativePoint="RIGHT">
-							<Offset x="20" y="0"/>
-						</Anchor>
-					</Anchors>
-				</ColorValueTexture>
-				<ColorValueThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
-					<Size x="32" y="12"/>
-					<TexCoords left="0.25" right="1.0" top="0" bottom="0.875"/>
-				</ColorValueThumbTexture>
-				<Frames>
-					<!--
-					<EditBox name="$parentRedValue" parentKey="redvalue" inherits="IonEditBoxTemplate3" letters="4">
-						<Anchors>
-							<Anchor point="TOPRIGHT">
-								<Offset x="-10" y="-5"/>
-							</Anchor>
-						</Anchors>
-						<Layers>
-							<Layer level="ARTWORK">
-								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="RIGHT" text="R">
-									<Anchors>
-										<Anchor point="RIGHT" relativePoint="LEFT">
-											<Offset x="-1" y="0"/>
-										</Anchor>
-									</Anchors>
-									<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnTabPressed>
-								self:GetParent().greenvalue:SetFocus()
-								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
-							</OnTabPressed>
-							<OnEnterPressed>
-								self:ClearFocus()
-								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
-							</OnEnterPressed>
-						</Scripts>
-					</EditBox>
-					<EditBox name="$parentGreenValue" parentKey="greenvalue" inherits="IonEditBoxTemplate3" letters="4">
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativeTo="$parentRedValue" relativePoint="BOTTOMRIGHT">
-								<Offset x="0" y="0"/>
-							</Anchor>
-						</Anchors>
-						<Layers>
-							<Layer level="ARTWORK">
-								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="RIGHT" text="G">
-									<Anchors>
-										<Anchor point="RIGHT" relativePoint="LEFT">
-											<Offset x="-1" y="0"/>
-										</Anchor>
-									</Anchors>
-									<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnTabPressed>
-								self:GetParent().bluevalue:SetFocus()
-								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
-							</OnTabPressed>
-							<OnEnterPressed>
-								self:ClearFocus()
-								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
-							</OnEnterPressed>
-						</Scripts>
-					</EditBox>
-					<EditBox name="$parentBlueValue" parentKey="bluevalue" inherits="IonEditBoxTemplate3" letters="4">
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativeTo="$parentGreenValue" relativePoint="BOTTOMRIGHT">
-								<Offset x="0" y="0"/>
-							</Anchor>
-						</Anchors>
-						<Layers>
-							<Layer level="ARTWORK">
-								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="RIGHT" text="B">
-									<Anchors>
-										<Anchor point="RIGHT" relativePoint="LEFT">
-											<Offset x="-1" y="0"/>
-										</Anchor>
-									</Anchors>
-									<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnTabPressed>
-								self:GetParent().hexvalue:SetFocus()
-								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
-							</OnTabPressed>
-							<OnEnterPressed>
-								self:ClearFocus()
-								self:GetParent():SetColorRGB(self:GetParent().redvalue:GetText(), self:GetParent().greenvalue:GetText(), self:GetParent().bluevalue:GetText())
-							</OnEnterPressed>
-						</Scripts>
-					</EditBox>
-					<EditBox name="$parentHexValue" parentKey="hexvalue" inherits="IonEditBoxTemplate3">
-						<Size x="55" y="21"/>
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativeTo="$parentBlueValue" relativePoint="BOTTOMRIGHT">
-								<Offset x="0" y="0"/>
-							</Anchor>
-						</Anchors>
-						<Layers>
-							<Layer level="ARTWORK">
-								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="RIGHT" text="Hex">
-									<Anchors>
-										<Anchor point="RIGHT" relativePoint="LEFT">
-											<Offset x="-1" y="0"/>
-										</Anchor>
-									</Anchors>
-									<Color r="1.0" g="1.0" b="1.0" a="1.0"/>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnTextChanged>
-								self:SetText((self:GetText()):gsub("%X", ""):upper())
-							</OnTextChanged>
-							<OnTabPressed>
-								self:GetParent().redvalue:SetFocus()
-								hex = self:GetText()
-								local rhex, ghex, bhex = string.sub(hex, 1, 2), string.sub(hex, 3, 4), string.sub(hex, 5, 6)
-								local r, g, b = tonumber(rhex, 16), tonumber(ghex, 16), tonumber(bhex, 16)
-								r = r/255
-								g = g/255
-								b = b/255
-								self:GetParent():SetColorRGB(r, g, b)
-							</OnTabPressed>
-							<OnEnterPressed>
-								self:ClearFocus()
-								hex = self:GetText()
-								local rhex, ghex, bhex = string.sub(hex, 1, 2), string.sub(hex, 3, 4), string.sub(hex, 5, 6)
-								local r, g, b = tonumber(rhex, 16), tonumber(ghex, 16), tonumber(bhex, 16)
-								r = r/255
-								g = g/255
-								b = b/255
-								self:GetParent():SetColorRGB(r, g, b)
-							</OnEnterPressed>
-						</Scripts>
-					</EditBox>
-					-->
-					<Button name="$parentDone" inherits="IonButtonTemplate1">
-						<Size x="60" y="25"/>
-						<Anchors>
-							<Anchor point="BOTTOMLEFT">
-								<Offset x="10" y="10"/>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								--self.text:SetText(Ion.Strings.DONE)
-								self.parent = self:GetParent()
-							</OnLoad>
-							<OnClick>
-								PlaySound("gsTitleOptionOK")
-								self.parent:Hide()
-								if (self.parent.updateFunc) then
-									self.parent.updateFunc(self.parent)
-									self.parent.updateFunc = nil
-								end
-							</OnClick>
-						</Scripts>
-					</Button>
-					<Button name="$parentCancel" inherits="IonButtonTemplate1">
-						<Size x="60" y="25"/>
-						<Anchors>
-							<Anchor point="BOTTOMRIGHT">
-								<Offset x="-10" y="10"/>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnLoad>
-								--self.text:SetText(Ion.Strings.CANCEL)
-								self.parent = self:GetParent()
-							</OnLoad>
-							<OnClick>
-								PlaySound("gsTitleOptionOK")
-								self.parent:Hide()
-								self.parent.updateFunc = nil
-							</OnClick>
-						</Scripts>
-					</Button>
-				</Frames>
-				<Scripts>
-					<OnLoad>
-						self:SetBackdropColor(0, 0, 0, 1)
-						self:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
-						self:SetFrameStrata("TOOLTIP")
-					</OnLoad>
-					<OnShow>
-						local r,g,b = self:GetColorRGB()
-						--self.redvalue:SetText(r); self.redvalue:SetCursorPosition(0)
-						--self.greenvalue:SetText(g); self.greenvalue:SetCursorPosition(0)
-						--self.bluevalue:SetText(b); self.bluevalue:SetCursorPosition(0)
-						--self.hexvalue:SetText(string.upper(string.format("%02x%02x%02x", math.ceil((r*255)), math.ceil((g*255)), math.ceil((b*255))))); self.hexvalue:SetCursorPosition(0)
-					</OnShow>
-					<OnColorSelect>
-						--self.redvalue:SetText(r)
-						--self.greenvalue:SetText(g)
-						--self.bluevalue:SetText(b)
-						--self.hexvalue:SetText(string.upper(string.format("%02x%02x%02x", math.ceil((r*255)), math.ceil((g*255)), math.ceil((b*255)))))
-					</OnColorSelect>
-				</Scripts>
-			</ColorSelect>
 		</Frames>
 		<Scripts>
 			<OnLoad>
 				Ion:BarEditor_OnLoad(self)
 			</OnLoad>
-			<OnEvent>
-
-			</OnEvent>
-			<OnShow>
-
-			</OnShow>
-			<OnHide>
-
-			</OnHide>
-			<OnUpdate>
-
-			</OnUpdate>
 			<OnDragStart>
 				self:StartMoving()
 			</OnDragStart>
@@ -1664,7 +1504,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</BackgroundInsets>
 		</Backdrop>
 		<Frames>
-			<Button name="$parentDone" toplevel="true" frameStrata="TOOLTIP">
+			<Button name="$parentDone" parentKey="done" toplevel="true" frameStrata="TOOLTIP">
 				<Size x="32" y="32"/>
 				<Anchors>
 					<Anchor point="TOPRIGHT">
@@ -1694,9 +1534,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			<OnHide>
 				Ion:ObjectEditor_OnHide(self)
 			</OnHide>
-			<OnUpdate>
-				--Ion.ObjectEditor_OnUpdate(self, elasped)
-			</OnUpdate>
 			<OnDragStart>
 				self:StartMoving()
 			</OnDragStart>
@@ -1782,6 +1619,91 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 					</OnLoad>
 				</Scripts>
 			</Frame>
+
+			<ScrollFrame name="$parentIconList"  frameStrata="TOOLTIP" enableMouse="true" parentKey="iconlist" inherits="IonScrollFrameTemplate1" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentActionList" relativePoint="TOPRIGHT">
+						<Offset x="2" y="-45"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-37" y="14"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Frame>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="0" y="45"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="28" y="-5"/>
+							</Anchor>
+						</Anchors>
+						<Backdrop bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="18"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="8"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="3" right="3" top="2" bottom="2"/>
+							</BackgroundInsets>
+						</Backdrop>
+						<Scripts>
+							<OnLoad>
+								self:SetBackdropColor(0, 0, 0, 1)
+								self:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Button toplevel="true" frameStrata="TOOLTIP">
+						<Size x="32" y="32"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT">
+								<Offset x="30" y="46"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								self:GetParent():Hide()
+							</OnClick>
+						</Scripts>
+						<NormalTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+						<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+						<HighlightTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+					</Button>
+				</Frames>
+				<ScrollChild>
+					<Frame name="$parentScrollChildFrame">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="5" y="-5"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="-5" y="5"/>
+							</Anchor>
+						</Anchors>
+					</Frame>
+					<Scripts>
+						<OnShow>
+							--self:SetValue(0)
+						</OnShow>
+					</Scripts>
+				</ScrollChild>
+				<Scripts>
+					<OnLoad>
+						self.offset = 0
+						self.scrollbar = _G[self:GetName().."ScrollBar"]
+						self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
+						self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
+						self.parent = self:GetParent()
+					</OnLoad>
+					<OnVerticalScroll>
+						FauxScrollFrame_OnVerticalScroll(self, offset, 1, Ion.MacroIconListUpdate)
+					</OnVerticalScroll>
+				</Scripts>
+			</ScrollFrame>
 		</Frames>
 		<Scripts>
 			<OnLoad>

@@ -616,6 +616,52 @@
 		</NormalTexture>
 	</CheckButton>
 
+	<GameTooltip name="IonBindingsEditor" inherits="GameTooltipTemplate" parent="UIParent" enableMouse="true" toplevel="true" movable="true" frameStrata="TOOLTIP" hidden="true">
+		<Size x="128" y="64"/>
+		<Anchors>
+			<Anchor point="TOP" relativeTo="UIParent" relativePoint="TOP">
+				<Offset x="0" y="-125"/>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button name="ItemRefCloseButton">
+				<Size x="32" y="32"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="1" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide()
+						self.wasShown = nil
+						IonLatencyButton.hover = nil
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Ion:BindingsEditor_OnLoad(self)
+			</OnLoad>
+			<OnShow>
+				Ion:BindingsEditor_OnShow(self)
+			</OnShow>
+			<OnHide>
+				Ion:BindingsEditor_OnHide(self)
+			</OnHide>
+			<OnDragStart>
+				self:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</GameTooltip>
+
 	<Frame name="IonMiniOrbTemplate" virtual="true">
 		<Size x="14" y="14"/>
 		<Layers>

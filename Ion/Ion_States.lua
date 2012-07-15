@@ -90,7 +90,7 @@ Ion.MANAGED_ACTION_STATES = {
 	},
 
 	vehicle = {
-		states = "[vehicleui] vehicle1; laststate",
+		states = "[vehicleui] vehicle1; [bonusbar:5] vehicle1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 13,

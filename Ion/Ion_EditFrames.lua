@@ -10,8 +10,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
 
 local BARIndex, BTNIndex, EDITIndex = ION.BARIndex, ION.BTNIndex, ION.EDITIndex
 
-local editmode = false
-
 local sIndex = ION.sIndex
 local cIndex = ION.cIndex
 
@@ -156,17 +154,17 @@ end
 
 function ION:ToggleEditFrames(show, hide)
 
-	if (editmode or hide) then
+	if (ION.EditFrameShown or hide) then
 
-		editmode = false
+		ION.EditFrameShown = false
 
 		for index, OBJEDITOR in pairs(EDITIndex) do
-			OBJEDITOR:Hide(); OBJEDITOR.object.editmode = editmode
+			OBJEDITOR:Hide(); OBJEDITOR.object.editmode = ION.EditFrameShown
 			OBJEDITOR:SetFrameStrata("LOW")
 		end
 
 		for _,bar in pairs(BARIndex) do
-			bar:UpdateObjectGrid(editmode)
+			bar:UpdateObjectGrid(ION.EditFrameShown)
 			if (bar.handler:GetAttribute("assertstate")) then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
 			end
@@ -185,10 +183,10 @@ function ION:ToggleEditFrames(show, hide)
 		ION:ToggleBars(nil, true)
 		ION:ToggleBindings(nil, true)
 
-		editmode = true
+		ION.EditFrameShown = true
 
 		for index, OBJEDITOR in pairs(EDITIndex) do
-			OBJEDITOR:Show(); OBJEDITOR.object.editmode = editmode
+			OBJEDITOR:Show(); OBJEDITOR.object.editmode = ION.EditFrameShown
 
 			if (OBJEDITOR.object.bar) then
 				OBJEDITOR:SetFrameStrata(OBJEDITOR.object.bar:GetFrameStrata())
@@ -197,7 +195,7 @@ function ION:ToggleEditFrames(show, hide)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			bar:UpdateObjectGrid(editmode)
+			bar:UpdateObjectGrid(ION.EditFrameShown)
 		end
 	end
 end

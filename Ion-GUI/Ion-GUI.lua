@@ -15,6 +15,8 @@ local LGUI = LibStub("AceLocale-3.0"):GetLocale("IonGUI")
 
 local GUIData = ION.RegisteredGUIData
 
+local ICONS = ION.iIndex
+
 ION.Editors = {}
 
 IonGUIGDB = {
@@ -36,16 +38,18 @@ local chkOptions = {
 	[1] = { [0] = "AUTOHIDE", LGUI.AUTOHIDE, 1, "AutoHideBar" },
 	[2] = { [0] = "SHOWGRID", LGUI.SHOWGRID, 1, "ShowGridSet" },
 	[3] = { [0] = "SPELLGLOW", LGUI.SPELLGLOW, 1, "SpellGlowSet" },
-	[4] = { [0] = "SNAPTO", LGUI.SNAPTO, 1, "SnapToBar" },
-	[5] = { [0] = "DUALSPEC", LGUI.DUALSPEC, 1, "DualSpecSet" },
-	[6] = { [0] = "HIDDEN", LGUI.HIDDEN, 1, "ConcealBar" },
-	[7] = { [0] = "LOCKBAR", LGUI.LOCKBAR, 1, "LockSet" },
-	[8] = { [0] = "LOCKBAR", LGUI.LOCKBAR_SHIFT, 0.9, "LockSet", "shift" },
-	[9] = { [0] = "LOCKBAR", LGUI.LOCKBAR_CTRL, 0.9, "LockSet", "ctrl" },
-	[10] = { [0] = "LOCKBAR", LGUI.LOCKBAR_ALT, 0.9, "LockSet", "alt" },
-	[11] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS, 1, "ToolTipSet" },
-	[12] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS_ENH, 0.9, "ToolTipSet", "enhanced" },
-	[13] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS_COMBAT, 0.9, "ToolTipSet", "combat" },
+	[4] = { [0] = "SPELLGLOW", LGUI.SPELLGLOW_DEFAULT, 1, "SpellGlowSet", "default" },
+	[5] = { [0] = "SPELLGLOW", LGUI.SPELLGLOW_ALT, 1, "SpellGlowSet", "alt" },
+	[6] = { [0] = "SNAPTO", LGUI.SNAPTO, 1, "SnapToBar" },
+	--[7] = { [0] = "DUALSPEC", LGUI.DUALSPEC, 1, "DualSpecSet" },
+	[7] = { [0] = "HIDDEN", LGUI.HIDDEN, 1, "ConcealBar" },
+	[8] = { [0] = "LOCKBAR", LGUI.LOCKBAR, 1, "LockSet" },
+	[9] = { [0] = "LOCKBAR", LGUI.LOCKBAR_SHIFT, 0.9, "LockSet", "shift" },
+	[10] = { [0] = "LOCKBAR", LGUI.LOCKBAR_CTRL, 0.9, "LockSet", "ctrl" },
+	[11] = { [0] = "LOCKBAR", LGUI.LOCKBAR_ALT, 0.9, "LockSet", "alt" },
+	[12] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS, 1, "ToolTipSet" },
+	[13] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS_ENH, 0.9, "ToolTipSet", "enhanced" },
+	[14] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS_COMBAT, 0.9, "ToolTipSet", "combat" },
 }
 
 local adjOptions = {
@@ -63,52 +67,6 @@ local adjOptions = {
 	[11] = { [0] = "ALPHAUP", LGUI.ALPHAUP, 2, "AlphaUpSet", nil, nil, nil, ION.AlphaUps },
 	[12] = { [0] = "ALPHAUP", LGUI.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
 }
-
---[[
-	[1] = "",
-	[2] = "CreateNewBar",
-	[3] = "DeleteBar",
-	[4] = "ToggleBars",
-	[5] = "AddObjects",
-	[6] = "RemoveObjects",
-	[7] = "",
-	[8] = "ToggleBindings",
-	[9] = "ScaleBar",
-	[10] = "SnapToBar",
-	[11] = "AutoHideBar",
-	[12] = "ConcealBar",
-	[13] = "ShapeBar",
-	[14] = "NameBar",
-	[15] = "StrataSet",
-	[16] = "AlphaSet",
-	[17] = "AlphaUpSet",
-	[18] = "ArcStartSet",
-	[19] = "ArcLengthSet",
-	[20] = "ColumnsSet",
-	[21] = "PadHSet",
-	[22] = "PadVSet",
-	[23] = "PadHVSet",
-	[24] = "XAxisSet",
-	[25] = "YAxisSet",
-	[26] = "SetState",
-	[27] = "SetVisibility",
-	[28] = "ShowGridSet",
-	[29] = "LockSet",
-	[30] = "ToolTipSet",
-	[31] = "SpellGlowSet",
-	[32] = "BindTextSet",
-	[33] = "MacroTextSet",
-	[34] = "CountTextSet",
-	[35] = "CDTextSet",
-	[36] = "CDAlphaSet",
-	[37] = "AuraTextSet",
-	[38] = "AuraIndSet",
-	[39] = "UpClicksSet",
-	[40] = "DownClicksSet",
-	[41] = "SetTimerLimit",
-	[42] = "PrintStateList",
-	[43] = "PrintBarTypes",
-]]--
 
 local function IonPanelTemplates_DeselectTab(tab)
 
@@ -211,6 +169,11 @@ function ION:UpdateBarGUI()
 
 	if (bar and GUIData[bar.class]) then
 
+		if (IonBarEditor:IsVisible()) then
+			IonBarEditor.count.text:SetText(bar.objType.." "..LGUI.COUNT..": |cffffffff"..bar.objCount.."|r")
+			IonBarEditor.barname:SetText(bar.gdata.name)
+		end
+
 		if (IonBarEditor.baropt:IsVisible()) then
 
 			local yoff, anchor, last, adjHeight = -10
@@ -223,7 +186,7 @@ function ION:UpdateBarGUI()
 
 				editor.tab1:Click()
 
-				editor:SetPoint("BOTTOMLEFT", 0, 155)
+				editor:SetPoint("BOTTOMLEFT", 0, 165)
 
 				adjHeight = 151
 
@@ -233,18 +196,44 @@ function ION:UpdateBarGUI()
 				editor.tab1:Disable()
 				editor.tab2:Disable()
 
-				editor:SetPoint("BOTTOMLEFT", 0, 275)
+				editor:SetPoint("BOTTOMLEFT", 0, 285)
 
 				adjHeight = 271
 			end
 
 			for i,f in ipairs(barOpt.pri) do
-				f:SetChecked(bar.cdata[f.option])
+				if (f.option == "stance" and (GetNumShapeshiftForms() < 1 or ION.class == "DEATHKNIGHT" or ION.class == "PALADIN" or ION.class == "HUNTER")) then
+					f:SetChecked(nil)
+					f:Disable()
+					f.text:SetTextColor(0.5,0.5,0.5)
+				else
+					f:SetChecked(bar.cdata[f.option])
+					f:Enable()
+					f.text:SetTextColor(1,0.82,0)
+				end
 			end
 
 			for i,f in ipairs(barOpt.sec) do
 				f:SetChecked(bar.cdata[f.option])
 			end
+
+			wipe(popupData)
+
+			for state, value in pairs(ION.STATES) do
+
+				if (bar.cdata.paged and state:find("paged")) then
+
+					popupData[value] = state:match("%d+")
+
+				elseif (bar.cdata.stance and state:find("stance")) then
+
+					popupData[value] = state:match("%d+")
+
+				end
+			end
+
+			ION.EditBox_PopUpInitialize(barOpt.remap.popup, popupData)
+			ION.EditBox_PopUpInitialize(barOpt.remapto.popup, popupData)
 
 			for i,f in ipairs(barOpt.chk) do
 				f:ClearAllPoints(); f:Hide()
@@ -274,15 +263,10 @@ function ION:UpdateBarGUI()
 
 					if (not f.disabled) then
 
-						if (f:GetScale() < 1) then
-							f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 30, (yoff/f:GetScale())+3)
-							yoff = yoff-f:GetHeight()-5
-						else
-							f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
-							yoff = yoff-f:GetHeight()-8
-						end
-
+						f:SetPoint("TOPRIGHT", f.parent, "TOPRIGHT", -10, yoff)
 						f:Show()
+
+						yoff = yoff-f:GetHeight()-6
 					end
 				end
 			end
@@ -378,13 +362,158 @@ function ION:UpdateObjectGUI(reset)
 	end
 end
 
+local function updateBarName(frame)
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+
+		bar.gdata.name = frame:GetText()
+
+		bar.text:SetText(bar.gdata.name)
+
+		bar:SaveData()
+
+		frame:ClearFocus()
+
+		ION.BarListScrollFrameUpdate()
+	end
+end
+
+local function resetBarName(frame)
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+		frame:SetText(bar.gdata.name)
+		frame:ClearFocus()
+	end
+end
+
+local function countOnMouseWheel(frame, delta)
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+
+		if (delta > 0) then
+			bar:AddObjects()
+		else
+			bar:RemoveObjects()
+		end
+	end
+end
+
 function Ion:BarEditor_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.7, 0.7, 0.7)
-	frame:SetBackdropColor(0,0,0,1)
+	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
+	frame:SetBackdropColor(0,0,0,0.8)
 	frame:RegisterEvent("ADDON_LOADED")
 	frame:RegisterForDrag("LeftButton", "RightButton")
 	frame.bottom = 0
+
+	frame.tabs = {}
+
+	local function TabsOnClick(cTab, silent)
+
+		for tab, panel in pairs(frame.tabs) do
+
+			if (tab == cTab) then
+				--IonPanelTemplates_SelectTab(tab);
+				tab:SetChecked(1)
+				if (MouseIsOver(cTab)) then
+					PlaySound("igCharacterInfoTab")
+				end
+				panel:Show()
+			else
+				tab:SetChecked(nil)
+				--IonPanelTemplates_DeselectTab(tab)
+				panel:Hide()
+			end
+
+		end
+	end
+
+	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
+	f:SetWidth(140)
+	f:SetHeight(25)
+	f:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -28, -10)
+	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
+	f:SetFrameLevel(frame:GetFrameLevel()+1)
+	f:SetChecked(nil)
+	f.text:SetText("")
+	frame.tab3 = f; frame.tabs[f] = frame.bargroups
+
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
+	f:SetWidth(140)
+	f:SetHeight(25)
+	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)
+	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
+	f:SetFrameLevel(frame:GetFrameLevel()+1)
+	f:SetChecked(nil)
+	f.text:SetText(LGUI.VISIBILITY)
+	frame.tab2 = f; frame.tabs[f] = frame.barvis
+
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
+	f:SetWidth(140)
+	f:SetHeight(25)
+	f:SetPoint("RIGHT", frame.tab2, "LEFT", -5, 0)
+	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
+	f:SetFrameLevel(frame:GetFrameLevel()+1)
+	f:SetChecked(1)
+	f.text:SetText(LGUI.GENERAL)
+	frame.tab1 = f; frame.tabs[f] = frame.baropt
+
+	f = CreateFrame("EditBox", nil, frame, "IonEditBoxTemplateSmall")
+	f:SetWidth(157)
+	f:SetHeight(26)
+	f:SetPoint("RIGHT", frame.tab1, "LEFT", -5, 0)
+	f:SetPoint("TOPLEFT", frame.barlist, "TOPRIGHT", 4, 0)
+	f:SetBackdrop({
+		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 16,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
+	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
+	f:SetBackdropColor(0,0,0,1)
+	f:SetScript("OnEnterPressed", updateBarName)
+	f:SetScript("OnTabPressed", updateBarName)
+	f:SetScript("OnEscapePressed", resetBarName)
+	frame.barname = f
+
+	f = CreateFrame("Frame", nil, frame)
+	f:SetWidth(250)
+	f:SetHeight(30)
+	f:SetPoint("BOTTOM", 0, 10)
+	f:SetScript("OnMouseWheel", function(self, delta) countOnMouseWheel(self, delta) end)
+	f:EnableMouseWheel(true)
+	frame.count = f
+
+	local text = f:CreateFontString(nil, "ARTWORK", "DialogButtonNormalText")
+	text:SetPoint("CENTER")
+	text:SetJustifyH("CENTER")
+	text:SetText("Test Object Count: 12")
+	frame.count.text = text
+
+	f = CreateFrame("Button", nil, frame.count)
+	f:SetWidth(32)
+	f:SetHeight(40)
+	f:SetPoint("LEFT", text, "RIGHT", 10, -1)
+	f:SetNormalTexture("Interface\\AddOns\\Ion\\Images\\AdjustOptionRight-Up")
+	f:SetPushedTexture("Interface\\AddOns\\Ion\\Images\\AdjustOptionRight-Down")
+	f:SetHighlightTexture("Interface\\AddOns\\Ion\\Images\\AdjustOptionRight-Highlight")
+	f:SetScript("OnClick", function(self) if (ION.CurrentBar) then ION.CurrentBar:AddObjects() end end)
+
+	f = CreateFrame("Button", nil, frame.count)
+	f:SetWidth(32)
+	f:SetHeight(40)
+	f:SetPoint("RIGHT", text, "LEFT", -10, -1)
+	f:SetNormalTexture("Interface\\AddOns\\Ion\\Images\\AdjustOptionLeft-Up")
+	f:SetPushedTexture("Interface\\AddOns\\Ion\\Images\\AdjustOptionLeft-Down")
+	f:SetHighlightTexture("Interface\\AddOns\\Ion\\Images\\AdjustOptionLeft-Highlight")
+	f:SetScript("OnClick", function(self) if (ION.CurrentBar) then ION.CurrentBar:RemoveObjects() end end)
 
 end
 
@@ -405,7 +534,7 @@ function ION.BarListScrollFrame_OnLoad(self)
 	self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	self:SetBackdropColor(0,0,0,0.5)
 
-	local button, lastButton, rowButton, count, fontString, script = false, false, false, 0
+	local button, lastButton, rowButton, count, script = false, false, false, 0
 
 	for i=1,numShown do
 
@@ -477,11 +606,10 @@ function ION.BarListScrollFrame_OnLoad(self)
 				self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
 			end)
 
-		fontString = button:CreateFontString(button:GetName().."Index", "ARTWORK", "GameFontNormalSmall")
-		fontString:SetPoint("TOPLEFT", button, "TOPLEFT", 5, 0)
-		fontString:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -5, 0)
-		fontString:SetJustifyH("LEFT")
-		button.name = fontString
+		button.name = button:CreateFontString(button:GetName().."Index", "ARTWORK", "GameFontNormalSmall")
+		button.name:SetPoint("TOPLEFT", button, "TOPLEFT", 5, 0)
+		button.name:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -5, 0)
+		button.name:SetJustifyH("LEFT")
 
 		button:SetID(i)
 		button:SetFrameLevel(self:GetFrameLevel()+2)
@@ -700,13 +828,23 @@ function ION:BarOptions_OnLoad(frame)
 		f:SetWidth(18)
 		f:SetHeight(18)
 		f:SetScript("OnClick", chkOptionOnClick)
-		f:SetScale(options[2])
+		--f:SetScale(options[2])
+		f:SetScale(1)
+		f:SetHitRectInsets(-100, 0, 0, 0)
+		f:SetCheckedTexture("Interface\\Addons\\Ion\\Images\\RoundCheckGreen.tga")
 
-		f.text:SetText(options[1])
 		f.option = options[0]
 		f.func = options[3]
 		f.modtext = options[4]
 		f.parent = frame
+
+		if (f.modtext) then
+			f.text:SetFontObject("GameFontNormalSmall")
+		end
+
+		f.text:ClearAllPoints()
+		f.text:SetPoint("LEFT", -120, 0)
+		f.text:SetText(options[1])
 
 		if (f.modtext) then
 			f.primary = primary
@@ -715,6 +853,65 @@ function ION:BarOptions_OnLoad(frame)
 		end
 
 		tinsert(barOpt.chk, f)
+	end
+end
+
+local function setBarActionState(frame)
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+		bar:SetState(frame.option)
+	end
+end
+
+local function remapOnTextChanged(frame)
+
+	local bar = ION.CurrentBar
+
+	if (bar and bar.cdata.remap and frame.value) then
+
+		local map, remap
+
+		for states in gmatch(bar.cdata.remap, "[^;]+") do
+
+			map, remap = (":"):split(states)
+
+			if (map == frame.value) then
+
+				barOpt.remapto.value = remap
+
+				if (bar.cdata.paged) then
+					barOpt.remapto:SetText(ION.STATES["paged"..remap])
+				elseif (bar.cdata.stance) then
+					barOpt.remapto:SetText(ION.STATES["stance"..remap])
+				end
+			end
+		end
+	else
+		barOpt.remapto:SetText("")
+	end
+end
+
+local function remapToOnTextChanged(frame)
+
+	local bar = ION.CurrentBar
+
+	if (bar and bar.cdata.remap and frame.value) then
+
+		local value = barOpt.remap.value
+
+		bar.cdata.remap = bar.cdata.remap:gsub(value..":%d+", value..":"..frame.value)
+
+		if (bar.cdata.paged) then
+			bar.paged.registered = false
+		elseif (bar.cdata.stance) then
+			bar.stance.registered = false
+		end
+
+		bar.stateschanged = true
+
+		bar:Update()
 	end
 end
 
@@ -791,8 +988,7 @@ function ION:StateEditor_OnLoad(frame)
 			f:SetID(index)
 			f:SetWidth(18)
 			f:SetHeight(18)
-			f:SetScript("OnShow", function() end)
-			f:SetScript("OnClick", function() end)
+			f:SetScript("OnClick", setBarActionState)
 			f.text:SetText(LGUI[state:upper()])
 			f.option = state
 
@@ -800,7 +996,7 @@ function ION:StateEditor_OnLoad(frame)
 				f:SetPoint("TOPLEFT", frame.presets.primary, "TOPLEFT", 10, -10)
 				anchor = f; last = f
 			else
-				f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -5)
+				f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -15)
 				last = f
 			end
 
@@ -818,8 +1014,7 @@ function ION:StateEditor_OnLoad(frame)
 			f:SetID(index)
 			f:SetWidth(18)
 			f:SetHeight(18)
-			f:SetScript("OnShow", function() end)
-			f:SetScript("OnClick", function() end)
+			f:SetScript("OnClick", setBarActionState)
 			f.text:SetText(LGUI[state:upper()])
 			f.option = state
 
@@ -847,10 +1042,12 @@ function ION:StateEditor_OnLoad(frame)
 	f.text:SetText(LGUI.REMAP)
 	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOMLEFT", 7, 5)
 	f:SetPoint("BOTTOMRIGHT", frame.presets, "BOTTOM", -20, 5)
-	f:SetScript("OnTextChanged", function() end)
-	f:SetScript("OnShow", function() end)
+	f:SetScript("OnTextChanged", remapOnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self:ClearFocus() end)
-	frame.remap = f
+	f.popup:ClearAllPoints()
+	f.popup:SetPoint("BOTTOMLEFT")
+	f.popup:SetPoint("BOTTOMRIGHT")
+	barOpt.remap = f
 
 	f = CreateFrame("EditBox", "$parentRemapTo", frame.presets, "IonDropDownOptionFull")
 	f:SetWidth(160)
@@ -859,10 +1056,12 @@ function ION:StateEditor_OnLoad(frame)
 	f.text:SetText(LGUI.REMAPTO)
 	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOM", 5, 5)
 	f:SetPoint("BOTTOMRIGHT", frame.presets, "BOTTOMRIGHT", -28, 5)
-	f:SetScript("OnTextChanged", function() end)
-	f:SetScript("OnShow", function() end)
+	f:SetScript("OnTextChanged", remapToOnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self:ClearFocus() end)
-	frame.remapto = f
+	f.popup:ClearAllPoints()
+	f.popup:SetPoint("BOTTOMLEFT")
+	f.popup:SetPoint("BOTTOMRIGHT")
+	barOpt.remapto = f
 end
 
 local function adjOptionOnTextChanged(edit, frame)
@@ -983,6 +1182,16 @@ local function adjOptionSub(frame, onupdate)
 	end
 end
 
+local function adjOptionOnMouseWheel(frame, delta)
+
+	if (delta > 0) then
+		adjOptionAdd(frame)
+	else
+		adjOptionSub(frame)
+	end
+
+end
+
 function ION.AdjustableOptions_OnLoad(frame)
 
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
@@ -995,6 +1204,8 @@ function ION.AdjustableOptions_OnLoad(frame)
 		f:SetWidth(200)
 		f:SetHeight(24)
 		f:SetScript("OnShow", function() end)
+		f:SetScript("OnMouseWheel", function(self, delta) adjOptionOnMouseWheel(self, delta) end)
+		f:EnableMouseWheel(true)
 
 		f.text:SetText(options[1]..":")
 		f.method = options[2]
@@ -1072,8 +1283,8 @@ end
 
 function ION:ObjectEditor_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.7, 0.7, 0.7);
-	frame:SetBackdropColor(0,0,0,1);
+	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
+	frame:SetBackdropColor(0,0,0,0.8)
 	frame:RegisterForDrag("LeftButton", "RightButton")
 	frame.bottom = 0
 
@@ -1119,7 +1330,7 @@ function ION:ActionListScrollFrame_OnLoad(frame)
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	frame:SetBackdropColor(0,0,0,0.5)
 
-	local button, lastButton, rowButton, count, fontString, script = false, false, false, 0
+	local button, lastButton, rowButton, count, script = false, false, false, 0
 
 	for i=1,numShown do
 
@@ -1182,11 +1393,10 @@ function ION:ActionListScrollFrame_OnLoad(frame)
 				end
 			end)
 
-		fontString = button:CreateFontString(button:GetName().."Index", "ARTWORK", "GameFontNormalSmall")
-		fontString:SetPoint("TOPLEFT", button, "TOPLEFT", 5, 0)
-		fontString:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -5, 0)
-		fontString:SetJustifyH("LEFT")
-		button.name = fontString
+		button.name = button:CreateFontString(button:GetName().."Index", "ARTWORK", "GameFontNormalSmall")
+		button.name:SetPoint("TOPLEFT", button, "TOPLEFT", 5, 0)
+		button.name:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -5, 0)
+		button.name:SetJustifyH("LEFT")
 
 		button:SetID(i)
 		button:SetFrameLevel(frame:GetFrameLevel()+2)
@@ -1318,6 +1528,8 @@ function ION:MacroEditorUpdate()
 
 			if (not data.macro_Icon) then
 				IBTNE.macroicon.icon:SetTexture(button.iconframeicon:GetTexture())
+			elseif (data.macro_Icon == "BLANK") then
+				IBTNE.macroicon.icon:SetTexture("")
 			else
 				IBTNE.macroicon.icon:SetTexture(data.macro_Icon)
 			end
@@ -1325,19 +1537,6 @@ function ION:MacroEditorUpdate()
 			IBTNE.nameedit:SetText(data.macro_Name)
 			IBTNE.noteedit:SetText(data.macro_Note)
 			IBTNE.usenote:SetChecked(data.macro_UseNote)
-
-		else
-			if (state) then
-				print("State: "..state)
-			else
-				print("no state")
-			end
-
-			if (spec) then
-				print("Spec: "..spec)
-			else
-				print("no spec")
-			end
 		end
 	end
 end
@@ -1370,7 +1569,7 @@ function ION:ButtonEditor_OnHide(frame)
 
 end
 
-function macroText_OnEditFocusLost(self)
+local function macroText_OnEditFocusLost(self)
 
 	self.hasfocus = nil
 
@@ -1386,7 +1585,7 @@ function macroText_OnEditFocusLost(self)
 	end
 end
 
-function macroText_OnTextChanged(self)
+local function macroText_OnTextChanged(self)
 
 	if (self.hasfocus) then
 
@@ -1399,7 +1598,7 @@ function macroText_OnTextChanged(self)
 	end
 end
 
-function macroNameEdit_OnTextChanged(self)
+local function macroNameEdit_OnTextChanged(self)
 
 	if (strlen(self:GetText()) > 0) then
 		self.text:Hide()
@@ -1416,7 +1615,7 @@ function macroNameEdit_OnTextChanged(self)
 	end
 end
 
-function macroNoteEdit_OnTextChanged(self)
+local function macroNoteEdit_OnTextChanged(self)
 
 	if (strlen(self:GetText()) > 0) then
 		self.text:Hide()
@@ -1436,7 +1635,7 @@ function macroNoteEdit_OnTextChanged(self)
 	end
 end
 
-function macroOnEditFocusLost(self)
+local function macroOnEditFocusLost(self)
 
 	self.hasfocus = nil
 
@@ -1451,6 +1650,84 @@ function macroOnEditFocusLost(self)
 	end
 end
 
+local function macroIconOnClick(frame)
+
+	if (frame.iconlist:IsVisible()) then
+		frame.iconlist:Hide()
+	else
+		frame.iconlist:Show()
+	end
+
+	frame:SetChecked(nil)
+
+end
+
+local IconList = {}
+
+local function updateIconList()
+
+	wipe(IconList)
+
+	local search
+
+	if (IonButtonEditor.search) then
+		search = IonButtonEditor.search:GetText()
+		if (strlen(search) < 1) then
+			search = nil
+		end
+	end
+
+	for index, icon in ipairs(ICONS) do
+		if (search) then
+			if (icon:lower():find(search:lower()) or index == 1) then
+				tinsert(IconList, icon)
+			end
+		else
+			tinsert(IconList, icon)
+		end
+	end
+end
+
+function ION.MacroIconListUpdate(frame)
+
+	if (not frame) then
+		frame = IonButtonEditor.iconlist
+	end
+
+	local numIcons, offset, index, texture, blankSet = #IconList+1, FauxScrollFrame_GetOffset(frame)
+
+	for i,btn in ipairs(frame.buttons) do
+
+		index = (offset * 10) + i
+
+		texture = IconList[index]
+
+		if (index < numIcons) then
+
+			btn.icon:SetTexture(texture)
+			btn:Show()
+			btn.texture = texture
+
+		elseif (not blankSet) then
+
+			btn.icon:SetTexture("")
+			btn:Show()
+			btn.texture = "BLANK"
+			blankSet = true
+
+		else
+			btn.icon:SetTexture("")
+			btn:Hide()
+			btn.texture = ICONS[1]
+		end
+
+	end
+
+	FauxScrollFrame_Update(frame, ceil(numIcons/10), 1, 1, nil, nil, nil, nil, nil, nil, true)
+
+end
+
+
 function ION:ButtonEditor_OnLoad(frame)
 
 	frame:RegisterForDrag("LeftButton", "RightButton")
@@ -1459,7 +1736,7 @@ function ION:ButtonEditor_OnLoad(frame)
 
 	frame.panels = {}
 
-	local f, fontStr
+	local f
 
 	f = CreateFrame("Frame", nil, frame)
 	f:SetPoint("TOPLEFT", frame.actionlist, "TOPRIGHT", 10, -10)
@@ -1491,23 +1768,63 @@ function ION:ButtonEditor_OnLoad(frame)
 		edgeSize = 16,
 		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
 	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	f:SetBackdropColor(0,0,0,0.5)
+	f:SetBackdropColor(0,0,0,1)
 	frame.macroeditBG = f
 
 	f = CreateFrame("CheckButton", nil, frame.macro, "IonMacroIconButtonTemplate")
 	f:SetID(0)
-	f:SetPoint("BOTTOMLEFT", frame.macroedit, "TOPLEFT", -6, 17)
-	f:SetWidth(44)
-	f:SetHeight(44)
-	f:SetScript("OnShow", function() end)
+	f:SetPoint("BOTTOMLEFT", frame.macroedit, "TOPLEFT", -8, 15)
+	f:SetWidth(56)
+	f:SetHeight(56)
 	f:SetScript("OnEnter", function() end)
 	f:SetScript("OnLeave", function() end)
-	f.onclick_func = function() end
+	f:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
+	f.onclick_func = macroIconOnClick
 	f.onupdate_func = function() end
 	f.elapsed = 0
 	f.click = false
 	f.parent = frame
+	f.iconlist = frame.iconlist
+	f.iconlist:SetScript("OnShow", function(self) self.scrollbar.scrollStep = 1 IonObjectEditor.done:Hide() updateIconList() ION.MacroIconListUpdate(self) end)
+	f.iconlist:SetScript("OnHide", function() IonObjectEditor.done:Show() end)
 	frame.macroicon = f
+
+	f = CreateFrame("Button", nil, frame.macro)
+	f:SetPoint("TOPLEFT", frame.macroicon, "TOPRIGHT", 0, 3)
+	f:SetWidth(35)
+	f:SetHeight(35)
+	f:SetScript("OnClick", function(self) end)
+	f:SetNormalTexture("Interface\\Buttons\\UI-RotationRight-Button-Up")
+	f:SetPushedTexture("Interface\\Buttons\\UI-RotationRight-Button-Down")
+	f:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Round")
+	frame.otherspec = f
+
+	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplateGrey")
+	f:SetWidth(105)
+	f:SetHeight(26)
+	f:SetPoint("LEFT", frame.otherspec, "RIGHT", -3, 1)
+	f:SetScript("OnClick", function(self) end)
+	f:SetChecked(nil)
+	f.text:SetText("")
+	frame.macromaster = f
+
+	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplateGrey")
+	f:SetWidth(105)
+	f:SetHeight(26)
+	f:SetPoint("LEFT", frame.macromaster, "RIGHT", 0, 0)
+	f:SetScript("OnClick", function(self) end)
+	f:SetChecked(nil)
+	f.text:SetText("")
+	frame.snippets = f
+
+	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplateGrey")
+	f:SetWidth(105)
+	f:SetHeight(26)
+	f:SetPoint("LEFT", frame.snippets, "RIGHT", 0, 0)
+	f:SetScript("OnClick", function(self) end)
+	f:SetChecked(nil)
+	f.text:SetText("")
+	frame.somethingsomething = f
 
 	f = CreateFrame("EditBox", nil, frame.macro)
 	f:SetMultiLine(false)
@@ -1516,8 +1833,8 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetTextInsets(5,5,5,5)
 	f:SetFontObject("GameFontHighlight")
 	f:SetJustifyH("CENTER")
-	f:SetPoint("TOPLEFT", frame.macroicon, "TOPRIGHT", 5, 2)
-	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOP", -20, 25)
+	f:SetPoint("TOPLEFT", frame.macroicon, "BOTTOMRIGHT", 3, 27)
+	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOP", -20, 4)
 	f:SetScript("OnTextChanged", macroNameEdit_OnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
 	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
@@ -1525,11 +1842,10 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
 	frame.nameedit = f
 
-	fontStr = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
-	fontStr:SetPoint("CENTER")
-	fontStr:SetJustifyH("CENTER")
-	fontStr:SetText(LGUI.MACRO_NAME)
-	f.text = fontStr
+	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
+	f.text:SetPoint("CENTER")
+	f.text:SetJustifyH("CENTER")
+	f.text:SetText(LGUI.MACRO_NAME)
 
 	f = CreateFrame("Frame", nil, frame.nameedit)
 	f:SetPoint("TOPLEFT", 0, 0)
@@ -1555,7 +1871,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetTextInsets(5,5,5,5)
 	f:SetFontObject("GameFontHighlightSmall")
 	f:SetPoint("TOPLEFT", frame.nameedit, "TOPRIGHT", 0, 0)
-	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOPRIGHT",-15, 25)
+	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOPRIGHT",-15, 4)
 	f:SetScript("OnTextChanged", macroNoteEdit_OnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
 	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
@@ -1563,11 +1879,10 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
 	frame.noteedit = f
 
-	fontStr = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
-	fontStr:SetPoint("CENTER", 10, 0)
-	fontStr:SetJustifyH("CENTER")
-	fontStr:SetText(LGUI.MACRO_EDITNOTE)
-	f.text = fontStr
+	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
+	f.text:SetPoint("CENTER", 10, 0)
+	f.text:SetJustifyH("CENTER")
+	f.text:SetText(LGUI.MACRO_EDITNOTE)
 
 	f = CreateFrame("Frame", nil, frame.noteedit)
 	f:SetPoint("TOPLEFT", 0, 0)
@@ -1595,6 +1910,113 @@ function ION:ButtonEditor_OnLoad(frame)
 	f.tooltipText = LGUI.MACRO_USENOTE
 	frame.usenote = f
 	frame.noteedit.cb = f
+
+	frame.iconlist.buttons = {}
+
+	local count, x, y = 0, 26, -16
+
+	for i=1,80 do
+
+		f = CreateFrame("CheckButton", nil, frame.iconlist, "IonMacroIconButtonTemplate")
+		f:SetID(i)
+		f:SetFrameLevel(frame.iconlist:GetFrameLevel()+2)
+		f:SetScript("OnEnter", function(self)
+							self.fl = self:GetFrameLevel()
+							self:SetFrameLevel(self.fl+1)
+							self:GetNormalTexture():SetPoint("TOPLEFT", -7, 7)
+							self:GetNormalTexture():SetPoint("BOTTOMRIGHT", 7, -7)
+							self.slot:SetPoint("TOPLEFT", -10, 10)
+							self.slot:SetPoint("BOTTOMRIGHT", 10, -10)
+						end)
+		f:SetScript("OnLeave", function(self)
+							self:SetFrameLevel(self.fl)
+							self:GetNormalTexture():SetPoint("TOPLEFT", 2, -2)
+							self:GetNormalTexture():SetPoint("BOTTOMRIGHT", -2, 2)
+							self.slot:SetPoint("TOPLEFT", -2, 2)
+							self.slot:SetPoint("BOTTOMRIGHT", 2, -2)
+						end)
+		f.onclick_func = function(self, button, down)
+
+							local object = ION.CurrentObject
+
+							if (object and object.data) then
+
+								if (self.texture == "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK") then
+									object.data.macro_Icon = false
+								else
+									object.data.macro_Icon = self.texture
+								end
+
+								object:MACRO_UpdateIcon()
+
+								ION:UpdateObjectGUI()
+							end
+
+							self:SetFrameLevel(self.fl-1)
+							self.click = true
+							self.elapsed = 0
+							self:GetParent():Hide()
+							self:SetChecked(nil)
+					   end
+
+		count = count + 1
+
+		f:SetPoint("CENTER", frame.iconlist, "TOPLEFT", x, y)
+
+		if (count == 10) then
+			x = 26; y = y - 35; count = 0
+		else
+			x = x + 37
+		end
+
+		tinsert(frame.iconlist.buttons, f)
+
+	end
+
+	f = CreateFrame("EditBox", nil, frame.iconlist, "IonEditBoxTemplateSmall")
+	f:SetWidth(230)
+	f:SetHeight(30)
+	f:SetJustifyH("LEFT")
+	f:SetTextInsets(22, 0, 0, 0)
+	f:SetPoint("TOPLEFT", 8, 36)
+	f:SetBackdrop({
+		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 16,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
+	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
+	f:SetBackdropColor(0,0,0,1)
+	f:SetScript("OnShow", function(self) self:SetText("") end)
+	f:SetScript("OnEnterPressed", function(self) updateIconList() ION.MacroIconListUpdate() self:ClearFocus() self.hasfocus = nil end)
+	f:SetScript("OnTabPressed", function(self) updateIconList() ION.MacroIconListUpdate() self:ClearFocus() self.hasfocus = nil end)
+	f:SetScript("OnEscapePressed", function(self) self:SetText("") updateIconList() ION.MacroIconListUpdate()  self:ClearFocus() self.hasfocus = nil end)
+	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.cancel:Show() self.hasfocus = true end)
+	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() self.cancel:Hide() end self.hasfocus = nil end)
+	f:SetScript("OnTextChanged", function(self) if (strlen(self:GetText()) < 1 and not self.hasfocus) then self.text:Show() self.cancel:Hide() end end)
+	frame.search = f
+
+	f.cancel = CreateFrame("Button", nil, f)
+	f.cancel:SetWidth(20)
+	f.cancel:SetHeight(20)
+	f.cancel:SetPoint("RIGHT", -3, 0)
+	f.cancel:SetScript("OnClick", function(self) self.parent:SetText("") updateIconList() ION.MacroIconListUpdate()  self.parent:ClearFocus() self.parent.hasfocus = nil end)
+	f.cancel:Hide()
+	f.cancel.tex = f.cancel:CreateTexture(nil, "OVERLAY")
+	f.cancel.tex:SetTexture("Interface\\FriendsFrame\\ClearBroadcastIcon")
+	f.cancel.tex:SetAlpha(0.7)
+	f.cancel.tex:SetAllPoints()
+	f.cancel.parent = f
+
+	f.searchicon = f:CreateTexture(nil, "OVERLAY")
+	f.searchicon:SetTexture("Interface\\Common\\UI-Searchbox-Icon")
+	f.searchicon:SetPoint("LEFT", 6, -2)
+
+	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontDisable");
+	f.text:SetPoint("LEFT", 22, 0)
+	f.text:SetJustifyH("LEFT")
+	f.text:SetText(LGUI.SEARCH)
 
 end
 

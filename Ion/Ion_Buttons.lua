@@ -792,7 +792,11 @@ function BUTTON:MACRO_SetSpellIcon(spell)
 
 	elseif (#self.data.macro_Icon > 0) then
 
-		self.iconframeicon:SetTexture(self.data.macro_Icon)
+		if (self.data.macro_Icon == "BLANK") then
+			self.iconframeicon:SetTexture("")
+		else
+			self.iconframeicon:SetTexture(self.data.macro_Icon)
+		end
 
 	else
 
@@ -855,7 +859,11 @@ function BUTTON:MACRO_SetItemIcon(item)
 
 	elseif (#self.data.macro_Icon > 0) then
 
-		self.iconframeicon:SetTexture(self.data.macro_Icon)
+		if (self.data.macro_Icon == "BLANK") then
+			self.iconframeicon:SetTexture("")
+		else
+			self.iconframeicon:SetTexture(self.data.macro_Icon)
+		end
 	else
 
 		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
@@ -2858,9 +2866,11 @@ function BUTTON:SetType(save, kill, init)
 						]])
 
 		if (ION.TOCVersion < 50000) then
+			self:SetAttribute("possessID_Offset", 120)
 			self:SetAttribute("vehicleID_Offset", 120)
 			self:SetAttribute("vehicleExit_Macro", "/click VehicleMenuBarLeaveButton")
 		else
+			self:SetAttribute("possessID_Offset", 157)
 			self:SetAttribute("vehicleID_Offset", 132)
 			self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
 		end
@@ -2893,7 +2903,11 @@ function BUTTON:SetType(save, kill, init)
 
 							--new action ID's for vehicle 133-138
 
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+							--if (UnitHasVehicleUI("player")) then
+								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+							--else
+							--	self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("possessID_Offset"))
+							--end
 						end
 
 						self:Show()
@@ -2946,7 +2960,7 @@ function BUTTON:SetFauxState(state)
 				self:SetAttribute("type", "macro")
 
 				if (UnitHasVehicleUI("player")) then
-					self:SetAttribute("*macrotext*", "/click OverrideActionBarLeaveFrameLeaveButton")
+					self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
 				else
 					self:SetAttribute("*macrotext*", "/click PossessButton2")
 				end
@@ -2957,8 +2971,18 @@ function BUTTON:SetFauxState(state)
 
 				self:SetAttribute("type", "action")
 
-				self:SetAttribute("*action*", self:GetAttribute("barPos")+120)
+				--new action ID's for possess 157-162
+
+				--new action ID's for vehicle 133-138
+
+				--if (UnitHasVehicleUI("player")) then
+					self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+				--else
+				--	self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("possessID_Offset"))
+				--end
 			end
+
+			self:Show()
 
 		else
 

@@ -12,8 +12,6 @@ local BTNIndex = ION.BTNIndex
 
 local BINDIndex = ION.BINDIndex
 
-local editmode = false
-
 local sIndex = ION.sIndex
 local cIndex = ION.cIndex
 
@@ -243,59 +241,30 @@ function BINDER:OnEnter()
 
 	self.select:Show()
 
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+	IonBindingsEditor:ClearLines()
 
-	if (button.data.buttonType == "macro") then
+	IonBindingsEditor:SetText(" ")
+	IonBindingsEditor:AddDoubleLine(L.KEYBIND_TOOLTIP1, self.bindType:gsub("^%l", string.upper).." "..button.id, 1.0, 1.0, 1.0, 0, 1, 0)
+	IonBindingsEditor:AddLine(" ")
+	IonBindingsEditor:AddLine(format(L.KEYBIND_TOOLTIP2, self.bindType, self.bindType, self.bindType), 1.0, 1.0, 1.0)
+	IonBindingsEditor:AddLine(" ")
+	IonBindingsEditor:AddDoubleLine(L.KEYBIND_TOOLTIP3, self:GetBindkeyList(button), 1.0, 1.0, 1.0, 0, 1, 0)
+	IonBindingsEditor:AddLine(" ")
 
-		local spell, item, link = button.macrospell, button.macroitem
+	IonBindingsEditor:Show()
 
-		if (spell) then
-
-			if (sIndex[spell:lower()]) then
-
-				GameTooltip:SetSpellBookItem(sIndex[spell:lower()].index, sIndex[spell:lower()].booktype)
-
-			elseif (type(button.data.macro_Icon) == "table") then
-
-				GameTooltip:SetHyperlink("spell:"..button.data.macro_Icon[5])
-			end
-
-		elseif (item) then
-
-			_, link = GetItemInfo(item)
-
-			if (link) then
-				GameTooltip:SetHyperlink(link)
-			end
-		else
-			if (strlen(button.data.macro_Text) > 0) then
-				GameTooltip:SetText(button.data.macro_Text)
-			else
-				GameTooltip:SetText(L.EMPTY_BUTTON)
-			end
+	for i = 1, select("#", IonBindingsEditor:GetRegions()) do
+		local region = select(i, IonBindingsEditor:GetRegions())
+		if (region and region.SetJustifyH) then
+			region:SetJustifyH("CENTER")
+			region:SetJustifyV("CENTER")
 		end
-
-	elseif (button.data.buttonType == "") then
-
-
-	elseif (button.data.buttonType == "") then
-
-
 	end
-
-	GameTooltip:AddLine(format(L.KEYBIND_TOOLTIP1, self.bindType:gsub("^%l", string.upper).." "..button.id).."|r", 1.0, 1.0, 1.0)
-	GameTooltip:AddLine(format(L.KEYBIND_TOOLTIP2, self.bindType, self.bindType), 1.0, 1.0, 1.0)
-	GameTooltip:AddLine(L.KEYBIND_TOOLTIP3..self:GetBindkeyList(button).."|r")
-
-	GameTooltip:Show()
-
 end
 
 function BINDER:OnLeave()
 
 	self.select:Hide()
-
-	GameTooltip:Hide()
 
 end
 
@@ -427,28 +396,46 @@ function BUTTON:CreateBindFrame(index)
 
 end
 
+function ION:BindingsEditor_OnLoad(frame)
+
+	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
+	frame:SetBackdropColor(0,0,0,0.8)
+	frame:RegisterForDrag("LeftButton")
+
+end
+
+function ION:BindingsEditor_OnShow(frame)
+
+end
+
+function ION:BindingsEditor_OnHide(frame)
+
+end
+
 function ION:ToggleBindings(show, hide)
 
-	if (editmode or hide) then
+	if (ION.BindingMode or hide) then
 
-		editmode = false
+		ION.BindingMode = false
 
 		for index, binder in pairs(BINDIndex) do
-			binder:Hide(); binder.button.editmode = editmode
+			binder:Hide(); binder.button.editmode = ION.BindingMode
 			binder:SetFrameStrata("LOW")
 			if (not ION.BarsShown) then
 				binder.button:SetGrid()
 			end
 		end
 
+		IonBindingsEditor:Hide()
+
 	else
 
 		ION:ToggleEditFrames(nil, true)
 
-		editmode = true
+		ION.BindingMode = true
 
 		for index, binder in pairs(BINDIndex) do
-			binder:Show(); binder.button.editmode = editmode
+			binder:Show(); binder.button.editmode = ION.BindingMode
 
 			if (binder.button.bar) then
 				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
@@ -456,5 +443,8 @@ function ION:ToggleBindings(show, hide)
 				binder.button:SetGrid(true)
 			end
 		end
+
+		IonBindingsEditor:SetOwner(UIParent, "ANCHOR_PRESERVE")
+
 	end
 end

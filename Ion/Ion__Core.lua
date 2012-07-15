@@ -788,6 +788,13 @@ function ION:UpdateStanceStrings()
 
 	if (ION.class == "DRUID" or
 	    ION.class == "MONK" or
+	    ION.class == "PRIEST") then
+
+	end
+
+
+	if (ION.class == "DRUID" or
+	    ION.class == "MONK" or
 	    ION.class == "PRIEST" or
 	    ION.class == "ROGUE" or
 	    ION.class == "WARRIOR" or
@@ -1877,6 +1884,17 @@ local function control_OnEvent(self, event, ...)
 		if (ION.TOCVersion >= 50000) then
 
 		end
+
+		GameMenuFrame:HookScript("OnShow", function(self)
+
+				if (ION.BarsShown or ION.EditFrameShown or ION.BindingMode) then
+
+					HideUIPanel(self)
+					ION:ToggleEditFrames(nil, true)
+					ION:ToggleBindings(nil, true)
+					ION:ToggleBars(nil, true)
+
+				end end)
 
 	elseif (event == "VARIABLES_LOADED") then
 

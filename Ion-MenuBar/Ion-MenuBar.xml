@@ -267,26 +267,18 @@
 	</Button>
 
 	<GameTooltip name="IonMenuBarTooltip" inherits="GameTooltipTemplate" parent="UIParent" enableMouse="true" toplevel="true" movable="true" frameStrata="TOOLTIP" hidden="true">
-		<Size>
-			<AbsDimension x="128" y="64"/>
-		</Size>
+		<Size x="128" y="64"/>
 		<Anchors>
 			<Anchor point="BOTTOMRIGHT">
-				<Offset>
-					<AbsDimension x="150" y="80"/>
-				</Offset>
+				<Offset x="150" y="80"/>
 			</Anchor>
 		</Anchors>
 		<Frames>
 			<Button name="ItemRefCloseButton">
-				<Size>
-					<AbsDimension x="32" y="32"/>
-				</Size>
+				<Size x="32" y="32"/>
 				<Anchors>
 					<Anchor point="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="1" y="0"/>
-						</Offset>
+						<Offset x="1" y="0"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>

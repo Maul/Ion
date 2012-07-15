@@ -376,7 +376,7 @@ end
 function HANDLER:SetAutoHide(bar)
 
 	if (bar.gdata.autoHide) then
-		autoHideIndex[bar] = self; self.fadeSpeed = bar.gdata.fadeSpeed
+		autoHideIndex[bar] = self; self.fadeSpeed = (bar.gdata.fadeSpeed*bar.gdata.fadeSpeed)
 	else
 		autoHideIndex[bar] = nil
 	end
@@ -384,7 +384,7 @@ function HANDLER:SetAutoHide(bar)
 	if (bar.gdata.alphaUp == L.OFF) then
 		alphaupIndex[bar] = nil
 	else
-		alphaupIndex[bar] = self; self.fadeSpeed = bar.gdata.fadeSpeed
+		alphaupIndex[bar] = self; self.fadeSpeed = (bar.gdata.fadeSpeed*bar.gdata.fadeSpeed)
 	end
 end
 
@@ -2224,7 +2224,8 @@ function BAR:SetState(msg, gui, silent)
 		self.stateschanged = true
 
 		self:Update()
-	else
+
+	elseif (not gui) then
 
 		wipe(statetable)
 
