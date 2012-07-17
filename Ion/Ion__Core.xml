@@ -115,7 +115,7 @@
 				GameTooltip:Hide()
 			</OnLeave>
 		</Scripts>
-		<ButtonText name="$parentText" inherits="GameFontNormalSmall" justifyH="CENTER" parentKey="text">
+		<ButtonText name="$parentText" inherits="GameFontHighlight" justifyH="CENTER" parentKey="text">
 			<Anchors>
 				<Anchor point="TOPLEFT"/>
 				<Anchor point="BOTTOMRIGHT"/>
@@ -278,6 +278,50 @@
 			</Frame>
 		</Frames>
 	</Button>
+
+	<CheckButton name="IonOptionsCheckButtonTemplate" virtual="true">
+		<Size x="26" y="26"/>
+		<HitRectInsets>
+			<AbsInset left="0" right="-50" top="0" bottom="0"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" parentkey="text" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT">
+							<Offset x="3" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnClick>
+				if ( self:GetChecked() ) then
+					PlaySound("igMainMenuOptionCheckBoxOn");
+				else
+					PlaySound("igMainMenuOptionCheckBoxOff");
+				end
+			</OnClick>
+			<OnEnter>
+				if ( self.tooltipText ) then
+					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+					GameTooltip:SetText(self.tooltipText)
+				end
+				if ( self.tooltipRequirement ) then
+					GameTooltip:AddLine(self.tooltipRequirement)
+				end
+				GameTooltip:Show();
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+		<NormalTexture file="Interface\Addons\Ion\Images\RoundCheckBox.tga"/>
+		<CheckedTexture file="Interface\Addons\Ion\Images\RoundCheck.tga"/>
+		<DisabledTexture file="Interface\Addons\Ion\Images\RoundCheckBox.tga"/>
+		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+	</CheckButton>
 
 	<CheckButton name="IonActionButtonTemplate" inherits="SecureActionButtonTemplate, SecureHandlerEnterLeaveTemplate" virtual="true" clampedToScreen="false">
 		<Size x="43" y="43"/>
@@ -616,51 +660,422 @@
 		</NormalTexture>
 	</CheckButton>
 
-	<GameTooltip name="IonBindingsEditor" inherits="GameTooltipTemplate" parent="UIParent" enableMouse="true" toplevel="true" movable="true" frameStrata="TOOLTIP" hidden="true">
-		<Size x="128" y="64"/>
-		<Anchors>
-			<Anchor point="TOP" relativeTo="UIParent" relativePoint="TOP">
-				<Offset x="0" y="-125"/>
-			</Anchor>
-		</Anchors>
+	<EditBox name="IonEditBoxTemplateSmall" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
+		<Size x="37" y="21"/>
+		<Scripts>
+			<OnEscapePressed>
+				self:ClearFocus()
+			</OnEscapePressed>
+			<OnEditFocusLost>
+				self:HighlightText(0, 0)
+			</OnEditFocusLost>
+			<OnEditFocusGained>
+				self:HighlightText()
+			</OnEditFocusGained>
+		</Scripts>
+		<FontString name="$parentFont" justifyH="CENTER" inherits="GameFontHighlight"/>
+	</EditBox>
+
+	<EditBox name="IonDropDownOption" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
 		<Frames>
-			<Button name="ItemRefCloseButton">
-				<Size x="32" y="32"/>
+			<Button name="$parentButton" parentKey="button" hidden="false">
 				<Anchors>
-					<Anchor point="TOPRIGHT">
-						<Offset x="1" y="0"/>
+					<Anchor point="TOPLEFT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						self:GetParent():Hide()
-						self.wasShown = nil
-						IonLatencyButton.hover = nil
+						self:GetParent().show = nil
+						self:GetParent().popup.timer = 0;
+						if (self:GetParent().popup:IsVisible()) then
+							self:GetParent().popup:Hide()
+						else
+							if (self:GetParent().popup.data) then
+								self:GetParent().popup:Show()
+							end
+						end
+						PlaySound("igMainMenuOptionCheckBoxOn")
 					</OnClick>
+					<OnEnter>
+						self:GetParent():SetBackdropBorderColor(1, 0.82, 0, 1)
+					</OnEnter>
+					<OnLeave>
+						self:GetParent():SetBackdropBorderColor(0, 0, 0, 0)
+					</OnLeave>
 				</Scripts>
-				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
-				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
-				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
+			<Frame name="$parentPopUp" parentkey="popup" toplevel="true" enableMouse="true" clampedToScreen="true">
+				<Anchors>
+					<Anchor point="CENTER">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="18"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="8"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="2" bottom="2"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						self.timer = 0
+						self.options = {}
+						self:RegisterEvent("ADDON_LOADED")
+						self:SetBackdropColor(0, 0, 0)
+						self:SetBackdropBorderColor(1, 0.82, 0)
+						self:Hide()
+					</OnLoad>
+					<OnShow>
+						self.timer = 0
+					</OnShow>
+					<OnHide>
+						self:GetParent().click = nil
+					</OnHide>
+					<OnUpdate>
+						self.timer = self.timer + elapsed
+						if (self:IsVisible() and self.timer > 5) then
+							if (not self:IsMouseOver()) then
+								self:Hide()
+							end
+						end
+					</OnUpdate>
+				</Scripts>
+			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				Ion:BindingsEditor_OnLoad(self)
+				self:RegisterEvent("PLAYER_LOGIN")
+				self:SetBackdropColor(0, 0, 0)
+				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
-			<OnShow>
-				Ion:BindingsEditor_OnShow(self)
-			</OnShow>
-			<OnHide>
-				Ion:BindingsEditor_OnHide(self)
-			</OnHide>
-			<OnDragStart>
-				self:StartMoving()
-			</OnDragStart>
-			<OnDragStop>
-				self:StopMovingOrSizing()
-			</OnDragStop>
+			<OnTabPressed>
+				self:ClearFocus()
+			</OnTabPressed>
+			<OnEnterPressed>
+				self:ClearFocus()
+			</OnEnterPressed>
+			<OnEscapePressed>
+				self:ClearFocus()
+			</OnEscapePressed>
+			<OnEditFocusLost>
+				self:HighlightText(0, 0)
+			</OnEditFocusLost>
+			<OnEditFocusGained>
+				self:HighlightText()
+			</OnEditFocusGained>
 		</Scripts>
-	</GameTooltip>
+		<FontString name="$parentFont" justifyH="CENTER" inherits="GameFontHighlight"/>
+	</EditBox>
+
+	<EditBox name="IonDropDownOptionFull" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
+		<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="14"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="20"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="3" right="3" top="2" bottom="2"/>
+			</BackgroundInsets>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" parentKey="text" justifyH="CENTER" inherits="GameFontNormalSmall" nonspacewrap="true">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOP">
+							<Offset x="0" y="1"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parentButton" hidden="false">
+				<Size x="20" y="20"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self:RegisterEvent("ADDON_LOADED")
+					</OnLoad>
+					<OnEvent>
+                                                if (... == "Ion") then
+							self:SetWidth(self:GetParent():GetHeight())
+							self:SetHeight(self:GetParent():GetHeight())
+                                                end
+					</OnEvent>
+					<OnClick>
+						self:GetParent().show = nil
+						self:GetParent().popup.timer = 0;
+						if (self:GetParent().popup:IsVisible()) then
+							self:GetParent().popup:Hide()
+						else
+							if (self:GetParent().popup.data) then
+								self:GetParent().popup:Show()
+							end
+						end
+						PlaySound("igMainMenuOptionCheckBoxOn")
+					</OnClick>
+				</Scripts>
+				<NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up"/>
+				<PushedTexture name="$parentPushedTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Down"/>
+				<DisabledTexture name="$parentDisabledTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Disabled"/>
+				<HighlightTexture name="$parentHighlightTexture" file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
+			<Frame name="$parentPopUp" parentKey="popup" toplevel="true" enableMouse="true" clampedToScreen="true">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="18"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="8"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="3" right="3" top="2" bottom="2"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						self.timer = 0
+						self.options = {}
+						self:RegisterEvent("ADDON_LOADED")
+						self:SetBackdropColor(0, 0, 0)
+						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+						self:Hide()
+					</OnLoad>
+					<OnShow>
+						self.timer = 0
+					</OnShow>
+					<OnHide>
+						self:GetParent().click = nil
+					</OnHide>
+					<OnUpdate>
+						self.timer = self.timer + elapsed
+						if (self:IsVisible() and self.timer > 5) then
+							if (not self:IsMouseOver()) then
+								self:Hide()
+							end
+						end
+					</OnUpdate>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:RegisterEvent("PLAYER_LOGIN")
+				self:SetBackdropColor(0, 0, 0, 0)
+				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+			</OnLoad>
+			<OnTabPressed>
+				self:ClearFocus()
+			</OnTabPressed>
+			<OnEnterPressed>
+				self:ClearFocus()
+			</OnEnterPressed>
+			<OnEscapePressed>
+				self:ClearFocus()
+			</OnEscapePressed>
+			<OnEditFocusLost>
+				self:HighlightText(0, 0)
+			</OnEditFocusLost>
+			<OnEditFocusGained>
+				self:HighlightText()
+			</OnEditFocusGained>
+		</Scripts>
+		<FontString name="$parentFont" justifyH="CENTER" inherits="GameFontHighlightSmall"/>
+	</EditBox>
+
+	<Frame name="IonAdjustOptionTemplate" virtual="true">
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="text" inherits="GameFontNormal" justifyH="LEFT" nonspacewrap="false">
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="CENTER">
+							<Offset x="-15" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="method1" enableMouse="true" hidden="true">
+				<Size x="100" y="24"/>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="CENTER">
+						<Offset x="5" y="0"/>
+					</Anchor>
+					<Anchor point="RIGHT">
+						<Offset x="-10" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Button parentKey="add" hidden="true">
+						<Size x="24" y="30"/>
+						<Anchors>
+							<Anchor point="RIGHT">
+								<Offset x="10" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.elapsed = 0
+								self:RegisterForClicks("AnyUp","AnyDown")
+							</OnLoad>
+							<OnClick>
+								Ion.IonAdjustOption_AddOnClick(self, button, down)
+							</OnClick>
+							<OnUpdate>
+								Ion.IonAdjustOption_AddOnUpdate(self, elapsed)
+							</OnUpdate>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\Ion\Images\AdjustOptionRight-Up"/>
+						<PushedTexture file="Interface\AddOns\Ion\Images\AdjustOptionRight-Down"/>
+						<HighlightTexture file="Interface\AddOns\Ion\Images\AdjustOptionRight-Highlight" alphaMode="ADD"/>
+					</Button>
+					<Button parentKey="sub" hidden="true">
+						<Size x="24" y="30"/>
+						<Anchors>
+							<Anchor point="LEFT">
+								<Offset x="-10" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.elapsed = 0
+								self:RegisterForClicks("AnyUp","AnyDown")
+							</OnLoad>
+							<OnClick>
+								Ion.IonAdjustOption_SubOnClick(self, button, down)
+							</OnClick>
+							<OnUpdate>
+								Ion.IonAdjustOption_SubOnUpdate(self, elapsed)
+							</OnUpdate>
+						</Scripts>
+						<NormalTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Up"/>
+						<PushedTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Down"/>
+						<HighlightTexture file="Interface\AddOns\Ion\Images\AdjustOptionLeft-Highlight" alphaMode="ADD"/>
+					</Button>
+					<EditBox parentKey="edit" inherits="IonEditBoxTemplateSmall" letters="6">
+						<Size x="70" y="24"/>
+						<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="14"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="20"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="3" right="3" top="2" bottom="2"/>
+							</BackgroundInsets>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self:SetBackdropColor(0, 0, 0, 0)
+								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+							</OnLoad>
+							<OnTabPressed>
+								self.hasfocus = nil
+								self:ClearFocus()
+							</OnTabPressed>
+							<OnEnterPressed>
+								self.hasfocus = nil
+								self:ClearFocus()
+							</OnEnterPressed>
+							<OnEditFocusGained>
+								self.hasfocus = true
+								self:GetParent().add:Show()
+								self:GetParent().sub:Show()
+								self:HighlightText()
+							</OnEditFocusGained>
+							<OnEditFocusLost>
+								self.hasfocus = nil
+							</OnEditFocusLost>
+						</Scripts>
+					</EditBox>
+				</Frames>
+			</Frame>
+			<Frame parentKey="method2" hidden="true">
+				<Size x="100" y="24"/>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="CENTER">
+						<Offset x="-5" y="0"/>
+					</Anchor>
+					<Anchor point="RIGHT">
+						<Offset x="0" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<EditBox parentKey="edit" inherits="IonDropDownOption">
+						<Size x="100" y="24"/>
+						<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+							<EdgeSize>
+								<AbsValue val="14"/>
+							</EdgeSize>
+							<TileSize>
+								<AbsValue val="20"/>
+							</TileSize>
+							<BackgroundInsets>
+								<AbsInset left="3" right="3" top="2" bottom="2"/>
+							</BackgroundInsets>
+						</Backdrop>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self:SetBackdropColor(0, 0, 0, 0)
+								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+							</OnLoad>
+						</Scripts>
+					</EditBox>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnUpdate>
+				if (self.method1:IsShown()) then
+					if (not self.method1.edit.hasfocus) then
+						if (not self.shown and MouseIsOver(self) and GetMouseFocus() == self.edit) then
+							self.method1.add:Show()
+							self.method1.sub:Show()
+							self.method1.edit:SetBackdropBorderColor(1, 0.82, 0, 1)
+							self.shown = true
+						elseif (self.shown and not MouseIsOver(self)) then
+							self.method1.add:Hide()
+							self.method1.sub:Hide()
+							self.method1.edit:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+							self.shown = nil
+						end
+					end
+				end
+			</OnUpdate>
+		</Scripts>
+	</Frame>
 
 	<Frame name="IonMiniOrbTemplate" virtual="true">
 		<Size x="14" y="14"/>
@@ -765,4 +1180,50 @@
 			</OnClick>
 		</Scripts>
 	</Button>
+
+	<GameTooltip name="IonBindingsEditor" inherits="GameTooltipTemplate" parent="UIParent" enableMouse="true" toplevel="true" movable="true" frameStrata="TOOLTIP" hidden="true">
+		<Size x="128" y="64"/>
+		<Anchors>
+			<Anchor point="TOP" relativeTo="UIParent" relativePoint="TOP">
+				<Offset x="0" y="-125"/>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button name="ItemRefCloseButton">
+				<Size x="32" y="32"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset x="1" y="0"/>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide()
+						self.wasShown = nil
+						IonLatencyButton.hover = nil
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Ion:BindingsEditor_OnLoad(self)
+			</OnLoad>
+			<OnShow>
+				Ion:BindingsEditor_OnShow(self)
+			</OnShow>
+			<OnHide>
+				Ion:BindingsEditor_OnHide(self)
+			</OnHide>
+			<OnDragStart>
+				self:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</GameTooltip>
 </Ui>

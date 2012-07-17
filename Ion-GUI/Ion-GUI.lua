@@ -17,8 +17,6 @@ local GUIData = ION.RegisteredGUIData
 
 local ICONS = ION.iIndex
 
-ION.Editors = {}
-
 IonGUIGDB = {
 	firstRun = true,
 }
@@ -183,10 +181,12 @@ function ION:UpdateBarGUI()
 
 				editor.tab1:Enable()
 				editor.tab2:Enable()
+				editor.tab1.text:SetTextColor(0.85, 0.85, 0.85)
+				editor.tab2.text:SetTextColor(0.85, 0.85, 0.85)
 
 				editor.tab1:Click()
 
-				editor:SetPoint("BOTTOMLEFT", 0, 165)
+				editor:SetPoint("BOTTOMLEFT", 0, 195)
 
 				adjHeight = 151
 
@@ -195,8 +195,10 @@ function ION:UpdateBarGUI()
 
 				editor.tab1:Disable()
 				editor.tab2:Disable()
+				editor.tab1.text:SetTextColor(0.4, 0.4, 0.4)
+				editor.tab2.text:SetTextColor(0.4, 0.4, 0.4)
 
-				editor:SetPoint("BOTTOMLEFT", 0, 285)
+				editor:SetPoint("BOTTOMLEFT", 0, 315)
 
 				adjHeight = 271
 			end
@@ -419,7 +421,6 @@ function Ion:BarEditor_OnLoad(frame)
 		for tab, panel in pairs(frame.tabs) do
 
 			if (tab == cTab) then
-				--IonPanelTemplates_SelectTab(tab);
 				tab:SetChecked(1)
 				if (MouseIsOver(cTab)) then
 					PlaySound("igCharacterInfoTab")
@@ -427,14 +428,13 @@ function Ion:BarEditor_OnLoad(frame)
 				panel:Show()
 			else
 				tab:SetChecked(nil)
-				--IonPanelTemplates_DeselectTab(tab)
 				panel:Hide()
 			end
 
 		end
 	end
 
-	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
+	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplateGrey")
 	f:SetWidth(140)
 	f:SetHeight(25)
 	f:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -28, -10)
@@ -444,7 +444,7 @@ function Ion:BarEditor_OnLoad(frame)
 	f.text:SetText("")
 	frame.tab3 = f; frame.tabs[f] = frame.bargroups
 
-	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplateGrey")
 	f:SetWidth(140)
 	f:SetHeight(25)
 	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)
@@ -454,7 +454,7 @@ function Ion:BarEditor_OnLoad(frame)
 	f.text:SetText(LGUI.VISIBILITY)
 	frame.tab2 = f; frame.tabs[f] = frame.barvis
 
-	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplateGrey")
 	f:SetWidth(140)
 	f:SetHeight(25)
 	f:SetPoint("RIGHT", frame.tab2, "LEFT", -5, 0)
@@ -927,18 +927,59 @@ function ION:StateEditor_OnLoad(frame)
 		for tab, panel in pairs(frame.tabs) do
 
 			if (tab == cTab) then
-				IonPanelTemplates_SelectTab(tab);
-				if (MouseIsOver(cTab)) then
+				if (MouseIsOver(cTab) and not tab.selected) then
 					PlaySound("igCharacterInfoTab")
 				end
 				panel:Show()
+				tab:SetHeight(33)
+				tab:SetBackdropBorderColor(0.7, 0.7, 0.7)
+				tab:SetBackdropColor(0.3,0.3,0.3,1)
+				tab.text:SetTextColor(1,0.82,0)
+
+				tab.selected = true
 			else
-				IonPanelTemplates_DeselectTab(tab); panel:Hide()
+				panel:Hide()
+				tab:SetHeight(28)
+				tab:SetBackdropBorderColor(0.5, 0.5, 0.5)
+				tab:SetBackdropColor(0.1,0.1,0.1,1)
+				tab.text:SetTextColor(0.85, 0.85, 0.85)
+
+				tab.selected = nil
 			end
 
 		end
 	end
 
+	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate2")
+	f:SetWidth(160)
+	f:SetHeight(33)
+	f:SetPoint("TOPLEFT", frame, "BOTTOMLEFT",5,4)
+	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
+	f:SetFrameLevel(frame:GetFrameLevel())
+	f:SetBackdropColor(0.3,0.3,0.3,1)
+	f.text:SetText(LGUI.PRESET_STATES)
+	f.selected = true
+	frame.tab1 = f; frame.tabs[f] = frame.presets
+
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate2")
+	f:SetWidth(160)
+	f:SetHeight(28)
+	f:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT",-5,4)
+	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
+	f:SetFrameLevel(frame:GetFrameLevel())
+	f.text:SetText(LGUI.CUSTOM_STATES)
+	frame.tab2 = f; frame.tabs[f] = frame.custom
+
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate2")
+	f:SetWidth(160)
+	f:SetHeight(28)
+	f:SetPoint("TOP", frame, "BOTTOM",0,0)
+	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
+	f:SetFrameLevel(frame:GetFrameLevel())
+	f:Hide()
+	frame.tab3 = f; frame.tabs[f] = frame.hidden
+
+	--[[
 	local f = CreateFrame("CheckButton", frame:GetName().."Preset", frame, "IonTopTabTemplate")
 	f:SetWidth(18)
 	f:SetHeight(18)
@@ -971,6 +1012,8 @@ function ION:StateEditor_OnLoad(frame)
 	frame.tab3 = f; frame.tabs[f] = frame.hidden
 
 	IonPanelTemplates_DeselectTab(frame.tab3); IonPanelTemplates_TabResize(frame.tab3, 0, nil, 120, 175)
+
+	]]--
 
 	local states, anchor, last, count = {}
 
@@ -1040,8 +1083,8 @@ function ION:StateEditor_OnLoad(frame)
 	f:SetHeight(25)
 	f:SetTextInsets(7,3,0,0)
 	f.text:SetText(LGUI.REMAP)
-	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOMLEFT", 7, 5)
-	f:SetPoint("BOTTOMRIGHT", frame.presets, "BOTTOM", -20, 5)
+	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOMLEFT", 7, 8)
+	f:SetPoint("BOTTOMRIGHT", frame.presets, "BOTTOM", -20, 8)
 	f:SetScript("OnTextChanged", remapOnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self:ClearFocus() end)
 	f.popup:ClearAllPoints()
@@ -1054,8 +1097,8 @@ function ION:StateEditor_OnLoad(frame)
 	f:SetHeight(25)
 	f:SetTextInsets(7,3,0,0)
 	f.text:SetText(LGUI.REMAPTO)
-	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOM", 5, 5)
-	f:SetPoint("BOTTOMRIGHT", frame.presets, "BOTTOMRIGHT", -28, 5)
+	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOM", 5, 8)
+	f:SetPoint("BOTTOMRIGHT", frame.presets, "BOTTOMRIGHT", -28, 8)
 	f:SetScript("OnTextChanged", remapToOnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self:ClearFocus() end)
 	f.popup:ClearAllPoints()
@@ -1233,54 +1276,6 @@ function ION.AdjustableOptions_OnLoad(frame)
 	end
 end
 
-function ION.IonAdjustOption_AddOnClick(frame, button, down)
-
-	frame.elapsed = 0
-	frame.pushed = frame:GetButtonState()
-
-	if (not down) then
-		if (frame:GetParent():GetParent().addfunc) then
-			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent())
-		end
-	end
-end
-
-function ION.IonAdjustOption_AddOnUpdate(frame, elapsed)
-
-	frame.elapsed = frame.elapsed + elapsed
-
-	if (frame.pushed == "NORMAL") then
-
-		if (frame.elapsed > 1 and frame:GetParent():GetParent().addfunc) then
-			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent(), true)
-		end
-	end
-end
-
-function ION.IonAdjustOption_SubOnClick(frame, button, down)
-
-	frame.elapsed = 0
-	frame.pushed = frame:GetButtonState()
-
-	if (not down) then
-		if (frame:GetParent():GetParent().subfunc) then
-			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent())
-		end
-	end
-end
-
-function ION.IonAdjustOption_SubOnUpdate(frame, elapsed)
-
-	frame.elapsed = frame.elapsed + elapsed
-
-	if (frame.pushed == "NORMAL") then
-
-		if (frame.elapsed > 1 and frame:GetParent():GetParent().subfunc) then
-			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent(), true)
-		end
-	end
-end
-
 function ION:ObjectEditor_OnLoad(frame)
 
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
@@ -1302,12 +1297,17 @@ function ION:ObjectEditor_OnShow(frame)
 		local objType = ION.CurrentObject.objType
 
 		if (ION.Editors[objType]) then
-			ION.Editors[objType][1]:Show()
+
+			local editor = ION.Editors[objType][1]
+
+			editor:SetParent(frame)
+			editor:SetAllPoints(frame)
+			editor:Show()
+
 			IOE:SetWidth(ION.Editors[objType][2])
 			IOE:SetHeight(ION.Editors[objType][3])
 		end
 	end
-
 end
 
 function ION:ObjectEditor_OnHide(frame)
@@ -1732,7 +1732,8 @@ function ION:ButtonEditor_OnLoad(frame)
 
 	frame:RegisterForDrag("LeftButton", "RightButton")
 
-	ION.Editors.ACTIONBUTTON = { frame, 550, 350, ION.ButtonEditorUpdate }
+	ION.Editors.ACTIONBUTTON[1] = frame
+	ION.Editors.ACTIONBUTTON[4] = ION.ButtonEditorUpdate
 
 	frame.panels = {}
 

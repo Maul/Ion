@@ -45,31 +45,48 @@ local GetTime = _G.GetTime
 local	UIDropDownMenu_AddButton = UIDropDownMenu_AddButton
 local	UIDropDownMenu_CreateInfo = UIDropDownMenu_CreateInfo
 local MirrorTimerColors = MirrorTimerColors
+
 local CASTING_BAR_ALPHA_STEP = CASTING_BAR_ALPHA_STEP
 local CASTING_BAR_FLASH_STEP = CASTING_BAR_FLASH_STEP
 local CASTING_BAR_HOLD_TIME = CASTING_BAR_HOLD_TIME
 
 local BarTextures = {
-	[1] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Default_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Default_2", "Default" },
-	[2] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Contrast_2", "Contrast" },
+	[1] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Default_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Default_2", LSTAT.BARFILL_DEFAULT },
+	[2] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Contrast_2", LSTAT.BARFILL_CONTRAST },
 	-- Following textures by Tonedef of WoWInterface
-	[3] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Carpaint_2", "Carpaint" },
-	[4] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Gel_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Gel_2", "Gel" },
-	[5] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Glassed_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Glassed_2", "Glassed" },
-	[6] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Soft_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Soft_2", "Soft" },
-	[7] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Velvet_3", "Velvet" },
+	[3] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Carpaint_2", LSTAT.BARFILL_CARPAINT },
+	[4] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Gel_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Gel_2", LSTAT.BARFILL_GEL },
+	[5] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Glassed_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Glassed_2", LSTAT.BARFILL_GLASSED },
+	[6] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Soft_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Soft_2", LSTAT.BARFILL_SOFT },
+	[7] = { "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Ion-StatusBars\\Images\\BarFill_Velvet_3", LSTAT.BARFILL_VELVET },
 }
+
+local BarTexturesData = {}
+
+do
+	for i,data in ipairs(BarTextures) do
+		BarTexturesData[i] = data[3]
+	end
+end
 
 local BarBorders = {
-	[1] = { "Tooltip", "Interface\\Tooltips\\UI-Tooltip-Border", 2, 2, 3, 3, 12, 12, -2, 3, 2, -3 },
-	[2] = { "Slider", "Interface\\Buttons\\UI-SliderBar-Border", 3, 3, 6, 6, 8, 8 , -1, 5, 1, -5 },
-	[3] = { "Dialog", "Interface\\AddOns\\Ion-StatusBars\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
-	[4] = { "None", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	[1] = { LSTAT.BORDER_TOOLTIP, "Interface\\Tooltips\\UI-Tooltip-Border", 2, 2, 3, 3, 12, 12, -2, 3, 2, -3 },
+	[2] = { LSTAT.BORDER_SLIDER, "Interface\\Buttons\\UI-SliderBar-Border", 3, 3, 6, 6, 8, 8 , -1, 5, 1, -5 },
+	[3] = { LSTAT.BORDER_DIALOG, "Interface\\AddOns\\Ion-StatusBars\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
+	[4] = { LSTAT.BORDER_NONE, "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 }
 
+local BarBordersData = {}
+
+do
+	for i,data in ipairs(BarBorders) do
+		BarBordersData[i] = data[1]
+	end
+end
+
 local BarOrientations = {
-	[1] = "Horizontal",
-	[2] = "Vertical",
+	[1] = LSTAT.ORIENT_HORIZ,
+	[2] = LSTAT.ORIENT_VERT,
 }
 
 local BarUnits = {
@@ -207,30 +224,56 @@ local configDefaults = {
 	[6] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3 },
 }
 
+local sbTypes = { { "cast", LSTAT.CAST_BAR }, { "xp", LSTAT.XP_BAR }, { "rep", LSTAT.REP_BAR }, { "mirror", LSTAT.MIRROR_BAR } }
+
+local sbOpt = { types = {}, chk = {}, adj = {} }
+
+local popupData = {}
+
 local sbStrings = {
 	cast = {
-		[1] = { "---", function(sb) return "" end },
-		[2] = { "Spell", function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].spell end end },
-		[3] = { "Timer", function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].timer end end },
+		[1] = { LSTAT.TEXT_BLANK, function(sb) return "" end },
+		[2] = { LSTAT.TEXT_SPELL, function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].spell end end },
+		[3] = { LSTAT.TEXT_TIMER, function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].timer end end },
 	},
 	xp = {
-		[1] = { "---", function(sb) return "" end },
-		[2] = { "Current/Next", function(sb) if (XPWatch.current) then return XPWatch.current end end },
-		[3] = { "Rested Levels", function(sb) if (XPWatch.rested) then return XPWatch.rested end end },
-		[4] = { "Percent", function(sb) if (XPWatch.percent) then return XPWatch.percent end end },
-		[5] = { "Bubbles", function(sb) if (XPWatch.bubbles) then return XPWatch.bubbles end end },
+		[1] = { LSTAT.TEXT_BLANK, function(sb) return "" end },
+		[2] = { LSTAT.TEXT_CURRNEXT, function(sb) if (XPWatch.current) then return XPWatch.current end end },
+		[3] = { LSTAT.TEXT_RESTED, function(sb) if (XPWatch.rested) then return XPWatch.rested end end },
+		[4] = { LSTAT.TEXT_PERCENT, function(sb) if (XPWatch.percent) then return XPWatch.percent end end },
+		[5] = { LSTAT.TEXT_BUBBLES, function(sb) if (XPWatch.bubbles) then return XPWatch.bubbles end end },
 	},
 	rep = {
-		[1] = { "---", function(sb) return "" end },
-		[2] = { "Faction & Standing", function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end },
-		[3] = { "Current/Next", function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
-		[4] = { "Percent", function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
+		[1] = { LSTAT.TEXT_BLANK, function(sb) return "" end },
+		[2] = { LSTAT.TEXT_FACTION, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end },
+		[3] = { LSTAT.TEXT_CURRNEXT, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
+		[4] = { LSTAT.TEXT_PERCENT, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
 	},
 	mirror = {
-		[1] = { "---", function(sb) return "" end },
-		[2] = { "Type", function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].label end end },
-		[3] = { "Timer", function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].timer end end },
+		[1] = { LSTAT.TEXT_BLANK, function(sb) return "" end },
+		[2] = { LSTAT.TEXT_TYPE, function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].label end end },
+		[3] = { LSTAT.TEXT_TIMER, function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].timer end end },
 	},
+}
+
+local chkOptions = {
+
+	[1] = { "cast", LSTAT.CAST_ICON, "UpdateCastIcon", "showIcon" }
+}
+
+local adjOptions = {
+
+	[1] = { [0] = "WIDTH", LSTAT.WIDTH, 1, "UpdateWidth", 0.5, 1, nil, nil, "%0.1f", 1, "" },
+	[2] = { [0] = "HEIGHT", LSTAT.HEIGHT, 1, "UpdateHeight", 0.5, 1, nil, nil, "%0.1f", 1, "" },
+	[3] = { [0] = "BARFILL", LSTAT.BARFILL, 2, "UpdateTexture", nil, nil, nil, BarTexturesData },
+	[4] = { [0] = "BORDER", LSTAT.BORDER, 2, "UpdateBorder", nil, nil, nil, BarBordersData },
+	[5] = { [0] = "ORIENT", LSTAT.ORIENT, 2, "UpdateOrientation", nil, nil, nil, BarOrientations },
+	[6] = { [0] = "CENTER_TEXT", LSTAT.CENTER_TEXT, 2, "UpdateCenterText", nil, nil, nil, sbStrings },
+	[7] = { [0] = "LEFT_TEXT", LSTAT.LEFT_TEXT, 2, "UpdateLeftText", nil, nil, nil, sbStrings  },
+	[8] = { [0] = "RIGHT_TEXT", LSTAT.RIGHT_TEXT, 2, "UpdateRightText", nil, nil, nil, sbStrings  },
+	[9] = { [0] = "MOUSE_TEXT", LSTAT.MOUSE_TEXT, 2, "UpdateMouseover", nil, nil, nil, sbStrings  },
+	[10] = { [0] = "TOOLTIP_TEXT", LSTAT.TOOLTIP_TEXT, 2, "UpdateTooltip", nil, nil, nil, sbStrings  },
+	[11] = { [0] = "UNIT_WATCH", LSTAT.UNIT_WATCH, 2, "UpdateUnit", nil, nil, nil, BarUnits  },
 }
 
 local function xpstrings_Update()
@@ -364,7 +407,7 @@ local function repDropDown_Initialize(frame)
 
 		info.arg1 = frame.statusbar
 		info.arg2 = repbar_OnEvent
-		info.text = "Auto Select"
+		info.text = LSTAT.AUTO_SELECT
 		info.func = function(self, statusbar, func, checked)
 					local faction = sbStrings.rep[2][2](statusbar.sb)
 					statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb, nil, faction)
@@ -485,75 +528,6 @@ local function mirrorbar_Stop(mirror)
 	end
 end
 
-function STATUS:SetBorder(statusbar, config, bordercolor)
-
-	statusbar.border:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-				edgeFile = BarBorders[config.border][2],
-				tile = true,
-				tileSize = BarBorders[config.border][7],
-				edgeSize = BarBorders[config.border][8],
-				insets = { left = BarBorders[config.border][3],
-					   right = BarBorders[config.border][4],
-					   top = BarBorders[config.border][5],
-					   bottom = BarBorders[config.border][6]
-					 }
-				})
-
-	statusbar.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
-	statusbar.border:SetPoint("BOTTOMRIGHT", BarBorders[config.border][11], BarBorders[config.border][12])
-
-	statusbar.border:SetBackdropColor(0, 0, 0, 0)
-	statusbar.border:SetBackdropBorderColor(bordercolor[1], bordercolor[2], bordercolor[3], 1)
-	statusbar.border:SetFrameLevel(self:GetFrameLevel()+1)
-
-	statusbar.bg:SetBackdropColor(0, 0, 0, 1)
-	statusbar.bg:SetBackdropBorderColor(0, 0, 0, 0)
-	statusbar.bg:SetFrameLevel(0)
-
-	if (statusbar.barflash) then
-		statusbar.barflash:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-					edgeFile = BarBorders[config.border][2],
-					tile = true,
-					tileSize = BarBorders[config.border][7],
-					edgeSize = BarBorders[config.border][8],
-					insets = { left = BarBorders[config.border][3],
-						   right = BarBorders[config.border][4],
-						   top = BarBorders[config.border][5],
-						   bottom = BarBorders[config.border][6]
-						 }
-					})
-	end
-
-
-end
-
-function STATUS:ChangeStatusBarType(statusbar)
-
-	if (self.config.sbType == "xp") then
-		self.config.sbType = "rep"
-		self.config.cIndex = 2
-		self.config.lIndex = 1
-		self.config.rIndex = 1
-	elseif (self.config.sbType == "rep") then
-		self.config.sbType = "cast"
-		self.config.cIndex = 1
-		self.config.lIndex = 2
-		self.config.rIndex = 3
-	elseif (self.config.sbType == "cast") then
-		self.config.sbType = "mirror"
-		self.config.cIndex = 1
-		self.config.lIndex = 2
-		self.config.rIndex = 3
-	else
-		self.config.sbType = "xp"
-		self.config.cIndex = 2
-		self.config.lIndex = 1
-		self.config.rIndex = 1
-	end
-
-	self:SetType()
-end
-
 function STATUS:CastBar_FinishSpell()
 
 	self.spark:Hide()
@@ -591,7 +565,7 @@ function STATUS:CastBar_OnEvent(event, ...)
 
 	if (event == "UNIT_SPELLCAST_START") then
 
-		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID = UnitCastingInfo(unit)
+		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
 
 		if (not name or (not self.showTradeSkills and isTradeSkill)) then
 			self.parent.CastBar_Reset(self); return
@@ -614,10 +588,19 @@ function STATUS:CastBar_OnEvent(event, ...)
 		CastWatch[self.unit].spell = text
 
 		if (self.showIcon) then
+
 			self.icon:SetTexture(texture)
 			self.icon:Show()
+
+			if (notInterruptible) then
+				self.shield:Show()
+			else
+				self.shield:Hide()
+			end
+
 		else
 			self.icon:Hide()
+			self.shield:Hide()
 		end
 
 		self:SetAlpha(1.0)
@@ -710,7 +693,7 @@ function STATUS:CastBar_OnEvent(event, ...)
 
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 
-		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
+		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 
 		if (not name or (not self.showTradeSkills and isTradeSkill)) then
 			self.parent.CastBar_Reset(self); return
@@ -726,10 +709,19 @@ function STATUS:CastBar_OnEvent(event, ...)
 		CastWatch[self.unit].spell = text
 
 		if (self.showIcon) then
+
 			self.icon:SetTexture(texture)
 			self.icon:Show()
+
+			if (notInterruptible) then
+				self.shield:Show()
+			else
+				self.shield:Hide()
+			end
+
 		else
 			self.icon:Hide()
+			self.shield:Hide()
 		end
 
 		if (self.spark) then
@@ -759,6 +751,15 @@ function STATUS:CastBar_OnEvent(event, ...)
 			self:SetMinMaxValues(0, self.maxValue)
 			self:SetValue(self.value)
 		end
+
+	elseif ( self.showShield and event == "UNIT_SPELLCAST_INTERRUPTIBLE" ) then
+
+		self.shield:Hide()
+
+	elseif ( self.showShield and event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" ) then
+
+		self.shield:Show()
+
 	else
 		self.parent.CastBar_Reset(self)
 	end
@@ -959,6 +960,46 @@ function STATUS:MirrorBar_OnUpdate(elapsed)
 	self.mText:SetText(self.mFunc(self))
 end
 
+function STATUS:SetBorder(sb, config, bordercolor)
+
+	sb.border:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+				edgeFile = BarBorders[config.border][2],
+				tile = true,
+				tileSize = BarBorders[config.border][7],
+				edgeSize = BarBorders[config.border][8],
+				insets = { left = BarBorders[config.border][3],
+					   right = BarBorders[config.border][4],
+					   top = BarBorders[config.border][5],
+					   bottom = BarBorders[config.border][6]
+					 }
+				})
+
+	sb.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
+	sb.border:SetPoint("BOTTOMRIGHT", BarBorders[config.border][11], BarBorders[config.border][12])
+
+	sb.border:SetBackdropColor(0, 0, 0, 0)
+	sb.border:SetBackdropBorderColor(bordercolor[1], bordercolor[2], bordercolor[3], 1)
+	sb.border:SetFrameLevel(sb:GetFrameLevel()+1)
+
+	sb.bg:SetBackdropColor(0, 0, 0, 1)
+	sb.bg:SetBackdropBorderColor(0, 0, 0, 0)
+	sb.bg:SetFrameLevel(0)
+
+	if (sb.barflash) then
+		sb.barflash:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+					edgeFile = BarBorders[config.border][2],
+					tile = true,
+					tileSize = BarBorders[config.border][7],
+					edgeSize = BarBorders[config.border][8],
+					insets = { left = BarBorders[config.border][3],
+						   right = BarBorders[config.border][4],
+						   top = BarBorders[config.border][5],
+						   bottom = BarBorders[config.border][6]
+						 }
+					})
+	end
+end
+
 function STATUS:OnClick(button, down)
 
 	if (button == "RightButton") then
@@ -993,13 +1034,13 @@ function STATUS:OnEnter()
 
 		if (self.bar) then
 
-			if (self.bar.config.tooltipsCombat and InCombatLockdown()) then
+			if (self.bar.cdata.tooltipsCombat and InCombatLockdown()) then
 				return
 			end
 
-			if (self.bar.config.tooltips) then
+			if (self.bar.cdata.tooltips) then
 
-				if (self.bar.config.tooltipsEnhanced) then
+				if (self.bar.cdata.tooltipsEnhanced) then
 					GameTooltip_SetDefaultAnchor(GameTooltip, self)
 				else
 					GameTooltip:SetOwner("STATUS_RIGHT")
@@ -1029,340 +1070,734 @@ function STATUS:OnLeave()
 	end
 end
 
-function STATUS:UpdateWidth(statusbar, delta, timer)
+function STATUS:UpdateEditor()
 
-	if (not delta) then
+	if (IonStatusBarEditor and IonStatusBarEditor:IsVisible()) then
+		ION:StatusBarEditorUpdate()
+	end
+
+end
+
+function STATUS:UpdateWidth(command, gui, query, skipupdate)
+
+	if (query) then
 		return self.config.width
 	end
 
-	if (timer) then
-		timer = ceil(timer/0.5)
-		if (timer <= 0) then
-			timer = 1
+	local width = tonumber(command)
+
+	if (width and width >= 10) then
+
+		self.config.width = width
+
+		self:SetWidth(self.config.width)
+
+		self.bar:SetObjectLoc()
+
+		self.bar:SetPerimeter()
+
+		self.bar:SetSize()
+
+		if (not skipupdate) then
+			self:UpdateEditor()
+			self.bar:Update()
 		end
-	else
-		timer = 1
 	end
-
-	if (delta > 0 ) then
-		self.config.width = self.config.width + 0.5 * timer
-	else
-		self.config.width = self.config.width - 0.5 * timer
-		if (self.config.width < 10) then
-			self.config.width = 10
-		end
-	end
-
-	self.bar:Update()
-
 end
 
-function STATUS:UpdateHeight(statusbar, delta, timer)
+function STATUS:UpdateHeight(command, gui, query, skipupdate)
 
-	if (not delta) then
+	if (query) then
 		return self.config.height
 	end
 
-	if (timer) then
-		timer = ceil(timer/0.5)
-		if (timer <= 0) then
-			timer = 1
-		end
-	else
-		timer = 1
-	end
+	local height = tonumber(command)
 
-	if (delta > 0 ) then
-		self.config.height = self.config.height + 0.5 * timer
-	else
-		self.config.height = self.config.height - 0.5 * timer
-		if (self.config.height < 4) then
-			self.config.height = 4
+	if (height and height >= 4) then
+
+		self.config.height = height
+
+		self:SetHeight(self.config.height)
+
+		self.bar:SetObjectLoc()
+
+		self.bar:SetPerimeter()
+
+		self.bar:SetSize()
+
+		if (not skipupdate) then
+			self:UpdateEditor()
+			self.bar:Update()
 		end
 	end
-
-	self.bar:Update()
 end
 
-function STATUS:UpdateTexture(statusbar, delta)
+function STATUS:UpdateTexture(command, gui, query)
 
-	if (not delta) then
+	if (query) then
 		return BarTextures[self.config.texture][3]
 	end
 
-	local index = self.config.texture
+	local index = tonumber(command)
 
-	if (delta > 0) then
-
-		if (index == #BarTextures) then
-			index = 1
-		else
-			index = index + 1
-		end
+	if (index and BarTextures[index]) then
 
 		self.config.texture = index
 
-	else
+		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 
-		if (index == 1) then
-			index = #BarTextures
-		else
-			index = index - 1
+		if (not skipupdate) then
+			self:UpdateEditor()
 		end
 
-		self.config.texture = index
 	end
 
-	self:SetData(self.bar)
 end
 
-function STATUS:UpdateBorder(statusbar, delta)
+function STATUS:UpdateBorder(command, gui, query)
 
-	if (not delta) then
+	if (query) then
 		return BarBorders[self.config.border][1]
 	end
 
-	local index = self.config.border
+	local index = tonumber(command)
 
-	if (delta > 0) then
-
-		if (index == #BarBorders) then
-			index = 1
-		else
-			index = index + 1
-		end
+	if (index and BarBorders[index]) then
 
 		self.config.border = index
 
-	else
-		if (index == 1) then
-			index = #BarBorders
-		else
-			index = index - 1
-		end
+		self:SetBorder(self.sb, self.config, self.bordercolor)
+		self:SetBorder(self.fbframe.feedback, self.config, self.bordercolor)
 
-		self.config.border = index
+		if (not skipupdate) then
+			self:UpdateEditor()
+		end
 	end
-
-	self:SetData(self.bar)
 end
 
-function STATUS:UpdateOrientation(statusbar, delta)
+function STATUS:UpdateOrientation(command, gui, query)
 
-	if (not delta) then
+	if (query) then
 		return BarOrientations[self.config.orientation]
 	end
 
-	local index = self.config.orientation
+	local index = tonumber(command)
 
-	if (delta > 0) then
-
-		if (index == #BarOrientations) then
-			index = 1
-		else
-			index = index + 1
-		end
+	if (index) then
 
 		self.config.orientation = index
+		self.sb.orientation = self.config.orientation
 
-	else
+		self.sb:SetOrientation(BarOrientations[self.config.orientation]:upper())
+		self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
 
-		if (index == 1) then
-			index = #BarOrientations
-		else
-			index = index - 1
+		local width, height = self.config.width,  self.config.height
+
+		self.config.width = height;  self.config.height = width
+
+		self:SetWidth(self.config.width)
+
+		self:SetHeight(self.config.height)
+
+		self.bar:SetObjectLoc()
+
+		self.bar:SetPerimeter()
+
+		self.bar:SetSize()
+
+		if (not skipupdate) then
+			self:UpdateEditor()
+			self.bar:Update()
 		end
-
-		self.config.orientation = index
 	end
-
-	local width, height = self.config.width,  self.config.height
-
-	self.config.width = height;  self.config.height = width
-	self.bar:Update()
 end
 
-function STATUS:UpdateCenterText(statusbar, delta)
+function STATUS:UpdateCenterText(command, gui, query)
 
 	if (not sbStrings[self.config.sbType]) then
 		return "---"
 	end
 
-	if (not delta) then
+	if (query) then
 		return sbStrings[self.config.sbType][self.config.cIndex][1]
 	end
 
-	local index = self.config.cIndex
+	local index = tonumber(command)
 
-	if (delta > 0) then
+	if (index) then
 
-		if (index == #sbStrings[self.config.sbType]) then
-			index = 1
+		self.config.cIndex = index
+
+		if (sbStrings[self.config.sbType]) then
+			self.sb.cFunc = sbStrings[self.config.sbType][self.config.cIndex][2]
 		else
-			index = index + 1
+			self.sb.cFunc = function() return "" end
 		end
 
-	else
-
-		if (index == 1) then
-			index = #sbStrings[self.config.sbType]
-		else
-			index = index - 1
-		end
-
+		self.sb.cText:SetText(self.sb.cFunc(self.sb))
 	end
-
-	self.config.cIndex = index
-
-	self:SetData(self.bar)
-
 end
 
-function STATUS:UpdateLeftText(statusbar, delta)
+function STATUS:UpdateLeftText(command, gui, query)
 
 	if (not sbStrings[self.config.sbType]) then
 		return "---"
 	end
 
-	if (not delta) then
+	if (query) then
 		return sbStrings[self.config.sbType][self.config.lIndex][1]
 	end
 
-	local index = self.config.lIndex
+	local index = tonumber(command)
 
-	if (delta > 0) then
+	if (index) then
 
-		if (index == #sbStrings[self.config.sbType]) then
-			index = 1
+		self.config.lIndex = index
+
+		if (sbStrings[self.config.sbType]) then
+			self.sb.lFunc = sbStrings[self.config.sbType][self.config.lIndex][2]
 		else
-			index = index + 1
+			self.sb.lFunc = function() return "" end
 		end
 
-	else
-
-		if (index == 1) then
-			index = #sbStrings[self.config.sbType]
-		else
-			index = index - 1
-		end
+		self.sb.lText:SetText(self.sb.lFunc(self.sb))
 
 	end
-
-	self.config.lIndex = index
-
-	self:SetData(self.bar)
-
 end
 
-function STATUS:UpdateRightText(statusbar, delta)
+function STATUS:UpdateRightText(command, gui, query)
 
 	if (not sbStrings[self.config.sbType]) then
 		return "---"
 	end
 
-	if (not delta) then
+	if (query) then
 		return sbStrings[self.config.sbType][self.config.rIndex][1]
 	end
 
-	local index = self.config.rIndex
+	local index = tonumber(command)
 
-	if (delta > 0) then
+	if (index) then
 
-		if (index == #sbStrings[self.config.sbType]) then
-			index = 1
+		self.config.rIndex = index
+
+		if (sbStrings[self.config.sbType]) then
+			self.sb.rFunc = sbStrings[self.config.sbType][self.config.rIndex][2]
 		else
-			index = index + 1
+			self.sb.rFunc = function() return "" end
 		end
 
-	else
-
-		if (index == 1) then
-			index = #sbStrings[self.config.sbType]
-		else
-			index = index - 1
-		end
+		self.sb.rText:SetText(self.sb.rFunc(self.sb))
 
 	end
-
-	self.config.rIndex = index
-
-	self:SetData(self.bar)
-
 end
 
-function STATUS:UpdateMouseover(statusbar, delta)
+function STATUS:UpdateMouseover(command, gui, query)
 
 	if (not sbStrings[self.config.sbType]) then
 		return "---"
 	end
 
-	if (not delta) then
+	if (query) then
 		return sbStrings[self.config.sbType][self.config.mIndex][1]
 	end
 
-	local index = self.config.mIndex
+	local index = tonumber(command)
 
-	if (delta > 0) then
+	if (index) then
 
-		if (index == #sbStrings[self.config.sbType]) then
-			index = 1
+		self.config.mIndex = index
+
+		if (sbStrings[self.config.sbType]) then
+			self.sb.mFunc = sbStrings[self.config.sbType][self.config.mIndex][2]
 		else
-			index = index + 1
+			self.sb.mFunc = function() return "" end
 		end
 
-	else
-
-		if (index == 1) then
-			index = #sbStrings[self.config.sbType]
-		else
-			index = index - 1
-		end
-
+		self.sb.mText:SetText(self.sb.mFunc(self.sb))
 	end
-
-	self.config.mIndex = index
-
-	self:SetData(self.bar)
-
 end
 
-function STATUS:UpdateTooltip(statusbar, delta)
+function STATUS:UpdateTooltip(command, gui, query)
 
 	if (not sbStrings[self.config.sbType]) then
 		return "---"
 	end
 
-	if (not delta) then
+	if (query) then
 		return sbStrings[self.config.sbType][self.config.tIndex][1]
 	end
 
-	local index = self.config.tIndex
+	local index = tonumber(command)
 
-	if (delta > 0) then
+	if (index) then
 
-		if (index == #sbStrings[self.config.sbType]) then
-			index = 1
+		self.config.tIndex = index
+
+		if (sbStrings[self.config.sbType]) then
+			self.sb.tFunc = sbStrings[self.config.sbType][self.config.tIndex][2]
 		else
-			index = index + 1
+			self.sb.tFunc = function() return "" end
 		end
+	end
+end
 
-	else
+function STATUS:UpdateUnit(command, gui, query)
 
-		if (index == 1) then
-			index = #sbStrings[self.config.sbType]
-		else
-			index = index - 1
-		end
-
+	if (query) then
+		return BarUnits[self.data.unit]
 	end
 
-	self.config.tIndex = index
+	local index = tonumber(command)
 
-	self:SetData(self.bar)
+	if (index) then
+
+		self.data.unit = index
+
+		self.sb.unit = BarUnits[self.data.unit]
+
+	end
+end
+
+function STATUS:UpdateCastIcon(frame, checked)
+
+	if (checked) then
+		self.config.showIcon = true
+	else
+		self.config.showIcon = false
+	end
+
+	self.sb.showIcon = self.config.showIcon
 
 end
 
-function STATUS:SetData(bar)
+function STATUS:ChangeStatusBarType(statusbar)
+
+	if (self.config.sbType == "xp") then
+		self.config.sbType = "rep"
+		self.config.cIndex = 2
+		self.config.lIndex = 1
+		self.config.rIndex = 1
+	elseif (self.config.sbType == "rep") then
+		self.config.sbType = "cast"
+		self.config.cIndex = 1
+		self.config.lIndex = 2
+		self.config.rIndex = 3
+	elseif (self.config.sbType == "cast") then
+		self.config.sbType = "mirror"
+		self.config.cIndex = 1
+		self.config.lIndex = 2
+		self.config.rIndex = 3
+	else
+		self.config.sbType = "xp"
+		self.config.cIndex = 2
+		self.config.lIndex = 1
+		self.config.rIndex = 1
+	end
+
+	self:SetType()
+end
+
+function ION.StatusBarEditorUpdate(reset)
+
+	local sb = Ion.CurrentObject
+
+	if (sb) then
+
+		if (IonStatusBarEditor:IsVisible()) then
+
+			local yoff, anchor, last, adjHeight = -10
+			local editor = IonBarEditor.baropt.editor
+
+			if (sb.config.sbType == "cast") then
+				adjHeight = 250
+			else
+				adjHeight = 275
+			end
+
+			for i,f in ipairs(sbOpt.types) do
+
+				if (sb.config.sbType == f.sbType) then
+					f:SetChecked(1)
+				else
+					f:SetChecked(nil)
+				end
+
+			end
+
+			for i,f in ipairs(sbOpt.chk) do
+				f:ClearAllPoints(); f:Hide()
+			end
+
+			for i,f in ipairs(sbOpt.chk) do
+
+				if (sb.config.sbType == f.sbType) then
+					f:SetPoint("BOTTOMLEFT", f.parent, "BOTTOMLEFT", 15, 60)
+					f:SetChecked(sb.config[f.index])
+					f:Show()
+				end
+			end
+
+			local yoff1, yoff2, shape = (adjHeight)/10, (adjHeight)/10
+
+			for i,f in ipairs(sbOpt.adj) do
+
+				f:ClearAllPoints(); f:Hide()
+
+				if (f.optData and f.strTable) then
+
+					wipe(popupData)
+
+					for types, data in pairs(f.optData) do
+						if (types == sb.config.sbType) then
+							for k,v in pairs(data) do
+								popupData[k.."_"..v[1]] = tostring(k)
+							end
+						end
+					end
+
+					ION.EditBox_PopUpInitialize(f.edit.popup, popupData)
+
+				elseif (f.optData) then
+
+					wipe(popupData)
+
+					for k,v in pairs(f.optData) do
+
+						if (k < 10) then
+							popupData["0"..k.."_"..v] = tostring(k)
+						else
+							popupData[k.."_"..v] = tostring(k)
+						end
+					end
+
+					ION.EditBox_PopUpInitialize(f.edit.popup, popupData)
+				end
+			end
+
+			for i,f in ipairs(sbOpt.adj) do
+
+				if (i == 11) then
+					if (sb.config.sbType == "cast") then
+						f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 35, yoff)
+						f:Show()
+						yoff = yoff-yoff1
+					end
+				else
+					f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 35, yoff)
+					f:Show()
+					yoff = yoff-yoff1
+				end
+
+				if (sb[f.func]) then
+					if (f.format) then
+						f.edit:SetText(format(f.format, sb[f.func](sb, nil, true, true)*f.mult)..f.endtext)
+					else
+						f.edit:SetText(sb[f.func](sb, nil, true, true) or "")
+					end
+					f.edit:SetCursorPosition(0)
+				end
+			end
+		end
+	end
+end
+
+function ION:StatusBarEditor_OnLoad(frame)
+
+	ION.Editors.STATUSBAR = { frame, 400, 335, ION.StatusBarEditorUpdate }
+
+end
+
+function ION:StatusBarEditor_OnShow(frame)
+
+end
+
+function ION:StatusBarEditor_OnHide(frame)
+
+end
+
+local function sbTypeOnClick(self, button, down)
+
+	local sb = ION.CurrentObject
+
+	if (sb) then
+
+		if (self.sbType == "xp") then
+
+			sb.config.sbType = self.sbType
+			sb.config.cIndex = 2
+			sb.config.lIndex = 1
+			sb.config.rIndex = 1
+
+		elseif (self.sbType == "rep") then
+
+			sb.config.sbType = self.sbType
+			sb.config.cIndex = 2
+			sb.config.lIndex = 1
+			sb.config.rIndex = 1
+
+
+		elseif (self.sbType == "cast") then
+
+			sb.config.sbType = self.sbType
+			sb.config.cIndex = 1
+			sb.config.lIndex = 2
+			sb.config.rIndex = 3
+
+		elseif (self.sbType == "mirror") then
+
+			sb.config.sbType = self.sbType
+			sb.config.cIndex = 1
+			sb.config.lIndex = 2
+			sb.config.rIndex = 3
+		end
+
+		sb:SetType()
+
+		sb:UpdateEditor()
+	end
+end
+
+local function chkOptionOnClick(frame)
+
+	local sb = ION.CurrentObject
+
+	if (sb) then
+		sb[frame.func](sb, frame, frame:GetChecked())
+	end
+
+end
+
+function ION:SB_EditorTypes_OnLoad(frame)
+
+	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
+	frame:SetBackdropColor(0,0,0,0.5)
+
+	local f, anchor, last
+
+	for index, types in ipairs(sbTypes) do
+
+		f = CreateFrame("CheckButton", nil, frame, "IonOptionsCheckButtonTemplate")
+		f:SetWidth(18)
+		f:SetHeight(18)
+		f:SetScript("OnClick", sbTypeOnClick)
+		f.sbType = types[1]
+		f.text:SetText(types[2])
+
+		if (not anchor) then
+			f:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -15)
+			anchor = f; last = f
+		else
+			f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -22)
+			last = f
+		end
+
+		tinsert(sbOpt.types, f)
+	end
+
+	frame.line = frame:CreateTexture(nil, "OVERLAY")
+	frame.line:SetHeight(1)
+	frame.line:SetPoint("LEFT", 8, -20)
+	frame.line:SetPoint("RIGHT", -8, -20)
+	frame.line:SetTexture(0.3, 0.3, 0.3)
+
+	anchor, last = nil, nil
+
+	for index, options in ipairs(chkOptions) do
+
+		f = CreateFrame("CheckButton", nil, frame, "IonOptionsCheckButtonTemplate")
+		f:SetWidth(18)
+		f:SetHeight(18)
+		f:SetScript("OnClick", chkOptionOnClick)
+		f.sbType = options[1]
+		f.text:SetText(options[2])
+		f.func = options[3]
+		f.index = options[4]
+		f.parent = frame
+
+		tinsert(sbOpt.chk, f)
+	end
+
+end
+
+local function adjOptionOnTextChanged(edit, frame)
+
+	local sb = ION.CurrentObject
+
+	if (sb) then
+
+		if (frame.method == 1) then
+
+		elseif (frame.method == 2) then
+
+			sb[frame.func](sb, edit.value, true)
+
+			edit:HighlightText(0,0)
+		end
+	end
+end
+
+local function adjOptionOnEditFocusLost(edit, frame)
+
+	edit.hasfocus = nil
+
+	local sb = ION.CurrentObject
+
+	if (sb) then
+
+		if (frame.method == 1) then
+
+			sb[frame.func](sb, edit:GetText(), true)
+
+		elseif (frame.method == 2) then
+
+		end
+	end
+end
+
+local function adjOptionAdd(frame, onupdate)
+
+	local sb = ION.CurrentObject
+
+	if (sb) then
+
+		local num = sb[frame.func](sb, nil, true, true)
+
+		if (num == L.OFF or num == "---") then
+			num = 0
+		else
+			num = tonumber(num)
+		end
+
+		if (num) then
+
+			if (frame.max and num >= frame.max) then
+
+				sb[frame.func](sb, frame.max, true, nil, onupdate)
+
+				if (onupdate) then
+					if (frame.format) then
+						frame.edit:SetText(format(frame.format, frame.max*frame.mult)..frame.endtext)
+					else
+						frame.edit:SetText(frame.max)
+					end
+				end
+			else
+				sb[frame.func](sb, num+frame.inc, true, nil, onupdate)
+
+				if (onupdate) then
+					if (frame.format) then
+						frame.edit:SetText(format(frame.format, (num+frame.inc)*frame.mult)..frame.endtext)
+					else
+						frame.edit:SetText(num+frame.inc)
+					end
+				end
+			end
+		end
+	end
+end
+
+local function adjOptionSub(frame, onupdate)
+
+	local sb = ION.CurrentObject
+
+	if (sb) then
+
+		local num = sb[frame.func](sb, nil, true, true)
+
+		if (num == L.OFF or num == "---") then
+			num = 0
+		else
+			num = tonumber(num)
+		end
+
+		if (num) then
+
+			if (frame.min and num <= frame.min) then
+
+				sb[frame.func](sb, frame.min, true, nil, onupdate)
+
+				if (onupdate) then
+					if (frame.format) then
+						frame.edit:SetText(format(frame.format, frame.min*frame.mult)..frame.endtext)
+					else
+						frame.edit:SetText(frame.min)
+					end
+				end
+			else
+				sb[frame.func](sb, num-frame.inc, true, nil, onupdate)
+
+				if (onupdate) then
+					if (frame.format) then
+						frame.edit:SetText(format(frame.format, (num-frame.inc)*frame.mult)..frame.endtext)
+					else
+						frame.edit:SetText(num-frame.inc)
+					end
+				end
+			end
+		end
+	end
+end
+
+local function adjOptionOnMouseWheel(frame, delta)
+
+	if (delta > 0) then
+		adjOptionAdd(frame)
+	else
+		adjOptionSub(frame)
+	end
+
+end
+
+function ION.SB_AdjustableOptions_OnLoad(frame)
+
+	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
+	frame:SetBackdropColor(0,0,0,0.5)
+	frame:RegisterForDrag("LeftButton", "RightButton")
+
+	for index, options in ipairs(adjOptions) do
+
+		f = CreateFrame("Frame", "IonSB_GUIAdjOpt"..index, frame, "IonAdjustOptionTemplate")
+		f:SetID(index)
+		f:SetWidth(200)
+		f:SetHeight(24)
+		f:SetScript("OnShow", function() end)
+		f:SetScript("OnMouseWheel", function(self, delta) adjOptionOnMouseWheel(self, delta) end)
+		f:EnableMouseWheel(true)
+
+		f.text:SetText(options[1]..":")
+		f.method = options[2]
+		f["method"..options[2]]:Show()
+		f.edit = f["method"..options[2]].edit
+		f.edit.frame = f
+		f.option = options[0]
+		f.func = options[3]
+		f.inc = options[4]
+		f.min = options[5]
+		f.max = options[6]
+		f.optData = options[7]
+		f.format = options[8]
+		f.mult = options[9]
+		f.endtext = options[10]
+		f.parent = frame
+
+		if (f.optData == sbStrings) then
+			f.strTable = true
+		end
+
+		f.edit:SetScript("OnTextChanged", function(self) adjOptionOnTextChanged(self, self.frame) end)
+		f.edit:SetScript("OnEditFocusLost", function(self) adjOptionOnEditFocusLost(self, self.frame) end)
+
+		f.addfunc = adjOptionAdd
+		f.subfunc = adjOptionSub
+
+		tinsert(sbOpt.adj, f)
+	end
+
+end
+
+function STATUS:SetData(bar, skipupdate)
 
 	if (bar) then
 
@@ -1443,25 +1878,25 @@ function STATUS:SetData(bar)
 
 	self.sb.orientation = self.config.orientation
 	self.sb:SetOrientation(BarOrientations[self.config.orientation]:upper())
-	self.editframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
+	self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
 
 	if (BarTextures[self.config.texture]) then
 		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-		self.editframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 	else
 		self.sb:SetStatusBarTexture(BarTextures[1][self.config.orientation])
-		self.editframe.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
+		self.fbframe.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
 	end
 
 	self:SetBorder(self.sb, self.config, self.bordercolor)
-	self:SetBorder(self.editframe.feedback, self.config, self.bordercolor)
+	self:SetBorder(self.fbframe.feedback, self.config, self.bordercolor)
 
 	self:SetFrameLevel(4)
 
-	self.editframe:SetFrameLevel(self:GetFrameLevel()+10)
-	self.editframe.feedback:SetFrameLevel(self.sb:GetFrameLevel()+10)
-	self.editframe.feedback.bg:SetFrameLevel(self.sb.bg:GetFrameLevel()+10)
-	self.editframe.feedback.border:SetFrameLevel(self.sb.border:GetFrameLevel()+10)
+	self.fbframe:SetFrameLevel(self:GetFrameLevel()+10)
+	self.fbframe.feedback:SetFrameLevel(self.sb:GetFrameLevel()+10)
+	self.fbframe.feedback.bg:SetFrameLevel(self.sb.bg:GetFrameLevel()+10)
+	self.fbframe.feedback.border:SetFrameLevel(self.sb.border:GetFrameLevel()+10)
 
 end
 
@@ -1511,12 +1946,12 @@ function STATUS:SetGrid(show, hide)
 
 		self.editmode = true
 
-		self.editframe:Show()
+		self.fbframe:Show()
 
 	else
 		self.editmode = nil
 
-		self.editframe:Hide()
+		self.fbframe:Hide()
 	end
 
 	--empty
@@ -1606,6 +2041,8 @@ function STATUS:SetType(save)
 			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
 			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+			self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
+			self.sb:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
 
 			self.sb.unit = BarUnits[self.data.unit]
 			self.sb.showIcon = self.config.showIcon
@@ -1682,7 +2119,7 @@ function STATUS:SetType(save)
 
 		end
 
-		self.editframe.feedback.text:SetText(LSTAT[self.config.sbType:upper().."_BAR"])
+		self.fbframe.feedback.text:SetText(LSTAT[self.config.sbType:upper().."_BAR"])
 
 	end
 
@@ -1716,6 +2153,23 @@ function STATUS:CreateEditFrame(index)
 	OBJEDITOR.type:SetText("")
 	OBJEDITOR.object = self
 	OBJEDITOR.editType = "status"
+
+	OBJEDITOR.select.TL:ClearAllPoints()
+	OBJEDITOR.select.TL:SetPoint("RIGHT", OBJEDITOR.select, "LEFT", 4, 0)
+	OBJEDITOR.select.TL:SetTexture("Interface\\AddOns\\Ion\\Images\\flyout.tga")
+	OBJEDITOR.select.TL:SetTexCoord(0.71875, 1, 0, 1)
+	OBJEDITOR.select.TL:SetWidth(16)
+	OBJEDITOR.select.TL:SetHeight(55)
+
+	OBJEDITOR.select.TR:ClearAllPoints()
+	OBJEDITOR.select.TR:SetPoint("LEFT", OBJEDITOR.select, "RIGHT", -4, 0)
+	OBJEDITOR.select.TR:SetTexture("Interface\\AddOns\\Ion\\Images\\flyout.tga")
+	OBJEDITOR.select.TR:SetTexCoord(0, 0.28125, 0, 1)
+	OBJEDITOR.select.TR:SetWidth(16)
+	OBJEDITOR.select.TR:SetHeight(55)
+
+	OBJEDITOR.select.BL:SetTexture("")
+	OBJEDITOR.select.BR:SetTexture("")
 
 	self.OBJEDITOR = OBJEDITOR
 

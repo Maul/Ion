@@ -4,6 +4,8 @@ local ION, DB, PEW = Ion
 
 ION.OBJEDITOR = setmetatable({}, { __index = CreateFrame("Button") })
 
+ION.Editors = {}
+
 local BUTTON, OBJEDITOR = ION.BUTTON, ION.OBJEDITOR
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
@@ -65,6 +67,8 @@ function OBJEDITOR:OnClick(button)
 		if (IonObjectEditor) then
 			if (not newObj and IonObjectEditor:IsVisible()) then
 				IonObjectEditor:Hide()
+			elseif (newObj) then
+				ION:ObjectEditor_OnShow(IonObjectEditor); IonObjectEditor:Show()
 			else
 				IonObjectEditor:Show()
 			end
@@ -203,6 +207,8 @@ end
 local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Ion") then
+
+	ION.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 

@@ -1234,7 +1234,7 @@ function ION:MinimapButton_OnClick(minimap, button)
 
 	if (button == "RightButton") then
 		ION:ToggleEditFrames()
-	elseif (IsAltKeyDown()) then
+	elseif (IsAltKeyDown() or button == "MiddleButton") then
 		ION:ToggleBindings()
 	else
 		ION:ToggleBars()
@@ -1243,6 +1243,54 @@ end
 
 function ION:MinimapMenuClose()
 	IonMinimapButton.popup:Hide()
+end
+
+function ION.IonAdjustOption_AddOnClick(frame, button, down)
+
+	frame.elapsed = 0
+	frame.pushed = frame:GetButtonState()
+
+	if (not down) then
+		if (frame:GetParent():GetParent().addfunc) then
+			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent())
+		end
+	end
+end
+
+function ION.IonAdjustOption_AddOnUpdate(frame, elapsed)
+
+	frame.elapsed = frame.elapsed + elapsed
+
+	if (frame.pushed == "NORMAL") then
+
+		if (frame.elapsed > 1 and frame:GetParent():GetParent().addfunc) then
+			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent(), true)
+		end
+	end
+end
+
+function ION.IonAdjustOption_SubOnClick(frame, button, down)
+
+	frame.elapsed = 0
+	frame.pushed = frame:GetButtonState()
+
+	if (not down) then
+		if (frame:GetParent():GetParent().subfunc) then
+			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent())
+		end
+	end
+end
+
+function ION.IonAdjustOption_SubOnUpdate(frame, elapsed)
+
+	frame.elapsed = frame.elapsed + elapsed
+
+	if (frame.pushed == "NORMAL") then
+
+		if (frame.elapsed > 1 and frame:GetParent():GetParent().subfunc) then
+			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent(), true)
+		end
+	end
 end
 
 function ION:UpdateData(data, defaults)
@@ -1923,7 +1971,7 @@ local function control_OnEvent(self, event, ...)
 		end
 
 		if (ION.TOCVersion >= 50000) then
-			SecureHandler_OnLoad(PetBattleFrame)
+
 		end
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then

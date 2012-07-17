@@ -209,7 +209,7 @@ L.ROGUE_MELEE = "Melee"
 L.WARLOCK_CASTER = "Caster Form"
 
 L.KEYBIND_TOOLTIP1 = "\nHit a key to bind it to"
-L.KEYBIND_TOOLTIP2 = "Left-Click to |cfff00000lock|r this %s's bindings\n\nRight-Click to make this %s's bindings |cff00ff00priority|r\n\nHit |cfff00000ESC|r to clear this %s's current binding(s)"
+L.KEYBIND_TOOLTIP2 = "Left-Click to |cfff00000LOCK|r this %s's bindings\n\nRight-Click to make this %s's bindings a |cff00ff00PRIORITY|r bind\n\nHit |cfff00000ESC|r to clear this %s's current binding(s)"
 L.KEYBIND_TOOLTIP3 = "Current Binding(s):"
 
 L.EDITFRAME_EDIT = "edit"
