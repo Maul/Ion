@@ -1245,6 +1245,88 @@ function ION:MinimapMenuClose()
 	IonMinimapButton.popup:Hide()
 end
 
+function ION.SubFramePlainBackdrop_OnLoad(self)
+
+	self:SetBackdrop({
+		bgFile = "",
+		edgeFile = "Interface\\AddOns\\Ion\\Images\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 22,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
+	self:SetBackdropBorderColor(0.35, 0.35, 0.35, 1)
+	self:SetBackdropColor(0,0,0,0)
+	self:GetParent().backdrop = self
+
+	self.bg = self:CreateTexture(nil, "BACKGROUND")
+	self.bg:SetTexture("Interface\\FriendsFrame\\UI-Toast-Background", true)
+	self.bg:SetVertexColor(0.65,0.65,0.65,0.85)
+	self.bg:SetPoint("TOPLEFT", 3, -3)
+	self.bg:SetPoint("BOTTOMRIGHT", -3, 3)
+	self.bg:SetHorizTile(true)
+	self.bg:SetVertTile(true)
+
+end
+
+function ION.SubFrameBlackBackdrop_OnLoad(self)
+
+	self:SetBackdrop({
+		bgFile = "",
+		edgeFile = "Interface\\AddOns\\Ion\\Images\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 18,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
+	self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+	self:SetBackdropColor(0,0,0,0)
+	self:GetParent().backdrop = self
+
+	self.bg = self:CreateTexture(nil, "BACKGROUND")
+	self.bg:SetTexture("Interface\\FriendsFrame\\UI-Toast-Background", true)
+	self.bg:SetVertexColor(0.65,0.65,0.65,1)
+	self.bg:SetPoint("TOPLEFT", 3, -3)
+	self.bg:SetPoint("BOTTOMRIGHT", -3, 3)
+	self.bg:SetHorizTile(true)
+	self.bg:SetVertTile(true)
+
+end
+
+function ION.SubFrameBlankBackdrop_OnLoad(self)
+
+	self:SetBackdrop({
+		bgFile = "",
+		edgeFile = "Interface\\AddOns\\Ion\\Images\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 12,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
+	self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+	self:SetBackdropColor(0,0,0,0)
+	self:GetParent().backdrop = self
+end
+
+function ION.SubFrameHoneycombBackdrop_OnLoad(self)
+
+	self:SetBackdrop({
+		bgFile = "",
+		edgeFile = "Interface\\AddOns\\Ion\\Images\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 18,
+		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
+	self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+	self:SetBackdropColor(0,0,0,0)
+	self:GetParent().backdrop = self
+
+	self.bg = self:CreateTexture(nil, "BACKGROUND")
+	self.bg:SetTexture("Interface\\AddOns\\Ion\\Images\\honeycomb_small", true)
+	self.bg:SetVertexColor(0.65,0.65,0.65,1)
+	self.bg:SetPoint("TOPLEFT", 3, -3)
+	self.bg:SetPoint("BOTTOMRIGHT", -3, 3)
+	self.bg:SetHorizTile(true)
+	self.bg:SetVertTile(true)
+end
+
 function ION.IonAdjustOption_AddOnClick(frame, button, down)
 
 	frame.elapsed = 0
@@ -1349,13 +1431,14 @@ function ION:ToggleBlizzBar(on)
 			]])
 		end
 
-		ActionBarController_OnLoad(ActionBarController)
-		ActionBarButtonEventsFrame_OnLoad(ActionBarButtonEventsFrame)
-		ActionBarActionEventsFrame_OnLoad(ActionBarActionEventsFrame)
+		--ActionBarController_OnLoad(ActionBarController)
+		--ActionBarButtonEventsFrame_OnLoad(ActionBarButtonEventsFrame)
+		--ActionBarActionEventsFrame_OnLoad(ActionBarActionEventsFrame)
 
 		MainMenuBar:SetPoint("BOTTOM", 0, 0)
-		MainMenuBar_OnLoad(MainMenuBar)
-		MainMenuBar:Show()
+		OverrideActionBar:SetPoint("BOTTOM", 0, 0)
+		--MainMenuBar_OnLoad(MainMenuBar)
+		--MainMenuBar:Show()
 
 	else
 
@@ -1367,13 +1450,14 @@ function ION:ToggleBlizzBar(on)
 			handler:UnwrapScript(button, "OnHide")
 		end
 
-		ActionBarController:UnregisterAllEvents()
-		ActionBarButtonEventsFrame:UnregisterAllEvents()
-		ActionBarActionEventsFrame:UnregisterAllEvents()
+		--ActionBarController:UnregisterAllEvents()
+		--ActionBarButtonEventsFrame:UnregisterAllEvents()
+		--ActionBarActionEventsFrame:UnregisterAllEvents()
 
 		MainMenuBar:SetPoint("BOTTOM", 0, -200)
-		MainMenuBar:UnregisterAllEvents()
-		MainMenuBar:Hide()
+		OverrideActionBar:SetPoint("BOTTOM", 0, -200)
+		--MainMenuBar:UnregisterAllEvents()
+		--MainMenuBar:Hide()
 
 	end
 end
@@ -1616,7 +1700,7 @@ function ION:CreateNewObject(class, id, firstRun)
 			index = index + 1
 		end
 
-		object = CreateFrame(data.objFrameT, data.objPrefix..id, UIParent, data.objTemplate)
+		local object = CreateFrame(data.objFrameT, data.objPrefix..id, UIParent, data.objTemplate)
 
 		setmetatable(object, data.objMetaT)
 
@@ -1687,7 +1771,7 @@ function ION:ChangeBar(bar)
 		for k,v in pairs(BARIndex) do
 			if (v ~= bar) then
 
-				if (v.gdata.hidden) then
+				if (v.cdata.conceal) then
 					v:SetBackdropColor(1,0,0,0.4)
 				else
 					v:SetBackdropColor(0,0,0,0.4)

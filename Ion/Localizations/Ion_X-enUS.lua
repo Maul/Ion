@@ -1,6 +1,8 @@
 ﻿--Ion, a World of Warcraft® user interface addon.
 --Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
+--English spelling validated by Eledryn
+
 local L = LibStub("AceLocale-3.0"):NewLocale("Ion", "enUS", true)
 
 L.SLASH1 = "/ion"
@@ -11,7 +13,7 @@ L.SLASH_CMD1 = "Menu"
 L.SLASH_CMD1_DESC = "Open the main menu"
 
 L.SLASH_CMD2 = "Create"
-L.SLASH_CMD2_DESC = "Create a blank bar of the given type (|cffffff00/ion create <type>|r)\n    Type |cffffff00/ion bartypes|r for avialable types"
+L.SLASH_CMD2_DESC = "Create a blank bar of the given type (|cffffff00/ion create <type>|r)\n    Type |cffffff00/ion bartypes|r for available types"
 
 L.SLASH_CMD3 = "Delete"
 L.SLASH_CMD3_DESC = "Delete the currently selected bar"
@@ -83,7 +85,7 @@ L.SLASH_CMD25 = "Y"
 L.SLASH_CMD25_DESC = "Change current bar's vertical axis position"
 
 L.SLASH_CMD26 = "State"
-L.SLASH_CMD26_DESC = "Toggle an action state for the current bar (|cffffff00/ion state <state>|r).\n    Type |cffffff00/ion statelist|r for vaild states"
+L.SLASH_CMD26_DESC = "Toggle an action state for the current bar (|cffffff00/ion state <state>|r).\n    Type |cffffff00/ion statelist|r for valid states"
 
 L.SLASH_CMD27 = "Vis"
 L.SLASH_CMD27_DESC = "Toggle visibility states for the current bar (|cffffff00/ion vis <state> <index>|r)\n|cffffff00<index>|r = \"show\" | \"hide\" | <num>.\nExample: |cffffff00/ion vis paged hide|r will toggle hide for all paged states\nExample: |cffffff00/ion vis paged 1|r will toggle show/hide for when the state manager is on page 1"
@@ -134,7 +136,7 @@ L.SLASH_CMD42 = "StateList"
 L.SLASH_CMD42_DESC = "Print a list of valid states"
 
 L.SLASH_CMD43 = "BarTypes"
-L.SLASH_CMD43_DESC = "Print a list of avilable bar types to make"
+L.SLASH_CMD43_DESC = "Print a list of available bar types to make"
 
 L.SLASH_CMD44 = "BlizzBar"
 L.SLASH_CMD44_DESC = "Toggle Blizzard's Action Bar"
@@ -178,27 +180,33 @@ L.PAGED3 = "Page 3"
 L.PAGED4 = "Page 4"
 L.PAGED5 = "Page 5"
 L.PAGED6 = "Page 6"
+
 L.PET0 = "No Pet"
 L.PET1 = "Pet Exists"
+
 L.ALT0 = "Alt Up"
 L.ALT1 = "Alt Down"
 L.CTRL0 = "Control Up"
 L.CTRL1 = "Control Down"
 L.SHIFT0 = "Shift Up"
 L.SHIFT1 = "Shift Down"
+
 L.STEALTH0 = "No Stealth"
 L.STEALTH1 = "Stealth"
 L.REACTION0 = "Friendly"
 L.REACTION1 = "Hostile"
 L.COMBAT0 = "No Combat"
 L.COMBAT1 = "Combat"
+
 L.GROUP0 = "No Group"
 L.GROUP1 = "Group: Raid"
 L.GROUP2 = "Group: Party"
 L.FISHING0 = "No Fishing Pole"
 L.FISHING1 = "Fishing Pole"
+
 L.VEHICLE0 = "No Vehicle/Possess"
 L.VEHICLE1 = "Vehicle/Possess"
+
 L.CUSTOM0 = "Custom States"
 
 --class specific state names
@@ -236,8 +244,8 @@ L.BAR_SHAPE2 = "Circle"
 L.BAR_SHAPE3 = "Circle+One"
 L.BAR_STRATAS = "\n1=BACKGROUND\n2=LOW\n3=MEDIUM\n4=HIGH\n5=DIALOG"
 L.BAR_ALPHA = "Alpha value must be between zero(0) and one(1)"
-L.BAR_ARCSTART = "Arc start must be bewtween 0 and 359"
-L.BAR_ARCLENGTH = "Arc length must be bewtween 0 and 359"
+L.BAR_ARCSTART = "Arc start must be between 0 and 359"
+L.BAR_ARCLENGTH = "Arc length must be between 0 and 359"
 L.BAR_COLUMNS = "Enter a number of desired columns for the bar higher than zero(0)\nOmit number to turn off columns"
 L.BAR_PADH = "Enter a valid number for desired horizontal button padding"
 L.BAR_PADV = "Enter a valid number for desired vertical button padding"

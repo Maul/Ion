@@ -157,7 +157,7 @@ function BINDER:ApplyBindings(button)
 
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 
-	if (button:IsVisible()) then
+	if (button:IsVisible() or button:GetParent():GetAttribute("concealed")) then
 		gsub(button.keys.hotKeys, "[^:]+", function(key) SetOverrideBindingClick(button, button.keys.hotKeyPri, key, button:GetName()) end)
 	end
 

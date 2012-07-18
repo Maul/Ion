@@ -268,60 +268,6 @@
 					</OnShow>
 				</Scripts>
 			</CheckButton>
-			<Frame name="$parentPopUp" parentKey="popup" frameStrata="DIALOG" toplevel="true" clampedToScreen="true">
-				<Anchors>
-					<Anchor point="CENTER">
-						<Offset x="0" y="0"/>
-					</Anchor>
-				</Anchors>
-				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="18"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="8"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="3" right="3" top="2" bottom="2"/>
-					</BackgroundInsets>
-				</Backdrop>
-				<Scripts>
-					<OnLoad>
-						self.timer = 0
-						self.options = {}
-						self:RegisterEvent("ADDON_LOADED")
-						self:SetBackdropColor(0, 0, 0)
-						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-						self:Hide()
-					</OnLoad>
-					<OnShow>
-						self.timer = 0
-					</OnShow>
-					<OnUpdate>
-						self.timer = self.timer + elapsed
-						if (self:IsVisible() and self.timer > 5) then
-							if (not self:IsMouseOver()) then
-								self:Hide()
-							end
-						end
-					</OnUpdate>
-				</Scripts>
-			</Frame>
-			<EditBox name="$parentPopUpEdit" parentKey="popupedit" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true">
-				<Anchors>
-					<Anchor point="CENTER">
-						<Offset x="0" y="0"/>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnEditFocusGained>
-						self:ClearFocus()
-					</OnEditFocusGained>
-					<OnTextChanged>
-
-					</OnTextChanged>
-				</Scripts>
-			</EditBox>
 		</Frames>
 	</Button>
 
@@ -336,17 +282,6 @@
 						<Offset x="135" y="10"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="5" right="5" top="5" bottom="5"/>
-					</BackgroundInsets>
-				</Backdrop>
 				<Frames>
 
 				</Frames>
@@ -365,17 +300,6 @@
 						<Offset x="-10" y="10"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="5" right="5" top="5" bottom="5"/>
-					</BackgroundInsets>
-				</Backdrop>
 				<Frames>
 
 				</Frames>

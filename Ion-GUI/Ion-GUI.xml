@@ -17,19 +17,19 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</FontString>
 			</Layer>
 		</Layers>
-		<NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+		<NormalTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Up">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</NormalTexture>
-		<PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+		<PushedTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Down">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</PushedTexture>
-		<HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+		<HighlightTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Highlight" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</HighlightTexture>
-		<CheckedTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+		<CheckedTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Highlight" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</CheckedTexture>
-		<DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+		<DisabledTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Disabled">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</DisabledTexture>
 		<NormalFont inherits="GameFontNormalSmall"/>
@@ -126,19 +126,19 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</FontString>
 			</Layer>
 		</Layers>
-		<NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+		<NormalTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Up">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</NormalTexture>
-		<PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+		<PushedTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Down">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</PushedTexture>
-		<HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+		<HighlightTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Highlight" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</HighlightTexture>
-		<CheckedTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+		<CheckedTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Highlight" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</CheckedTexture>
-		<DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+		<DisabledTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Disabled">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</DisabledTexture>
 		<NormalFont inherits="GameFontNormalSmall"/>
@@ -146,17 +146,17 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		<DisabledFont inherits="GameFontDisableSmall"/>
 	</CheckButton>
 
-	<CheckButton name="IonCheckButtonTemplate2" virtual="true">
+	<CheckButton name="IonCheckButtonTabTemplate" virtual="true">
 		<Size x="60" y="20"/>
-		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\AddOns\Ion-GUI\Images\UI-Tooltip-Border" tile="true">
+		<Backdrop bgFile="Interface\AddOns\Ion\Images\UI-Panel-Tab-Background" edgeFile="Interface\AddOns\Ion\Images\UI-Tooltip-Border-Tab">
 			<EdgeSize>
-				<AbsValue val="20"/>
+				<AbsValue val="18"/>
 			</EdgeSize>
 			<TileSize>
-				<AbsValue val="16"/>
+				<AbsValue val="64"/>
 			</TileSize>
 			<BackgroundInsets>
-				<AbsInset left="5" right="5" top="2" bottom="5"/>
+				<AbsInset left="2" right="2" top="0" bottom="2"/>
 			</BackgroundInsets>
 		</Backdrop>
 		<Layers>
@@ -173,15 +173,15 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 		<DisabledFont inherits="GameFontDisableSmall"/>
 		<Scripts>
 			<OnLoad>
-				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-				self:SetBackdropColor(0.1,0.1,0.1,1)
+				self:SetBackdropBorderColor(0.35, 0.35, 0.35, 1)
+				self:SetBackdropColor(0.7,0.7,0.7,1)
 			</OnLoad>
 			<OnEnter>
-				self:SetBackdropColor(0.3,0.3,0.3,1)
+				self:SetBackdropColor(1,1,1,1)
 			</OnEnter>
 			<OnLeave>
 				if (not self.selected) then
-					self:SetBackdropColor(0.1,0.1,0.1,1)
+					self:SetBackdropColor(0.7,0.7,0.7,1)
 				end
 			</OnLeave>
 		</Scripts>
@@ -198,19 +198,19 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</FontString>
 			</Layer>
 		</Layers>
-		<NormalTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+		<NormalTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Disabled">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</NormalTexture>
-		<PushedTexture file="Interface\Buttons\UI-Panel-Button-Disabled-Down">
+		<PushedTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Disabled-Down">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</PushedTexture>
-		<HighlightTexture file="Interface\Buttons\UI-Panel-Button-YellowHighlight" alphaMode="ADD">
+		<HighlightTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-YellowHighlight" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</HighlightTexture>
 		<CheckedTexture file="" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</CheckedTexture>
-		<DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+		<DisabledTexture file="Interface\AddOns\Ion\Images\UI-Panel-Button-Disabled">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</DisabledTexture>
 		<NormalFont inherits="GameFontNormalSmall"/>
@@ -310,8 +310,19 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 	<CheckButton name="IonMacroIconButtonTemplate" virtual="true">
 		<Size x="30" y="30"/>
 		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="filler">
+					<Anchor point="TOPLEFT">
+						<Offset x="2" y="-2"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-2" y="2"/>
+					</Anchor>
+					<Color r="0" g="0" b="0" a="1"/>
+				</Texture>
+			</Layer>
 			<Layer level="OVERLAY">
-				<Texture file="Interface\Buttons\UI-Quickslot2" parentKey="slot">
+				<Texture file="Interface\AddOns\Ion\Images\GlowSquareDark_Frame" parentKey="slot">
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset x="-2" y="2"/>
@@ -341,7 +352,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				end
 			</OnUpdate>
 		</Scripts>
-		<NormalTexture name="$parentIcon" parentKey="icon">
+		<NormalTexture name="$parentIcon" drawLayer="ARTWORK" parentKey="icon">
 			<Anchors>
 				<Anchor point="TOPLEFT">
 					<Offset x="2" y="-2"/>
@@ -352,7 +363,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</Anchors>
 			<TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>
 		</NormalTexture>
-		<CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight"/>
+		<CheckedTexture alphaMode="ADD" file="Interface\AddOns\Ion\Images\CheckButtonHilight"/>
 	</CheckButton>
 
 	<!-- Editbox Templates -->
@@ -366,6 +377,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				self.scrollbar = _G[self:GetName().."ScrollBar"]
 				self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
 				self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
+				self.thumbtexture = _G[self.scrollbar:GetName().."ThumbTexture"]
 
 				self.scrollbar:ClearAllPoints()
 				self.scrollbar:SetPoint("TOPLEFT", self, "TOPRIGHT", -18, -10)
@@ -450,17 +462,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				<Offset x="0" y="0"/>
 			</Anchor>
 		</Anchors>
-		<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-			<EdgeSize>
-				<AbsValue val="22"/>
-			</EdgeSize>
-			<TileSize>
-				<AbsValue val="16"/>
-			</TileSize>
-			<BackgroundInsets>
-				<AbsInset left="5" right="5" top="5" bottom="5"/>
-			</BackgroundInsets>
-		</Backdrop>
 		<Frames>
 			<Frame name="$parentBarList" parentKey="barlist">
 				<Anchors>
@@ -471,17 +472,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						<Offset x="150" y="-10"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="5" right="5" top="5" bottom="5"/>
-					</BackgroundInsets>
-				</Backdrop>
 				<Frames>
 					<ScrollFrame name="$parentScrollFrame" inherits="IonScrollFrameTemplate1">
 						<Anchors>
@@ -548,17 +538,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 								<Offset x="160" y="0"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="16"/>
-							</EdgeSize>
-							<TileSize>
-								<AbsValue val="16"/>
-							</TileSize>
-							<BackgroundInsets>
-								<AbsInset left="5" right="5" top="5" bottom="5"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Scripts>
 							<OnLoad>
 								Ion:BarOptions_OnLoad(self)
@@ -575,17 +554,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 								<Offset x="0" y="165"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="16"/>
-							</EdgeSize>
-							<TileSize>
-								<AbsValue val="16"/>
-							</TileSize>
-							<BackgroundInsets>
-								<AbsInset left="5" right="5" top="5" bottom="5"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Frames>
 							<Frame name="$parentPresets" parentKey="presets">
 								<Anchors>
@@ -626,21 +594,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 												<Offset x="110" y="50"/>
 											</Anchor>
 										</Anchors>
-										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-											<EdgeSize>
-												<AbsValue val="16"/>
-											</EdgeSize>
-											<TileSize>
-												<AbsValue val="16"/>
-											</TileSize>
-											<BackgroundInsets>
-												<AbsInset left="5" right="5" top="5" bottom="5"/>
-											</BackgroundInsets>
-										</Backdrop>
 										<Scripts>
 											<OnLoad>
-												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-												self:SetBackdropColor(0,0,0,0)
+												Ion.SubFrameBlackBackdrop_OnLoad(self)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -653,21 +609,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 												<Offset x="-6" y="50"/>
 											</Anchor>
 										</Anchors>
-										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-											<EdgeSize>
-												<AbsValue val="16"/>
-											</EdgeSize>
-											<TileSize>
-												<AbsValue val="16"/>
-											</TileSize>
-											<BackgroundInsets>
-												<AbsInset left="5" right="5" top="5" bottom="5"/>
-											</BackgroundInsets>
-										</Backdrop>
 										<Scripts>
 											<OnLoad>
-												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-												self:SetBackdropColor(0,0,0,0)
+												Ion.SubFrameBlackBackdrop_OnLoad(self)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -698,21 +642,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 												<Offset x="0" y="0"/>
 											</Anchor>
 										</Anchors>
-										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-											<EdgeSize>
-												<AbsValue val="16"/>
-											</EdgeSize>
-											<TileSize>
-												<AbsValue val="16"/>
-											</TileSize>
-											<BackgroundInsets>
-												<AbsInset left="5" right="5" top="5" bottom="5"/>
-											</BackgroundInsets>
-										</Backdrop>
 										<Scripts>
 											<OnLoad>
-												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-												self:SetBackdropColor(0,0,0,0)
+												Ion.SubFramePlainBackdrop_OnLoad(frame)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -737,21 +669,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 												<Offset x="0" y="0"/>
 											</Anchor>
 										</Anchors>
-										<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-											<EdgeSize>
-												<AbsValue val="16"/>
-											</EdgeSize>
-											<TileSize>
-												<AbsValue val="16"/>
-											</TileSize>
-											<BackgroundInsets>
-												<AbsInset left="5" right="5" top="5" bottom="5"/>
-											</BackgroundInsets>
-										</Backdrop>
 										<Scripts>
 											<OnLoad>
-												self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-												self:SetBackdropColor(0,0,0,0)
+												Ion.SubFramePlainBackdrop_OnLoad(frame)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -774,17 +694,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 								<Offset x="0" y="0"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="16"/>
-							</EdgeSize>
-							<TileSize>
-								<AbsValue val="16"/>
-							</TileSize>
-							<BackgroundInsets>
-								<AbsInset left="5" right="5" top="5" bottom="5"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Frames>
 
 						</Frames>
@@ -811,25 +720,13 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						<Offset x="-10" y="45"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="5" right="5" top="5" bottom="5"/>
-					</BackgroundInsets>
-				</Backdrop>
 				<Frames>
 
 
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-						self:SetBackdropColor(0,0,0,0.5)
+						Ion:BarVisibility_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -843,17 +740,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						<Offset x="-10" y="45"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="5" right="5" top="5" bottom="5"/>
-					</BackgroundInsets>
-				</Backdrop>
 				<Frames>
 					<Frame name="$parentList" parentKey="list">
 						<Anchors>
@@ -924,20 +810,19 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-						self:SetBackdropColor(0,0,0,0.5)
+						Ion:BarGroups_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
 
 			<Button name="$parentCreate" inherits="IonButtonTemplate1">
-				<Size x="60" y="25"/>
+				<Size x="60" y="28"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="BOTTOMLEFT">
-						<Offset x="-1" y="-5"/>
+						<Offset x="-1" y="-4"/>
 					</Anchor>
 					<Anchor point="TOPRIGHT" relativeTo="$parentBarList" relativePoint="BOTTOMRIGHT">
-						<Offset x="1" y="-5"/>
+						<Offset x="2.5" y="-4"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -951,10 +836,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</Button>
 
 			<Button name="$parentDelete" inherits="IonButtonTemplate1">
-				<Size x="150" y="25"/>
+				<Size x="150" y="28"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativeTo="IonBarEditor" relativePoint="BOTTOMRIGHT">
-						<Offset x="-8" y="15"/>
+						<Offset x="-8" y="14"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -968,10 +853,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			</Button>
 
 			<Frame name="$parentConfirm" hidden="true">
-				<Size x="200" y="25"/>
+				<Size x="200" y="28"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativeTo="IonBarEditor" relativePoint="BOTTOMRIGHT">
-						<Offset x="-10" y="15"/>
+						<Offset x="-10" y="14"/>
 					</Anchor>
 				</Anchors>
 				<Layers>
@@ -987,7 +872,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Layers>
 				<Frames>
 					<Button name="$parentConfirmYes" inherits="IonButtonTemplate1">
-						<Size x="60" y="25"/>
+						<Size x="60" y="28"/>
 						<Anchors>
 							<Anchor point="LEFT">
 								<Offset x="0" y="0"/>
@@ -1003,7 +888,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						</Scripts>
 					</Button>
 					<Button name="$parentConfirmNo" inherits="IonButtonTemplate1">
-						<Size x="60" y="25"/>
+						<Size x="60" y="28"/>
 						<Anchors>
 							<Anchor point="RIGHT">
 								<Offset x="0" y="0"/>
@@ -1041,9 +926,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						self:GetParent():Hide()
 					</OnClick>
 				</Scripts>
-				<NormalTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
-				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
-				<HighlightTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+				<NormalTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
 		</Frames>
 		<Scripts>
@@ -1066,17 +951,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				<Offset x="0" y="0"/>
 			</Anchor>
 		</Anchors>
-		<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-			<EdgeSize>
-				<AbsValue val="22"/>
-			</EdgeSize>
-			<TileSize>
-				<AbsValue val="16"/>
-			</TileSize>
-			<BackgroundInsets>
-				<AbsInset left="5" right="5" top="5" bottom="5"/>
-			</BackgroundInsets>
-		</Backdrop>
 		<Frames>
 			<Button name="$parentDone" parentKey="done" toplevel="true" frameStrata="TOOLTIP">
 				<Size x="32" y="32"/>
@@ -1093,9 +967,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						self:GetParent():Hide()
 					</OnClick>
 				</Scripts>
-				<NormalTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
-				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
-				<HighlightTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+				<NormalTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
 		</Frames>
 		<Scripts>
@@ -1213,21 +1087,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 								<Offset x="28" y="-5"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="18"/>
-							</EdgeSize>
-							<TileSize>
-								<AbsValue val="8"/>
-							</TileSize>
-							<BackgroundInsets>
-								<AbsInset left="3" right="3" top="2" bottom="2"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Scripts>
 							<OnLoad>
-								self:SetBackdropColor(0, 0, 0, 1)
-								self:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
+								Ion.SubFrameBlackBackdrop_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -1243,9 +1105,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 								self:GetParent():Hide()
 							</OnClick>
 						</Scripts>
-						<NormalTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
-						<HighlightTexture urgency="5" file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+						<NormalTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Up"/>
+						<PushedTexture file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Down"/>
+						<HighlightTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 					</Button>
 				</Frames>
 				<ScrollChild>

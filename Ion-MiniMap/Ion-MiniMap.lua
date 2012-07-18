@@ -70,6 +70,8 @@ local function hideMinimapItems()
 
 	minimapGetChildren()
 
+	local name
+
 	for k,v in pairs(minimapChildren) do
 
 		name = v:GetName()

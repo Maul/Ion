@@ -1,7 +1,7 @@
 ﻿--Ion, a World of Warcraft® user interface addon.
 --Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local ION, GDB, CDB, PEW, player, realm, barGDB, barCDB = Ion
+local ION, GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB = Ion
 
 ION.BAR = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
@@ -71,7 +71,7 @@ ION.barGDEF = {
 	arcStart = 0,
 	arcLength = 359,
 
-	snapTo = true,
+	snapTo = false,
 	snapToPad = 0,
 	snapToPoint = false,
 	snapToFrame = false,
@@ -366,9 +366,9 @@ function HANDLER:SetHidden(bar, show, hide)
 		self:Show()
 	else
 		if (bar.cdata.conceal) then
-			self:Hide()
+			self:SetAttribute("concealed", true); self:Hide()
 		elseif (not bar.gdata.barLink and not isAnchorChild) then
-			self:Show()
+			self:SetAttribute("concealed", nil); self:Show()
 		end
 	end
 end
@@ -1183,6 +1183,8 @@ end
 
 function BAR:SetFauxState(state)
 
+	local object
+
 	self.objCount = 0
 
 	self.handler:SetAttribute("fauxstate", state)
@@ -1202,6 +1204,8 @@ function BAR:SetFauxState(state)
 end
 
 function BAR:LoadObjects(init)
+
+	local object
 
 	self.objCount = 0
 
@@ -1333,7 +1337,7 @@ end
 
 function BAR:SetPerimeter()
 
-	local num, count = 0, self.objCount
+	local num, count, object = 0, self.objCount
 
 	self.objectCount = 0
 
@@ -1400,6 +1404,17 @@ function BAR:SetRemap_Paged()
 
 end
 
+local druidForms = {
+
+	[1066] = { "Aquatic Form", 0 },
+	[5487] = { "Bear Form", 5487 },
+	[768] = { "Cat Form", 768 },
+	[24858] = { "Moonkin Form", 24858 },
+	[40120] = { "Swift Flight Form", 0 },
+	[783] = { "Travel Form", 0 },
+	[114282] = { "Treant Form", 0 },
+}
+
 function BAR:SetRemap_Stance()
 
 	local start = tonumber(MAS.stance.homestate:match("%d+"))
@@ -1423,6 +1438,8 @@ function BAR:SetRemap_Stance()
 		if (ION.class == "ROGUE") then
 			self.cdata.remap = self.cdata.remap..";3:1"
 		end
+
+		--print(self.cdata.remap)
 	end
 end
 
@@ -1456,16 +1473,18 @@ end
 
 function BAR:ACTIVE_TALENT_GROUP_CHANGED(...)
 
-	self.stateschanged = true
+	if (PEW) then
 
-	self.vischanged = true
+		self.stateschanged = true
 
-	if (self.cdata.stance) then
-		self:SetRemap_Stance()
+		self.vischanged = true
+
+		--if (self.cdata.stance) then
+		--	self:SetRemap_Stance()
+		--end
+
+		self:Update()
 	end
-
-	self:Update()
-
 end
 
 
@@ -1896,6 +1915,8 @@ end
 
 function BAR:UpdateObjectData()
 
+	local object
+
 	for objID in gmatch(self.gdata.objectList, "[^;]+") do
 
 		object = _G[self.objPrefix..objID]
@@ -1907,6 +1928,8 @@ function BAR:UpdateObjectData()
 end
 
 function BAR:UpdateObjectGrid(show)
+
+	local object
 
 	for objID in gmatch(self.gdata.objectList, "[^;]+") do
 

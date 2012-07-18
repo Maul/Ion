@@ -2,7 +2,7 @@
 ## Title: Ion: Macaroon Macro Grabber
 ## Author: Maul
 ## Version: Hydrogen
-## Notes: Helps to import macros from Macroon to Ion
+## Notes: Helps to import macros from Macaroon to Ion
 ## DefaultState: enabled
 ## OptionalDeps: Ion, Macaroon
 ## SavedVariables: IonMMGGDB

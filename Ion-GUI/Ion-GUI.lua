@@ -1,7 +1,7 @@
 ﻿--Ion GUI, a World of Warcraft® user interface addon.
 --Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local ION, GDB, CDB, IBE, IOE, MAS, PEW = Ion
+local ION, GDB, CDB, IBE, IOE, IBTNE, MAS, PEW = Ion
 
 local width, height = 775, 440
 
@@ -65,6 +65,139 @@ local adjOptions = {
 	[11] = { [0] = "ALPHAUP", LGUI.ALPHAUP, 2, "AlphaUpSet", nil, nil, nil, ION.AlphaUps },
 	[12] = { [0] = "ALPHAUP", LGUI.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
 }
+
+local function insertLink(text)
+
+	local item = GetItemInfo(text)
+
+	if (IBTNE.flyoutedit and IBTNE.flyoutedit.keyedit.edit:IsVisible()) then
+
+		IBTNE.flyoutedit.keyedit.edit:Insert(item or text)
+
+	elseif (IBTNE.macroedit.edit:GetText() == "") then
+
+		if (item) then
+
+			if (GetItemSpell(text)) then
+				IBTNE.macroedit.edit:Insert(SLASH_USE1.." "..item)
+			else
+				IBTNE.macroedit.edit:Insert(SLASH_EQUIP1.." "..item)
+			end
+
+		else
+			IBTNE.macroedit.edit:Insert(SLASH_CAST1.." "..text)
+		end
+	else
+		IBTNE.macroedit.edit:Insert(item or text)
+	end
+end
+
+local function modifiedSpellClick(button)
+
+	local id = SpellBook_GetSpellBookSlot(GetMouseFocus())
+
+	if (id > MAX_SPELLS) then
+		return
+	end
+
+	if (CursorHasSpell() and IBTNE:IsVisible()) then
+		ClearCursor()
+	end
+
+	if (IsModifiedClick("CHATLINK")) then
+
+		if (IBTNE:IsVisible()) then
+
+			local spell, subName = GetSpellBookItemName(id, SpellBookFrame.bookType)
+
+			if (spell and not IsPassiveSpell(id, SpellBookFrame.bookType)) then
+
+				if (subName and #subName > 0) then
+					insertLink(spell.."("..subName..")")
+				else
+					insertLink(spell.."()")
+				end
+			end
+			return
+		end
+	end
+
+	if (IsModifiedClick("PICKUPACTION")) then
+
+		PickupSpell(id, SpellBookFrame.bookType)
+
+	end
+end
+
+local function modifiedItemClick(link)
+
+	if (IsModifiedClick("CHATLINK")) then
+
+		if (IBTNE:IsVisible()) then
+
+			local itemName = GetItemInfo(link)
+
+			if (itemName) then
+				insertLink(itemName)
+			end
+
+			return true
+		end
+	end
+end
+
+local function modifiedMountClick(self, button)
+
+	local id = self:GetParent().spellID
+
+	if (CursorHasSpell() and IBTNE:IsVisible()) then
+		ClearCursor()
+	end
+
+	if (IsModifiedClick("CHATLINK")) then
+
+		if (IBTNE:IsVisible()) then
+
+			local mount = GetSpellInfo(id)
+
+			if (mount) then
+				insertLink(mount.."()")
+			end
+
+			return
+		end
+	end
+end
+
+local function modifiedPetJournalClick(self, button)
+
+	local id = self:GetParent().petID
+
+	if (IBTNE:IsVisible()) then
+		ClearCursor()
+	end
+
+	if (IsModifiedClick("CHATLINK")) then
+
+		if (IBTNE:IsVisible()) then
+
+			local _, _, _, _, _, _, petName = C_PetJournal.GetPetInfoByPetID(id)
+
+			if (petName) then
+				insertLink(petName.."()")
+			end
+
+			return
+		end
+	end
+end
+
+local function openStackSplitFrame(...)
+
+	if (IBTNE:IsVisible()) then
+		StackSplitFrame:Hide()
+	end
+end
 
 local function IonPanelTemplates_DeselectTab(tab)
 
@@ -408,8 +541,8 @@ end
 
 function Ion:BarEditor_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.8)
+	ION.SubFramePlainBackdrop_OnLoad(frame)
+
 	frame:RegisterEvent("ADDON_LOADED")
 	frame:RegisterForDrag("LeftButton", "RightButton")
 	frame.bottom = 0
@@ -434,19 +567,19 @@ function Ion:BarEditor_OnLoad(frame)
 		end
 	end
 
-	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplateGrey")
+	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
 	f:SetWidth(140)
-	f:SetHeight(25)
-	f:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -28, -10)
+	f:SetHeight(28)
+	f:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -28, -8.5)
 	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
 	f.text:SetText("")
 	frame.tab3 = f; frame.tabs[f] = frame.bargroups
 
-	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplateGrey")
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
 	f:SetWidth(140)
-	f:SetHeight(25)
+	f:SetHeight(28)
 	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
@@ -454,9 +587,9 @@ function Ion:BarEditor_OnLoad(frame)
 	f.text:SetText(LGUI.VISIBILITY)
 	frame.tab2 = f; frame.tabs[f] = frame.barvis
 
-	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplateGrey")
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
 	f:SetWidth(140)
-	f:SetHeight(25)
+	f:SetHeight(28)
 	f:SetPoint("RIGHT", frame.tab2, "LEFT", -5, 0)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
@@ -465,23 +598,16 @@ function Ion:BarEditor_OnLoad(frame)
 	frame.tab1 = f; frame.tabs[f] = frame.baropt
 
 	f = CreateFrame("EditBox", nil, frame, "IonEditBoxTemplateSmall")
-	f:SetWidth(157)
+	f:SetWidth(160)
 	f:SetHeight(26)
-	f:SetPoint("RIGHT", frame.tab1, "LEFT", -5, 0)
-	f:SetPoint("TOPLEFT", frame.barlist, "TOPRIGHT", 4, 0)
-	f:SetBackdrop({
-		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
-		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
-	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	f:SetBackdropColor(0,0,0,1)
+	f:SetPoint("RIGHT", frame.tab1, "LEFT", -3.5, 0)
+	f:SetPoint("TOPLEFT", frame.barlist, "TOPRIGHT", 3.5, 0)
 	f:SetScript("OnEnterPressed", updateBarName)
 	f:SetScript("OnTabPressed", updateBarName)
 	f:SetScript("OnEscapePressed", resetBarName)
 	frame.barname = f
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
 
 	f = CreateFrame("Frame", nil, frame)
 	f:SetWidth(250)
@@ -519,11 +645,10 @@ end
 
 function ION:BarList_OnLoad(self)
 
-	self:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	self:SetBackdropColor(0,0,0,0.5)
-	self:GetParent().backdrop = self
+	ION.SubFrameHoneycombBackdrop_OnLoad(self)
 
 	self:SetHeight(height-55)
+
 end
 
 function ION.BarListScrollFrame_OnLoad(self)
@@ -790,7 +915,7 @@ function ION:BarEditor_ConfirmYes(button)
 		bar:DeleteBar()
 	end
 
-	IonBarEditorBarOptionsDelete:Click()
+	IonBarEditorDelete:Click()
 
 end
 
@@ -802,7 +927,7 @@ function ION:ConfirmNo_OnLoad(button)
 end
 
 function ION:BarEditor_ConfirmNo(button)
-	IonBarEditorBarOptionsDelete:Click()
+	IonBarEditorDelete:Click()
 end
 
 local function chkOptionOnClick(button)
@@ -816,8 +941,7 @@ end
 
 function ION:BarOptions_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.5)
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 	local f, primary
 
@@ -897,11 +1021,13 @@ local function remapToOnTextChanged(frame)
 
 	local bar = ION.CurrentBar
 
-	if (bar and bar.cdata.remap and frame.value) then
+	if (bar and bar.cdata.remap and frame.value and #frame.value > 0) then
 
 		local value = barOpt.remap.value
 
 		bar.cdata.remap = bar.cdata.remap:gsub(value..":%d+", value..":"..frame.value)
+
+		print(bar.cdata.remap)
 
 		if (bar.cdata.paged) then
 			bar.paged.registered = false
@@ -917,8 +1043,7 @@ end
 
 function ION:StateEditor_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.5)
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 	frame.tabs = {}
 
@@ -932,16 +1057,16 @@ function ION:StateEditor_OnLoad(frame)
 				end
 				panel:Show()
 				tab:SetHeight(33)
-				tab:SetBackdropBorderColor(0.7, 0.7, 0.7)
-				tab:SetBackdropColor(0.3,0.3,0.3,1)
+				tab:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+				tab:SetBackdropColor(1,1,1,1)
 				tab.text:SetTextColor(1,0.82,0)
 
 				tab.selected = true
 			else
 				panel:Hide()
 				tab:SetHeight(28)
-				tab:SetBackdropBorderColor(0.5, 0.5, 0.5)
-				tab:SetBackdropColor(0.1,0.1,0.1,1)
+				tab:SetBackdropBorderColor(0.2, 0.2, 0.2, 1)
+				tab:SetBackdropColor(0.7,0.7,0.7,1)
 				tab.text:SetTextColor(0.85, 0.85, 0.85)
 
 				tab.selected = nil
@@ -950,7 +1075,7 @@ function ION:StateEditor_OnLoad(frame)
 		end
 	end
 
-	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate2")
+	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
 	f:SetWidth(160)
 	f:SetHeight(33)
 	f:SetPoint("TOPLEFT", frame, "BOTTOMLEFT",5,4)
@@ -961,7 +1086,7 @@ function ION:StateEditor_OnLoad(frame)
 	f.selected = true
 	frame.tab1 = f; frame.tabs[f] = frame.presets
 
-	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate2")
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
 	f:SetWidth(160)
 	f:SetHeight(28)
 	f:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT",-5,4)
@@ -970,7 +1095,7 @@ function ION:StateEditor_OnLoad(frame)
 	f.text:SetText(LGUI.CUSTOM_STATES)
 	frame.tab2 = f; frame.tabs[f] = frame.custom
 
-	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate2")
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
 	f:SetWidth(160)
 	f:SetHeight(28)
 	f:SetPoint("TOP", frame, "BOTTOM",0,0)
@@ -978,42 +1103,6 @@ function ION:StateEditor_OnLoad(frame)
 	f:SetFrameLevel(frame:GetFrameLevel())
 	f:Hide()
 	frame.tab3 = f; frame.tabs[f] = frame.hidden
-
-	--[[
-	local f = CreateFrame("CheckButton", frame:GetName().."Preset", frame, "IonTopTabTemplate")
-	f:SetWidth(18)
-	f:SetHeight(18)
-	f:SetPoint("BOTTOMLEFT", frame, "TOPLEFT",0,-5)
-	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
-	f:SetFrameLevel(frame:GetFrameLevel())
-	f.text:SetText(LGUI.PRESET_STATES)
-	frame.tab1 = f; frame.tabs[f] = frame.presets
-
-	IonPanelTemplates_SelectTab(frame.tab1); IonPanelTemplates_TabResize(frame.tab1, 0, nil, 120, 175)
-
-	f = CreateFrame("CheckButton", frame:GetName().."Custom", frame, "IonTopTabTemplate")
-	f:SetWidth(18)
-	f:SetHeight(18)
-	f:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT",0,-5)
-	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
-	f:SetFrameLevel(frame:GetFrameLevel())
-	f.text:SetText(LGUI.CUSTOM_STATES)
-	frame.tab2 = f; frame.tabs[f] = frame.custom
-
-	IonPanelTemplates_DeselectTab(frame.tab2); IonPanelTemplates_TabResize(frame.tab2, 0, nil, 120, 175)
-
-	f = CreateFrame("CheckButton", frame:GetName().."Hidden", frame, "IonTopTabTemplate")
-	f:SetWidth(18)
-	f:SetHeight(18)
-	f:SetPoint("BOTTOM", frame, "TOP",0,-5)
-	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
-	f:SetFrameLevel(frame:GetFrameLevel())
-	f:Hide()
-	frame.tab3 = f; frame.tabs[f] = frame.hidden
-
-	IonPanelTemplates_DeselectTab(frame.tab3); IonPanelTemplates_TabResize(frame.tab3, 0, nil, 120, 175)
-
-	]]--
 
 	local states, anchor, last, count = {}
 
@@ -1092,6 +1181,8 @@ function ION:StateEditor_OnLoad(frame)
 	f.popup:SetPoint("BOTTOMRIGHT")
 	barOpt.remap = f
 
+	ION.SubFrameBlackBackdrop_OnLoad(f)
+
 	f = CreateFrame("EditBox", "$parentRemapTo", frame.presets, "IonDropDownOptionFull")
 	f:SetWidth(160)
 	f:SetHeight(25)
@@ -1105,6 +1196,8 @@ function ION:StateEditor_OnLoad(frame)
 	f.popup:SetPoint("BOTTOMLEFT")
 	f.popup:SetPoint("BOTTOMRIGHT")
 	barOpt.remapto = f
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
 end
 
 local function adjOptionOnTextChanged(edit, frame)
@@ -1237,8 +1330,7 @@ end
 
 function ION.AdjustableOptions_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.5)
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 	for index, options in ipairs(adjOptions) do
 
@@ -1276,10 +1368,22 @@ function ION.AdjustableOptions_OnLoad(frame)
 	end
 end
 
+function ION:BarVisibility_OnLoad(frame)
+
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+
+end
+
+function ION:BarGroups_OnLoad(frame)
+
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+
+end
+
 function ION:ObjectEditor_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.8)
+	ION.SubFramePlainBackdrop_OnLoad(frame)
+
 	frame:RegisterForDrag("LeftButton", "RightButton")
 	frame.bottom = 0
 
@@ -1316,9 +1420,7 @@ end
 
 function ION:ActionList_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.5)
-	frame:GetParent().backdrop = frame
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 end
 
@@ -1753,7 +1855,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetPoint("BOTTOMRIGHT", -2, 20)
 	f.edit:SetWidth(350)
 	f.edit:SetScript("OnTextChanged", macroText_OnTextChanged)
-	f.edit:SetScript("OnEditFocusGained", function(self) self.hasfocus = true end)
+	f.edit:SetScript("OnEditFocusGained", function(self) self.hasfocus = true self:SetText(self:GetText():gsub("#autowrite\n", "")) end)
 	f.edit:SetScript("OnEditFocusLost", macroText_OnEditFocusLost)
 	frame.macroedit = f
 
@@ -1761,16 +1863,9 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetPoint("TOPLEFT", -10, 10)
 	f:SetPoint("BOTTOMRIGHT", 4, -20)
 	f:SetFrameLevel(frame.macroedit.edit:GetFrameLevel()-1)
-	f:SetBackdrop({
-		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
-		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
-	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	f:SetBackdropColor(0,0,0,1)
 	frame.macroeditBG = f
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
 
 	f = CreateFrame("CheckButton", nil, frame.macro, "IonMacroIconButtonTemplate")
 	f:SetID(0)
@@ -1791,36 +1886,36 @@ function ION:ButtonEditor_OnLoad(frame)
 	frame.macroicon = f
 
 	f = CreateFrame("Button", nil, frame.macro)
-	f:SetPoint("TOPLEFT", frame.macroicon, "TOPRIGHT", 0, 3)
+	f:SetPoint("TOPLEFT", frame.macroicon, "TOPRIGHT", 0, 5)
 	f:SetWidth(35)
 	f:SetHeight(35)
 	f:SetScript("OnClick", function(self) end)
-	f:SetNormalTexture("Interface\\Buttons\\UI-RotationRight-Button-Up")
-	f:SetPushedTexture("Interface\\Buttons\\UI-RotationRight-Button-Down")
-	f:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Round")
+	f:SetNormalTexture("Interface\\AddOns\\Ion\\Images\\UI-RotationRight-Button-Up")
+	f:SetPushedTexture("Interface\\AddOns\\Ion\\Images\\UI-RotationRight-Button-Down")
+	f:SetHighlightTexture("Interface\\AddOns\\Ion\\Images\\UI-Common-MouseHilight")
 	frame.otherspec = f
 
-	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplateGrey")
+	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplate1")
 	f:SetWidth(105)
-	f:SetHeight(26)
-	f:SetPoint("LEFT", frame.otherspec, "RIGHT", -3, 1)
+	f:SetHeight(34)
+	f:SetPoint("LEFT", frame.otherspec, "RIGHT", -2, 1)
 	f:SetScript("OnClick", function(self) end)
 	f:SetChecked(nil)
 	f.text:SetText("")
 	frame.macromaster = f
 
-	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplateGrey")
+	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplate1")
 	f:SetWidth(105)
-	f:SetHeight(26)
+	f:SetHeight(34)
 	f:SetPoint("LEFT", frame.macromaster, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self) end)
 	f:SetChecked(nil)
 	f.text:SetText("")
 	frame.snippets = f
 
-	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplateGrey")
+	f = CreateFrame("CheckButton", nil, frame.macro, "IonCheckButtonTemplate1")
 	f:SetWidth(105)
-	f:SetHeight(26)
+	f:SetHeight(34)
 	f:SetPoint("LEFT", frame.snippets, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self) end)
 	f:SetChecked(nil)
@@ -1835,7 +1930,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetFontObject("GameFontHighlight")
 	f:SetJustifyH("CENTER")
 	f:SetPoint("TOPLEFT", frame.macroicon, "BOTTOMRIGHT", 3, 27)
-	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOP", -20, 4)
+	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOP", -20, 2)
 	f:SetScript("OnTextChanged", macroNameEdit_OnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
 	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
@@ -1852,15 +1947,8 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetPoint("TOPLEFT", 0, 0)
 	f:SetPoint("BOTTOMRIGHT", 0, 0)
 	f:SetFrameLevel(frame.nameedit:GetFrameLevel()-1)
-	f:SetBackdrop({
-		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
-		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
-	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	f:SetBackdropColor(0,0,0,0.5)
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
 
 	f = CreateFrame("EditBox", nil, frame.macro)
 	f:SetMultiLine(false)
@@ -1872,7 +1960,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetTextInsets(5,5,5,5)
 	f:SetFontObject("GameFontHighlightSmall")
 	f:SetPoint("TOPLEFT", frame.nameedit, "TOPRIGHT", 0, 0)
-	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOPRIGHT",-15, 4)
+	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOPRIGHT",-15, 2)
 	f:SetScript("OnTextChanged", macroNoteEdit_OnTextChanged)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
 	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
@@ -1889,15 +1977,8 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetPoint("TOPLEFT", 0, 0)
 	f:SetPoint("BOTTOMRIGHT", 15, 0)
 	f:SetFrameLevel(frame.noteedit:GetFrameLevel()-1)
-	f:SetBackdrop({
-		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
-		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
-	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	f:SetBackdropColor(0,0,0,0.5)
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
 
 	f = CreateFrame("CheckButton", nil, frame.macro, "IonOptionsCheckButtonTemplate")
 	f:SetID(0)
@@ -1980,15 +2061,6 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetJustifyH("LEFT")
 	f:SetTextInsets(22, 0, 0, 0)
 	f:SetPoint("TOPLEFT", 8, 36)
-	f:SetBackdrop({
-		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
-		insets = { left = 5, right = 5, top = 5, bottom = 5 },})
-	f:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	f:SetBackdropColor(0,0,0,1)
 	f:SetScript("OnShow", function(self) self:SetText("") end)
 	f:SetScript("OnEnterPressed", function(self) updateIconList() ION.MacroIconListUpdate() self:ClearFocus() self.hasfocus = nil end)
 	f:SetScript("OnTabPressed", function(self) updateIconList() ION.MacroIconListUpdate() self:ClearFocus() self.hasfocus = nil end)
@@ -1997,6 +2069,8 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() self.cancel:Hide() end self.hasfocus = nil end)
 	f:SetScript("OnTextChanged", function(self) if (strlen(self:GetText()) < 1 and not self.hasfocus) then self.text:Show() self.cancel:Hide() end end)
 	frame.search = f
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
 
 	f.cancel = CreateFrame("Button", nil, f)
 	f.cancel:SetWidth(20)
@@ -2051,6 +2125,29 @@ updater:SetScript("OnUpdate", runUpdater)
 updater.elapsed = 0
 updater:Hide()
 
+local function hookMountButtons()
+
+	if (MountJournal.ListScrollFrame.buttons) then
+		for i,btn in pairs(MountJournal.ListScrollFrame.buttons) do
+			btn.DragButton:HookScript("OnClick", modifiedMountClick)
+		end
+	end
+end
+
+local function hookPetJournalButtons()
+
+	print("prehook")
+
+	if (PetJournal.listScroll.buttons) then
+
+		print("hook")
+
+		for i,btn in pairs(PetJournal.listScroll.buttons) do
+			btn.dragButton:HookScript("OnClick", modifiedPetJournalClick)
+		end
+	end
+end
+
 local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Ion-GUI") then
@@ -2060,12 +2157,27 @@ local function controlOnEvent(self, event, ...)
 
 		IBE = IonBarEditor
 		IOE = IonObjectEditor
+		IBTNE = IonButtonEditor
 
 		MAS = ION.MANAGED_ACTION_STATES
 
 		for _,bar in pairs(ION.BARIndex) do
 			hookHandler(bar.handler)
 		end
+
+		hooksecurefunc("SpellButton_OnModifiedClick", modifiedSpellClick)
+		hooksecurefunc("HandleModifiedItemClick", modifiedItemClick)
+		hooksecurefunc("OpenStackSplitFrame", openStackSplitFrame)
+
+		if (MountJournal) then
+			hookMountButtons()
+			hookPetJournalButtons()
+		end
+
+	elseif (event == "ADDON_LOADED" and ... == "Blizzard_PetJournal") then
+
+		hookMountButtons()
+		hookPetJournalButtons()
 
 	elseif (event == "PLAYER_SPECIALIZATION_CHANGED") then
 

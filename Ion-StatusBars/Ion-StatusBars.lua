@@ -268,12 +268,12 @@ local adjOptions = {
 	[3] = { [0] = "BARFILL", LSTAT.BARFILL, 2, "UpdateTexture", nil, nil, nil, BarTexturesData },
 	[4] = { [0] = "BORDER", LSTAT.BORDER, 2, "UpdateBorder", nil, nil, nil, BarBordersData },
 	[5] = { [0] = "ORIENT", LSTAT.ORIENT, 2, "UpdateOrientation", nil, nil, nil, BarOrientations },
-	[6] = { [0] = "CENTER_TEXT", LSTAT.CENTER_TEXT, 2, "UpdateCenterText", nil, nil, nil, sbStrings },
-	[7] = { [0] = "LEFT_TEXT", LSTAT.LEFT_TEXT, 2, "UpdateLeftText", nil, nil, nil, sbStrings  },
-	[8] = { [0] = "RIGHT_TEXT", LSTAT.RIGHT_TEXT, 2, "UpdateRightText", nil, nil, nil, sbStrings  },
-	[9] = { [0] = "MOUSE_TEXT", LSTAT.MOUSE_TEXT, 2, "UpdateMouseover", nil, nil, nil, sbStrings  },
-	[10] = { [0] = "TOOLTIP_TEXT", LSTAT.TOOLTIP_TEXT, 2, "UpdateTooltip", nil, nil, nil, sbStrings  },
-	[11] = { [0] = "UNIT_WATCH", LSTAT.UNIT_WATCH, 2, "UpdateUnit", nil, nil, nil, BarUnits  },
+	[6] = { [0] = "UNIT_WATCH", LSTAT.UNIT_WATCH, 2, "UpdateUnit", nil, nil, nil, BarUnits  },
+	[7] = { [0] = "CENTER_TEXT", LSTAT.CENTER_TEXT, 2, "UpdateCenterText", nil, nil, nil, sbStrings },
+	[8] = { [0] = "LEFT_TEXT", LSTAT.LEFT_TEXT, 2, "UpdateLeftText", nil, nil, nil, sbStrings  },
+	[9] = { [0] = "RIGHT_TEXT", LSTAT.RIGHT_TEXT, 2, "UpdateRightText", nil, nil, nil, sbStrings  },
+	[10] = { [0] = "MOUSE_TEXT", LSTAT.MOUSE_TEXT, 2, "UpdateMouseover", nil, nil, nil, sbStrings  },
+	[11] = { [0] = "TOOLTIP_TEXT", LSTAT.TOOLTIP_TEXT, 2, "UpdateTooltip", nil, nil, nil, sbStrings  },
 }
 
 local function xpstrings_Update()
@@ -430,7 +430,7 @@ local function repDropDown_Initialize(frame)
 
 			if (k > 0) then
 
-				percent = tonumber(v.percent:match("%d+"))
+				local percent = tonumber(v.percent:match("%d+"))
 
 				if (percent < 10) then
 					percent = "0"..percent
@@ -1410,11 +1410,7 @@ function ION.StatusBarEditorUpdate(reset)
 			local yoff, anchor, last, adjHeight = -10
 			local editor = IonBarEditor.baropt.editor
 
-			if (sb.config.sbType == "cast") then
-				adjHeight = 250
-			else
-				adjHeight = 275
-			end
+			adjHeight = 200
 
 			for i,f in ipairs(sbOpt.types) do
 
@@ -1433,13 +1429,17 @@ function ION.StatusBarEditorUpdate(reset)
 			for i,f in ipairs(sbOpt.chk) do
 
 				if (sb.config.sbType == f.sbType) then
-					f:SetPoint("BOTTOMLEFT", f.parent, "BOTTOMLEFT", 15, 60)
+					f:SetPoint("BOTTOMLEFT", f.parent, "BOTTOMLEFT", 15, 25)
 					f:SetChecked(sb.config[f.index])
 					f:Show()
 				end
 			end
 
-			local yoff1, yoff2, shape = (adjHeight)/10, (adjHeight)/10
+			local yoff1, yoff2, shape = (adjHeight)/5, (adjHeight)/5
+
+			if (sb.config.sbType == "cast") then
+				yoff1 = (adjHeight)/6
+			end
 
 			for i,f in ipairs(sbOpt.adj) do
 
@@ -1478,14 +1478,23 @@ function ION.StatusBarEditorUpdate(reset)
 
 			for i,f in ipairs(sbOpt.adj) do
 
-				if (i == 11) then
+				if (i == 6) then
 					if (sb.config.sbType == "cast") then
-						f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 35, yoff)
+						f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
 						f:Show()
 						yoff = yoff-yoff1
 					end
+				elseif (i > 6) then
+
+					if (i == 7) then
+						yoff = -10
+					end
+
+					f:SetPoint("TOPLEFT", f.parent, "TOP", 10, yoff)
+					f:Show()
+					yoff = yoff-yoff2
 				else
-					f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 35, yoff)
+					f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
 					f:Show()
 					yoff = yoff-yoff1
 				end
@@ -1505,7 +1514,7 @@ end
 
 function ION:StatusBarEditor_OnLoad(frame)
 
-	ION.Editors.STATUSBAR = { frame, 400, 335, ION.StatusBarEditorUpdate }
+	ION.Editors.STATUSBAR = { frame, 625, 250, ION.StatusBarEditorUpdate }
 
 end
 
@@ -1571,8 +1580,7 @@ end
 
 function ION:SB_EditorTypes_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.5)
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 	local f, anchor, last
 
@@ -1589,7 +1597,7 @@ function ION:SB_EditorTypes_OnLoad(frame)
 			f:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -15)
 			anchor = f; last = f
 		else
-			f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -22)
+			f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -15)
 			last = f
 		end
 
@@ -1598,8 +1606,8 @@ function ION:SB_EditorTypes_OnLoad(frame)
 
 	frame.line = frame:CreateTexture(nil, "OVERLAY")
 	frame.line:SetHeight(1)
-	frame.line:SetPoint("LEFT", 8, -20)
-	frame.line:SetPoint("RIGHT", -8, -20)
+	frame.line:SetPoint("LEFT", 8, -40)
+	frame.line:SetPoint("RIGHT", -8, -40)
 	frame.line:SetTexture(0.3, 0.3, 0.3)
 
 	anchor, last = nil, nil
@@ -1752,9 +1760,11 @@ end
 
 function ION.SB_AdjustableOptions_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.5)
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+
 	frame:RegisterForDrag("LeftButton", "RightButton")
+
+	local f
 
 	for index, options in ipairs(adjOptions) do
 

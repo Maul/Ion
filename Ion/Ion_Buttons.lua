@@ -83,6 +83,8 @@ local tooltipScanTextLeft2 = IonTooltipScanTextLeft2
 
 local currMacro = {}
 
+local cmdSlash
+
 local configData = {
 
 	btnType = "macro",
@@ -1472,7 +1474,7 @@ function BUTTON:MACRO_HideGrid()
 
 	if (not InCombatLockdown()) then
 
-		if (not self.showGrid and not self:MACRO_HasAction()) then
+		if (not self.showGrid and not self:MACRO_HasAction() and not ION.BarsShown and not ION.EditFrameShown) then
 			self:Hide()
 		end
 	end
@@ -1864,6 +1866,34 @@ function BUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 	end
 end
 
+function BUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
+
+	local _, petName
+
+	if (action1 == 0) then
+		return
+	else
+	 	_, _, _, _, _, _, petName = C_PetJournal.GetPetInfoByPetID(action1)
+
+	 	self.data.macro_Text = self:AutoWriteMacro(petName)
+	 	self.data.macro_Auto = petName..";"
+	 	self.data.macro_Icon = false
+		self.data.macro_Name = ""
+		self.data.macro_Watch = false
+		self.data.macro_Note = ""
+		self.data.macro_UseNote = false
+
+		if (not self.cursor) then
+			self:SetType(true)
+		end
+
+		MacroDrag[0] = false
+
+		ClearCursor(); SetCursor(nil)
+	end
+
+end
+
 function BUTTON:MACRO_PickUpMacro()
 
 	local pickup = nil
@@ -1990,6 +2020,10 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 		elseif (cursorType == "flyout") then
 
 			self:MACRO_PlaceFlyout(action1, action2, self:MACRO_HasAction())
+
+		elseif (cursorType == "battlepet") then
+
+			self:MACRO_PlaceBattlePet(action1, action2, self:MACRO_HasAction())
 
 		end
 
@@ -2860,8 +2894,10 @@ function BUTTON:SetType(save, kill, init)
 						]])
 
 		self:WrapScript(self, "OnHide", [[
-						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
-							self:ClearBinding(key)
+						if (not self:GetParent():GetAttribute("concealed")) then
+							for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
+								self:ClearBinding(key)
+							end
 						end
 						]])
 

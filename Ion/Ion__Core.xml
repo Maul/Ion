@@ -714,7 +714,7 @@
 						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\AddOns\Ion\Images\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="18"/>
 					</EdgeSize>
@@ -731,7 +731,7 @@
 						self.options = {}
 						self:RegisterEvent("ADDON_LOADED")
 						self:SetBackdropColor(0, 0, 0)
-						self:SetBackdropBorderColor(1, 0.82, 0)
+						self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
 						self:Hide()
 					</OnLoad>
 					<OnShow>
@@ -801,10 +801,10 @@
 		</Layers>
 		<Frames>
 			<Button name="$parentButton" hidden="false">
-				<Size x="20" y="20"/>
+				<Size x="32" y="32"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
-						<Offset x="-2" y="0"/>
+						<Offset x="-5" y="0"/>
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -830,10 +830,10 @@
 						PlaySound("igMainMenuOptionCheckBoxOn")
 					</OnClick>
 				</Scripts>
-				<NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up"/>
-				<PushedTexture name="$parentPushedTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Down"/>
-				<DisabledTexture name="$parentDisabledTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Disabled"/>
-				<HighlightTexture name="$parentHighlightTexture" file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+				<NormalTexture name="$parentNormalTexture" file="Interface\AddOns\Ion\Images\UI-Panel-ExpandButton-Up"/>
+				<PushedTexture name="$parentPushedTexture" file="Interface\AddOns\Ion\Images\UI-Panel-ExpandButton-Down"/>
+				<DisabledTexture name="$parentDisabledTexture" file="Interface\AddOns\Ion\Images\UI-Panel-ExpandButton-Disabled"/>
+				<HighlightTexture name="$parentHighlightTexture" file="Interface\AddOns\Ion\Images\UI-Common-MouseHilight" alphaMode="ADD"/>
 			</Button>
 			<Frame name="$parentPopUp" parentKey="popup" toplevel="true" enableMouse="true" clampedToScreen="true">
 				<Anchors>
@@ -841,7 +841,7 @@
 						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\AddOns\Ion\Images\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="18"/>
 					</EdgeSize>
@@ -858,7 +858,7 @@
 						self.options = {}
 						self:RegisterEvent("ADDON_LOADED")
 						self:SetBackdropColor(0, 0, 0)
-						self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+						self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
 						self:Hide()
 					</OnLoad>
 					<OnShow>
@@ -975,17 +975,6 @@
 					</Button>
 					<EditBox parentKey="edit" inherits="IonEditBoxTemplateSmall" letters="6">
 						<Size x="70" y="24"/>
-						<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="14"/>
-							</EdgeSize>
-							<TileSize>
-								<AbsValue val="20"/>
-							</TileSize>
-							<BackgroundInsets>
-								<AbsInset left="3" right="3" top="2" bottom="2"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Anchors>
 							<Anchor point="CENTER">
 								<Offset x="0" y="0"/>
@@ -993,6 +982,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
+								Ion.SubFrameBlankBackdrop_OnLoad(self)
 								self:SetBackdropColor(0, 0, 0, 0)
 								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
@@ -1030,17 +1020,6 @@
 				<Frames>
 					<EditBox parentKey="edit" inherits="IonDropDownOption">
 						<Size x="100" y="24"/>
-						<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="14"/>
-							</EdgeSize>
-							<TileSize>
-								<AbsValue val="20"/>
-							</TileSize>
-							<BackgroundInsets>
-								<AbsInset left="3" right="3" top="2" bottom="2"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Anchors>
 							<Anchor point="CENTER">
 								<Offset x="0" y="0"/>
@@ -1048,6 +1027,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
+								Ion.SubFrameBlankBackdrop_OnLoad(self)
 								self:SetBackdropColor(0, 0, 0, 0)
 								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>

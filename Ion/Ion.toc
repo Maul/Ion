@@ -8,6 +8,7 @@
 ## SavedVariablesPerCharacter: IonCDB, IonSpec
 ## OptionalDeps: Align, Masque, BarKeep, Bartender4, Dominos, MagnetButtons, nMainbar, Orbs, rActionBarStyler, StellarBars, Tukui, XBar
 ## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
+## X-Permissions: AI-Art Visual Elements used with Author Permission (Quokka@WoWInterface)
 ## X-Email: trinityui@live.com
 
 Libs\LibStub\LibStub.lua

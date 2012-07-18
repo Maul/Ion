@@ -74,8 +74,8 @@ function OBJEDITOR:OnClick(button)
 			end
 		end
 
-	else
-
+	elseif (newObj and IonObjectEditor:IsVisible()) then
+		ION:ObjectEditor_OnShow(IonObjectEditor); IonObjectEditor:Show()
 	end
 
 	if (IonObjectEditor and IonObjectEditor:IsVisible()) then

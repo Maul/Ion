@@ -1170,7 +1170,7 @@ function ANCHOR:SetType(save)
 
 		self.element = menuElements[self.id]
 
-		objects = ION:GetParentKeys(self.element)
+		local objects = ION:GetParentKeys(self.element)
 
 		for k,v in pairs(objects) do
 			local name = v:gsub(self.element:GetName(), "")
