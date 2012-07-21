@@ -1192,6 +1192,18 @@ function STATUS:UpdateOrientation(command, gui, query)
 		self.sb:SetOrientation(BarOrientations[self.config.orientation]:upper())
 		self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
 
+		if (self.config.orientation == 2) then
+			self.sb.cText:SetAlpha(0)
+			self.sb.lText:SetAlpha(0)
+			self.sb.rText:SetAlpha(0)
+			self.sb.mText:SetAlpha(0)
+		else
+			self.sb.cText:SetAlpha(1)
+			self.sb.lText:SetAlpha(1)
+			self.sb.rText:SetAlpha(1)
+			self.sb.mText:SetAlpha(1)
+		end
+
 		local width, height = self.config.width,  self.config.height
 
 		self.config.width = height;  self.config.height = width
@@ -1282,7 +1294,7 @@ function STATUS:UpdateRightText(command, gui, query)
 
 		self.config.rIndex = index
 
-		if (sbStrings[self.config.sbType]) then
+		if (sbStrings[self.config.sbType] and self.config.rIndex) then
 			self.sb.rFunc = sbStrings[self.config.sbType][self.config.rIndex][2]
 		else
 			self.sb.rFunc = function() return "" end
@@ -1889,6 +1901,18 @@ function STATUS:SetData(bar, skipupdate)
 	self.sb.orientation = self.config.orientation
 	self.sb:SetOrientation(BarOrientations[self.config.orientation]:upper())
 	self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
+
+	if (self.config.orientation == 2) then
+		self.sb.cText:SetAlpha(0)
+		self.sb.lText:SetAlpha(0)
+		self.sb.rText:SetAlpha(0)
+		self.sb.mText:SetAlpha(0)
+	else
+		self.sb.cText:SetAlpha(1)
+		self.sb.lText:SetAlpha(1)
+		self.sb.rText:SetAlpha(1)
+		self.sb.mText:SetAlpha(1)
+	end
 
 	if (BarTextures[self.config.texture]) then
 		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])

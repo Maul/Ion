@@ -616,12 +616,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 										</Scripts>
 									</Frame>
 								</Frames>
-								<Scripts>
-									<OnLoad>
-										--self.primary:SetText("Primary Bar States")
-										--self.secondary:SetText("Secondary Bar States")
-									</OnLoad>
-								</Scripts>
 							</Frame>
 							<Frame name="$parentCustom" parentKey="custom" hidden="true">
 								<Anchors>
@@ -642,11 +636,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 												<Offset x="0" y="0"/>
 											</Anchor>
 										</Anchors>
-										<Scripts>
-											<OnLoad>
-												Ion.SubFramePlainBackdrop_OnLoad(frame)
-											</OnLoad>
-										</Scripts>
 									</Frame>
 								</Frames>
 							</Frame>
@@ -669,11 +658,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 												<Offset x="0" y="0"/>
 											</Anchor>
 										</Anchors>
-										<Scripts>
-											<OnLoad>
-												Ion.SubFramePlainBackdrop_OnLoad(frame)
-											</OnLoad>
-										</Scripts>
 									</Frame>
 								</Frames>
 							</Frame>
@@ -1070,8 +1054,8 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 
 			<ScrollFrame name="$parentIconList"  frameStrata="TOOLTIP" enableMouse="true" parentKey="iconlist" inherits="IonScrollFrameTemplate1" hidden="true">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentActionList" relativePoint="TOPRIGHT">
-						<Offset x="2" y="-45"/>
+					<Anchor point="TOPLEFT" relativeTo="$parentActionList" relativePoint="TOPLEFT">
+						<Offset x="0" y="-45"/>
 					</Anchor>
 					<Anchor point="BOTTOMRIGHT">
 						<Offset x="-37" y="14"/>
@@ -1104,6 +1088,9 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 							<OnClick>
 								self:GetParent():Hide()
 							</OnClick>
+							<OnHide>
+								Ion:ButtonEditorIconList_ResetCustom(self:GetParent():GetParent())
+							</OnHide>
 						</Scripts>
 						<NormalTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Up"/>
 						<PushedTexture file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Down"/>

@@ -12,7 +12,9 @@
 ## X-Email: trinityui@live.com
 
 Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\AceLocale-3.0\AceLocale-3.0.xml
+Libs\LibDataBroker-1.1\LibDataBroker.lua
 
 Ion_Localizations.xml
 
@@ -25,5 +27,6 @@ Ion_EditFrames.lua
 Ion_KeyBinder.lua
 Ion_Flyouts.lua
 Ion_SnapTo.lua
+Ion-Broker.lua
 
 Ion__Core.xml

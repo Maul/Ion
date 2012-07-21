@@ -4,6 +4,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("IonGUI", "enUS", true)
 
 L.CANCEL = "Cancel"
+L.DONE = "Done"
 L.CREATE_BAR = "Create New Bar"
 L.DELETE_BAR = "Delete Current Bar"
 L.SELECT_BAR_TYPE = "- Select Bar Type -"
@@ -20,6 +21,8 @@ L.MACRO_USENOTE = "Use macro note as button tooltip"
 
 L.COUNT = "Count"
 L.SEARCH = "Search"
+L.CUSTOM_ICON = "Custom Icon"
+L.PATH = "path"
 
 L.AUTOHIDE = "Auto Hide"
 L.SHOWGRID = "Show Grid"
@@ -31,7 +34,7 @@ L.LOCKBAR_SHIFT = " - Unlock on SHIFT"
 L.LOCKBAR_CTRL = " - Unlock on CTRL"
 L.LOCKBAR_ALT = " - Unlock on ALT"
 L.TOOLTIPS = "Enable Tooltips"
-L.TOOLTIPS_ENH = " - Enahanced"
+L.TOOLTIPS_ENH = " - Enhanced"
 L.TOOLTIPS_COMBAT = " - Hide in Combat"
 L.SPELLGLOW = "Spell Alerts"
 L.SPELLGLOW_DEFAULT = " - Default Alert"

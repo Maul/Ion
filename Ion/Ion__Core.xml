@@ -1169,7 +1169,8 @@
 			</Anchor>
 		</Anchors>
 		<Frames>
-			<Button name="ItemRefCloseButton">
+			<!--
+			<Button name="$parentDone" toplevel="true">
 				<Size x="32" y="32"/>
 				<Anchors>
 					<Anchor point="TOPRIGHT">
@@ -1177,16 +1178,18 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
+					<OnLoad>
+						self.button = "close"
+					</OnLoad>
 					<OnClick>
 						self:GetParent():Hide()
-						self.wasShown = nil
-						IonLatencyButton.hover = nil
 					</OnClick>
 				</Scripts>
-				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
-				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
-				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+				<NormalTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture urgency="5" file="Interface\AddOns\Ion\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
+			-->
 		</Frames>
 		<Scripts>
 			<OnLoad>

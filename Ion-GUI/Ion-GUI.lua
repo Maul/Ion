@@ -1800,7 +1800,7 @@ function ION.MacroIconListUpdate(frame)
 
 	for i,btn in ipairs(frame.buttons) do
 
-		index = (offset * 10) + i
+		index = (offset * 14) + i
 
 		texture = IconList[index]
 
@@ -1825,10 +1825,54 @@ function ION.MacroIconListUpdate(frame)
 
 	end
 
-	FauxScrollFrame_Update(frame, ceil(numIcons/10), 1, 1, nil, nil, nil, nil, nil, nil, true)
+	FauxScrollFrame_Update(frame, ceil(numIcons/14), 1, 1, nil, nil, nil, nil, nil, nil, true)
 
 end
 
+local function customPathOnShow(self)
+
+	local button = ION.CurrentObject
+
+	if (button) then
+
+		if (button.data.macro_Icon) then
+
+			local text = button.data.macro_Icon:gsub("INTERFACE\\", "")
+
+			self:SetText(text)
+
+		else
+			self:SetText("")
+		end
+	else
+		self:SetText("")
+	end
+
+	self:SetCursorPosition(0)
+end
+
+local function customDoneOnClick(self)
+
+	local button = ION.CurrentObject
+
+	if (button) then
+
+		local text = self.frame.custompath:GetText()
+
+		if (#text > 0) then
+
+			text = "INTERFACE\\"..text:gsub("\\", "\\")
+
+			button.data.macro_Icon = text
+
+			button:MACRO_UpdateIcon()
+
+			ION:UpdateObjectGUI()
+		end
+	end
+
+	self:GetParent():Hide()
+end
 
 function ION:ButtonEditor_OnLoad(frame)
 
@@ -1995,9 +2039,9 @@ function ION:ButtonEditor_OnLoad(frame)
 
 	frame.iconlist.buttons = {}
 
-	local count, x, y = 0, 26, -16
+	local count, x, y = 0, 28, -16
 
-	for i=1,80 do
+	for i=1,112 do
 
 		f = CreateFrame("CheckButton", nil, frame.iconlist, "IonMacroIconButtonTemplate")
 		f:SetID(i)
@@ -2045,10 +2089,10 @@ function ION:ButtonEditor_OnLoad(frame)
 
 		f:SetPoint("CENTER", frame.iconlist, "TOPLEFT", x, y)
 
-		if (count == 10) then
-			x = 26; y = y - 35; count = 0
+		if (count == 14) then
+			x = 28; y = y - 35; count = 0
 		else
-			x = x + 37
+			x = x + 35.5
 		end
 
 		tinsert(frame.iconlist.buttons, f)
@@ -2056,7 +2100,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	end
 
 	f = CreateFrame("EditBox", nil, frame.iconlist, "IonEditBoxTemplateSmall")
-	f:SetWidth(230)
+	f:SetWidth(378)
 	f:SetHeight(30)
 	f:SetJustifyH("LEFT")
 	f:SetTextInsets(22, 0, 0, 0)
@@ -2092,6 +2136,75 @@ function ION:ButtonEditor_OnLoad(frame)
 	f.text:SetPoint("LEFT", 22, 0)
 	f.text:SetJustifyH("LEFT")
 	f.text:SetText(LGUI.SEARCH)
+
+	f = CreateFrame("Button", nil, frame.iconlist, "IonCheckButtonTemplate1")
+	f:SetWidth(122)
+	f:SetHeight(35)
+	f:SetPoint("TOPLEFT", frame.search, "TOPRIGHT", -1, 4)
+	f:SetScript("OnClick", function(self) self:Hide() self.frame.search:Hide() self.frame.customdone:Show() self.frame.customcancel:Show() self.frame.custompath:Show() end)
+	f.text:SetText(LGUI.CUSTOM_ICON)
+	f.frame = frame
+	frame.customicon = f
+
+	f = CreateFrame("Button", nil, frame.iconlist, "IonCheckButtonTemplate1")
+	f:SetWidth(60)
+	f:SetHeight(35)
+	f:SetPoint("TOPLEFT", frame.search, "TOPRIGHT", -1, 4)
+	f:SetScript("OnClick", function(self) self:Hide()  self.frame.customcancel:Hide() self.frame.custompath:Hide() self.frame.customicon:Show() self.frame.search:Show() customDoneOnClick(self) end)
+	f:SetFrameLevel(frame.customicon:GetFrameLevel()+1)
+	f:Hide()
+	f.text:SetText(LGUI.DONE)
+	f.frame = frame
+	frame.customdone = f
+
+	f = CreateFrame("Button", nil, frame.iconlist, "IonCheckButtonTemplate1")
+	f:SetWidth(60)
+	f:SetHeight(35)
+	f:SetPoint("LEFT", frame.customdone, "RIGHT", 0, 0)
+	f:SetScript("OnClick", function(self) self:Hide() self.frame.customdone:Hide() self.frame.custompath:Hide() self.frame.customicon:Show() self.frame.search:Show() end)
+	f:SetFrameLevel(frame.customicon:GetFrameLevel()+1)
+	f:Hide()
+	f.text:SetText(LGUI.CANCEL)
+	f.frame = frame
+	frame.customcancel = f
+
+	f = CreateFrame("EditBox", nil, frame.iconlist, "IonEditBoxTemplateSmall")
+	f:SetWidth(378)
+	f:SetHeight(30)
+	f:SetJustifyH("LEFT")
+	f:SetPoint("TOPLEFT",  frame.search, "TOPLEFT", 0, 0)
+	f:SetScript("OnShow", customPathOnShow)
+	f:SetFrameLevel(frame.search:GetFrameLevel()+1)
+	f:Hide()
+	f:SetScript("OnEscapePressed", function(self) ION:ButtonEditorIconList_ResetCustom(self.frame) end)
+	f:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+	f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
+	--f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.cancel:Show() self.hasfocus = true end)
+	--f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() self.cancel:Hide() end self.hasfocus = nil end)
+	f:SetScript("OnTextChanged", function(self) self:SetText(self:GetText():upper()) end)
+	f.frame = frame
+	frame.custompath = f
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
+
+	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
+	f.text:SetPoint("LEFT", 8, 0)
+	f.text:SetJustifyH("LEFT")
+	f.text:SetText(LGUI.PATH..": INTERFACE\\")
+
+	f:SetTextInsets(f.text:GetWidth()+5, 0, 0, 0)
+
+
+end
+
+function ION:ButtonEditorIconList_ResetCustom(frame)
+
+	frame.customdone:Hide()
+	frame.customcancel:Hide()
+	frame.custompath:Hide()
+
+	frame.search:Show()
+	frame.customicon:Show()
 
 end
 

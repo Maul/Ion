@@ -242,27 +242,21 @@ function BINDER:OnEnter()
 	self.select:Show()
 
 	IonBindingsEditor:ClearLines()
-
-	IonBindingsEditor:SetText(" ")
+	IonBindingsEditor:SetText(L.BINDER_NOTICE)
 	IonBindingsEditor:AddDoubleLine(L.KEYBIND_TOOLTIP1, self.bindType:gsub("^%l", string.upper).." "..button.id, 1.0, 1.0, 1.0, 0, 1, 0)
 	IonBindingsEditor:AddLine(" ")
 	IonBindingsEditor:AddLine(format(L.KEYBIND_TOOLTIP2, self.bindType, self.bindType, self.bindType), 1.0, 1.0, 1.0)
 	IonBindingsEditor:AddLine(" ")
 	IonBindingsEditor:AddDoubleLine(L.KEYBIND_TOOLTIP3, self:GetBindkeyList(button), 1.0, 1.0, 1.0, 0, 1, 0)
 	IonBindingsEditor:AddLine(" ")
-
 	IonBindingsEditor:Show()
 
-	for i = 1, select("#", IonBindingsEditor:GetRegions()) do
-		local region = select(i, IonBindingsEditor:GetRegions())
-		if (region and region.SetJustifyH) then
-			region:SetJustifyH("CENTER")
-			region:SetJustifyV("CENTER")
-		end
-	end
 end
 
 function BINDER:OnLeave()
+
+	IonBindingsEditor:ClearLines()
+	IonBindingsEditor:SetText(L.BINDER_NOTICE)
 
 	self.select:Hide()
 
@@ -398,9 +392,27 @@ end
 
 function ION:BindingsEditor_OnLoad(frame)
 
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.8)
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+
 	frame:RegisterForDrag("LeftButton")
+
+	for i = 1, select("#", frame:GetRegions()) do
+		local region = select(i, frame:GetRegions())
+		if (region and region.SetJustifyH) then
+			region:SetJustifyH("CENTER")
+			region:SetJustifyV("CENTER")
+		end
+	end
+
+	IonBindingsEditorTextLeft1:ClearAllPoints()
+	IonBindingsEditorTextLeft1:SetPoint("TOP", 0, -10)
+
+	IonBindingsEditorTextLeft2:ClearAllPoints()
+	IonBindingsEditorTextLeft2:SetPoint("TOPLEFT", 10, -50)
+
+	IonBindingsEditorTextRight2:ClearAllPoints()
+	IonBindingsEditorTextRight2:SetPoint("TOPRIGHT", -10, -62)
+	IonBindingsEditorTextRight2:SetFontObject("GameFontNormal")
 
 end
 
@@ -445,6 +457,14 @@ function ION:ToggleBindings(show, hide)
 		end
 
 		IonBindingsEditor:SetOwner(UIParent, "ANCHOR_PRESERVE")
+		IonBindingsEditor:SetText(L.BINDER_NOTICE)
+		IonBindingsEditor:Show()
 
+		--for i = 1, select("#", IonBindingsEditor:GetRegions()) do
+		--	local region = select(i, IonBindingsEditor:GetRegions())
+		--	if (region) then
+		--		print(region:GetName())
+		--	end
+		--end
 	end
 end

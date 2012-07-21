@@ -5,6 +5,8 @@
 
 local L = LibStub("AceLocale-3.0"):NewLocale("Ion", "enUS", true)
 
+L.ION = "Ion"
+
 L.SLASH1 = "/ion"
 L.SLASH_HINT1 = "\n/ion |cff00ff00<command>|r <options>"
 L.SLASH_HINT2 = "\nCommand List -\n"
@@ -230,6 +232,7 @@ L.BINDFRAME_BIND = "bind"
 L.BINDFRAME_LOCKED = "locked"
 L.BINDFRAME_PRIORITY = "priority"
 L.BINDINGS_LOCKED	= "This button's bindings are locked.\nLeft-Click button to unlock."
+L.BINDER_NOTICE = "Ion Key Binder\nThe Original Mouseover Binding System\nDeveloped by Maul"
 
 L.OFF = "Off"
 L.ALPHAUP_BATTLE = "Combat"
@@ -258,3 +261,10 @@ L.TOOLTIPS = "Valid options:\n\n|cff00ff00enhanced|r: display additional ability
 L.SPELLGLOWS = "Valid options:\n\n|cff00ff00default|r: use Blizzard default spell glow animation\n|cff00ff00alt|r: use alternate subdued spell glow animation"
 L.TIMERLIMIT_SET = "Timer limit set to %d seconds"
 L.TIMERLIMIT_INVALID = "Invalid timer limit"
+
+L.PETATTACK = "Attack"
+L.PETFOLLOW = "Follow"
+L.PETMOVETO = "Move To"
+L.PETASSIST = "Assist"
+L.PETDEFENSIVE = "Defensive"
+L.PETPASSIVE = "Passive"

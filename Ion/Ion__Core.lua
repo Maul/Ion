@@ -157,6 +157,7 @@ function ION:GetParentKeys(frame)
 	end
 
 	local data, childData = {}, {}
+	--local children, regions = {}, {}
 	local children, regions = { frame:GetChildren() }, { frame:GetRegions() }
 
 	for k,v in pairs(children) do
@@ -241,7 +242,7 @@ end
 
 function ION:UpdateSpellIndex()
 
-	local i, spellName, subName, altName, spellID, spellType, spellLvl, isPassive, icon, cost, powerType, curSpell, _ = 1
+	local i, spellName, subName, altName, spellID, tempID, spellType, spellLvl, isPassive, icon, cost, powerType, curSpell, link, _ = 1
 
 	repeat
 		spellName, subName = GetSpellBookItemName(i, BOOKTYPE_SPELL)
@@ -251,6 +252,16 @@ function ION:UpdateSpellIndex()
 		isPassive = IsPassiveSpell(i, BOOKTYPE_SPELL)
 
 		if (spellName and spellType ~= "FUTURESPELL") then
+
+			link = GetSpellLink(spellName)
+
+			if (link) then
+				_, spellID = link:match("(spell:)(%d+)")
+				tempID = tonumber(spellID)
+				if (tempID) then
+					spellID = tempID
+				end
+			end
 
 			altName, _, _, cost, _, powerType = GetSpellInfo(spellID)
 
@@ -415,6 +426,16 @@ function ION:UpdateSpellIndex()
 		isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
 
 		if (spellName and spellType ~= "FUTURESPELL") then
+
+			link = GetSpellLink(spellName)
+
+			if (link) then
+				_, spellID = link:match("(spell:)(%d+)")
+				tempID = tonumber(spellID)
+				if (tempID) then
+					spellID = tempID
+				end
+			end
 
 			_, _, icon, cost, _, powerType = GetSpellInfo(spellName)
 
@@ -772,7 +793,6 @@ function ION:UpdateIconIndex()
 	wipe(temp)
 
 	GetMacroIcons(temp)
-	--GetMacroItemIcons(temp)
 
 	for k,v in ipairs(temp) do
 
@@ -782,6 +802,19 @@ function ION:UpdateIconIndex()
    			ICONS[#ICONS+1] = icon:upper(); icons[icon:upper()] = true
    		end
    	end
+
+	--wipe(temp)
+
+	--GetMacroItemIcons(temp)
+
+	--for k,v in ipairs(temp) do
+
+	--	icon = "INTERFACE\\ICONS\\"..v:upper()
+
+   	--	if (not icons[icon:upper()]) then
+   	--		ICONS[#ICONS+1] = icon:upper(); icons[icon:upper()] = true
+   	--	end
+   	--end
 end
 
 function ION:UpdateStanceStrings()

@@ -221,8 +221,6 @@ function ION.IonBackpackButton_OnEvent(self, event, ...)
 	end
 end
 
-local btnData = {}
-
 function ANCHOR:SetSkinned()
 
 	if (SKIN) then
@@ -231,9 +229,7 @@ function ANCHOR:SetSkinned()
 
 		if (bar) then
 
-			wipe(btnData)
-
-			btnData.Icon = self.element.icon
+			local btnData = { Icon = self.element.icon }
 
 			SKIN:Group("Ion", bar.gdata.name):AddButton(self.element, btnData)
 		end

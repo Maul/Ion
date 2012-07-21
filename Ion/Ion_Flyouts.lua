@@ -124,18 +124,6 @@ function BUTTON:GetSpellFromTooltip(data, spell, cmds)
 	end
 end
 
---curSpell.index = i
---curSpell.booktype = BOOKTYPE_SPELL
---curSpell.spellName = spellName
---curSpell.subName = subName
---curSpell.spellID = spellID
---curSpell.spellType = spellType
---curSpell.spellLvl = spellLvl
---curSpell.spellCost = cost
---curSpell.isPassive = isPassive
---curSpell.icon = icon
---curSpell.powerType = powerType
-
 function BUTTON:GetSpellData(data, tooltip)
 
 	local i, spell = 1
@@ -395,8 +383,6 @@ function BUTTON:GetCompanionData(data, tooltip)
 			end
 
 		elseif (mode == "CRITTER") then
-
-			print("macros for critters do not work, Blizzard macro or otherwise")
 
 			--[[
 
@@ -728,8 +714,9 @@ function BUTTON:Flyout_UpdateBar()
 	end
 
 	flyout.bar:ClearAllPoints()
-
 	flyout.bar:SetPoint(pointA, self, pointB, 0, 0)
+	flyout.bar:SetFrameStrata(self:GetFrameStrata())
+	flyout.bar:SetFrameLevel(self:GetFrameLevel()+1)
 
 	if (not hideArrow) then
 		if (pointB == "TOP") then
@@ -950,6 +937,7 @@ function BUTTON:Flyout_GetButton()
 	button.class = "flyout"
 	button.id = id
 	button:SetID(0)
+	button:SetToplevel(true)
 	button.objTIndex = id
 	button.objType = "FLYOUTBUTTON"
 	button.data = { macro_Text = "" }

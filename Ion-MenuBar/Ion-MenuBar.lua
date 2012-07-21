@@ -797,7 +797,7 @@ end
 
 function ION.LatencyButton_OnEvent(self, event, ...)
 
-	if (event == "ADDON_LOADED" and ...=="IonXtras") then
+	if (event == "ADDON_LOADED" and ...=="Ion-MenuBar") then
 		self.lastStart = 0
 		if (GDB) then
 			self.enabled = GDB.scriptProfile
@@ -1024,7 +1024,7 @@ function ION.LatencyButton_AltOnEnter(self)
 			IonMenuBarTooltip:AddLine("|cffffffff("..format("%.2f",(self.usage) / 2.5).."ms)|r Total Script CPU Time\n", NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
 		end
 
-		ClearTable(sortData)
+		wipe(sortData)
 
 		for i,v in ipairs(addonData) do
 

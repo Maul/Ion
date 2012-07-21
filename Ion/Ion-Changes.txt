@@ -1,0 +1,2 @@
+Added integrated broker plugin.
+Added the ability to use custom icons.

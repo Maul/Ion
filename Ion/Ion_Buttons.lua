@@ -65,10 +65,11 @@ local IsItemInRange = _G.IsItemInRange
 local IsEquippableItem = _G.IsEquippableItem
 
 local GetPossessInfo = _G.GetPossessInfo
-local GetCompanionCooldown = _G.GetCompanionCooldown
+--local GetCompanionInfo = _G.GetCompanionInfo
 
 local ShowOverlayGlow = ActionButton_ShowOverlayGlow
 local HideOverlayGlow = ActionButton_HideOverlayGlow
+local IsSpellOverlayed = _G.IsSpellOverlayed
 
 local sIndex = ION.sIndex
 local cIndex = ION.cIndex
@@ -185,6 +186,17 @@ ION.VehicleActions = {
 
 local VehicleActions = ION.VehicleActions
 
+ION.PetActions = {
+	petattack = { "Interface\\Icons\\Ability_GhoulFrenzy", L.PETATTACK, { 0, 1, 0, 1 }, "/petattack" },
+	petfollow = { "Interface\\Icons\\Ability_Tracking", L.PETFOLLOW, { 0, 1, 0, 1 }, "/petfollow" },
+	petmoveto = { "Interface\\Icons\\Ability_Hunter_Pet_Goto", L.PETMOVETO, { 0, 1, 0, 1 }, "/petmoveto" },
+	petassist = { "Interface\\Icons\\Ability_Hunter_Pet_Assist", L.PETASSIST, { 0, 1, 0, 1 }, "/petassist" },
+	petdefensive = { "Interface\\Icons\\Ability_Defend", L.PETDEFENSIVE, { 0, 1, 0, 1 }, "/petdefensive" },
+	petpassive = { "Interface\\Icons\\Ability_Seal", L.PETPASSIVE, { 0, 1, 0, 1 }, "/petpassive" },
+}
+
+local PetActions = ION.PetActions
+
 -- Moonfire: 8921
 -- Solar Eclipse: 48517
 -- Sunfire: 93402
@@ -264,7 +276,7 @@ local function controlOnUpdate(self, elapsed)
 
 			if ( cou_timer <= cou_speed ) then
 
-				if (shine.shape == "round") then
+				if (shine.shape == "circle") then
 
 					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
 					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
@@ -290,7 +302,7 @@ local function controlOnUpdate(self, elapsed)
 
 			elseif (cou_timer <= cou_speed*2) then
 
-				if (shine.shape == "round") then
+				if (shine.shape == "circle") then
 
 					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
 					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
@@ -317,7 +329,7 @@ local function controlOnUpdate(self, elapsed)
 
 			elseif (cou_timer <= cou_speed*3) then
 
-				if (shine.shape == "round") then
+				if (shine.shape == "circle") then
 
 					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
 					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
@@ -344,7 +356,7 @@ local function controlOnUpdate(self, elapsed)
 
 			else
 
-				if (shine.shape == "round") then
+				if (shine.shape == "circle") then
 
 					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
 					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
@@ -947,17 +959,23 @@ function BUTTON:MACRO_UpdateIcon(...)
 		self.border:Hide()
 	end
 
-	if (not self.vehicleID) then
+	if (not self.vehicleID and not self.skinned) then
 		self.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
 	end
 
-	if (spellGlows[self.spellID] and not self.glowing) then
+	if (self.spellID and IsSpellOverlayed(self.spellID)) then
 		self:MACRO_StartGlow()
-	end
-
-	if (self.glowing and not spellGlows[self.spellID]) then
+	elseif (self.glowing) then
 		self:MACRO_StopGlow()
 	end
+
+	--if (spellGlows[self.spellID] and not self.glowing) then
+	--	self:MACRO_StartGlow()
+	--end
+
+	--if (self.glowing and not spellGlows[self.spellID]) then
+	--	self:MACRO_StopGlow()
+	--end
 
 	return texture
 end
@@ -1178,8 +1196,8 @@ function BUTTON:MACRO_SetSpellCooldown(spell)
 
 	if (cIndex[spell]) then
 
-		local companion, index = cIndex[spell].creatureType, cIndex[spell].index
-		start, duration, enable = GetCompanionCooldown(companion, index)
+		--local companion, index = cIndex[spell].creatureType, cIndex[spell].index
+		start, duration, enable = GetSpellCooldown(spell)
 
 	elseif (sIndex[spell]) then
 
@@ -1779,7 +1797,7 @@ function BUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 		return
 	else
 
-		local _, _, spellID = GetCompanionInfo(action2, action1)
+		--local _, _, spellID = GetCompanionInfo(action2, action1)
 	 	local name = GetSpellInfo(spellID)
 
 	 	if (name) then
@@ -1966,9 +1984,9 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 
 	local cursorType, action1, action2, ID = GetCursorInfo()
 
-	--for i=1,select("#",GetCursorInfo()) do
-	--	print(i..": "..select(i,GetCursorInfo()))
-	--end
+	for i=1,select("#",GetCursorInfo()) do
+		print(i..": "..select(i,GetCursorInfo()))
+	end
 
 	local texture = self.iconframeicon:GetTexture()
 
@@ -2303,7 +2321,7 @@ function BUTTON:MACRO_OnEnter(...)
 			GameTooltip:Show()
 		end
 
-		if (self.flyout) then
+		if (self.flyout and self.flyout.arrow) then
 			self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX/0.625, self.flyout.arrowY/0.625)
 		end
 
@@ -2316,7 +2334,7 @@ function BUTTON:MACRO_OnLeave(...)
 
 	GameTooltip:Hide()
 
-	if (self.flyout) then
+	if (self.flyout and self.flyout.arrow) then
 		self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX, self.flyout.arrowY)
 	end
 end
@@ -2508,6 +2526,8 @@ function BUTTON:SetSkinned(flyout)
 			else
 				SKIN:Group("Ion", bar.gdata.name):AddButton(self, btnData)
 			end
+
+			self.skinned = true
 		end
 	end
 end
@@ -3121,15 +3141,11 @@ local function controlOnEvent(self, event, ...)
 
 	elseif (event == "SPELL_ACTIVATION_OVERLAY_GLOW_SHOW") then
 
-		local spellID = select(2, ...)
-
-		spellGlows[spellID] = true
+		spellGlows[select(1,...)] = true
 
 	elseif (event == "SPELL_ACTIVATION_OVERLAY_GLOW_HIDE") then
 
-		local spellID = select(2, ...)
-
-		spellGlows[spellID] = nil
+		spellGlows[select(1,...)] = nil
 
 	elseif (event == "ADDON_LOADED" and ... == "Ion") then
 
@@ -3198,6 +3214,10 @@ local function controlOnEvent(self, event, ...)
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 
+		for spell in pairs(spellGlows) do
+			print(spell)
+		end
+
 		PEW = true
 
 	elseif (event == "ACTIONBAR_SHOWGRID") then
@@ -3224,5 +3244,5 @@ frame:RegisterEvent("UNIT_SPELLCAST_SENT")
 frame:RegisterEvent("UNIT_SPELLCAST_START")
 frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-frame:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-frame:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+frame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+frame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
