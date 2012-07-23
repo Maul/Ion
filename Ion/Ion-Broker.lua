@@ -105,7 +105,7 @@ local function DelayedUpdate(self, elapsed)
 			if (type(_G[key]) == "table") then
 				if (_G[key].GetObjectType) then
 					local name = _G[key]:GetName()
-					if (name and name:find("IonHydrogen")) then
+					if (name and name:find("IonHydrogen") and not ORB.foundicon) then
 						if (name:find("Titan") and name:find("ButtonIcon$")) then
 							ORB.anchorFrame = _G[key]
 						elseif (name and name:find("Icon") and not name:find("Titan")) then
@@ -129,7 +129,7 @@ local function DelayedUpdate(self, elapsed)
 			end
 
 			local orb = createMiniOrb(frame, 1, "IonBrokerOrb")
-			orb:SetPoint("LEFT", ORB.anchorFrame, "LEFT", -2, 0)
+			orb:SetPoint("LEFT", ORB.anchorFrame, "LEFT", 0, 0)
 			orb:SetScale(1.5)
 			orb:SetFrameStrata(frame:GetFrameStrata())
 			orb:SetFrameLevel(frame:GetFrameLevel()+1)

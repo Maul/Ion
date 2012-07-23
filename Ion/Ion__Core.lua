@@ -157,7 +157,6 @@ function ION:GetParentKeys(frame)
 	end
 
 	local data, childData = {}, {}
-	--local children, regions = {}, {}
 	local children, regions = { frame:GetChildren() }, { frame:GetRegions() }
 
 	for k,v in pairs(children) do

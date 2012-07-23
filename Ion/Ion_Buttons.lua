@@ -218,7 +218,7 @@ local alphaTimer, alphaDir = 0, 0
 
 local autoCast = { speeds = { 2, 4, 6, 8 }, timers = { 0, 0, 0, 0 }, circle = { 0, 22, 44, 66 }, shines = {}, r = 0.95, g = 0.95, b = 0.32 }
 
-local spellGlows, cooldowns, cdAlphas = {}, {}, {}
+local cooldowns, cdAlphas = {}, {}, {}
 
 local function AutoCastStart(shine, r, g, b)
 
@@ -969,14 +969,6 @@ function BUTTON:MACRO_UpdateIcon(...)
 		self:MACRO_StopGlow()
 	end
 
-	--if (spellGlows[self.spellID] and not self.glowing) then
-	--	self:MACRO_StartGlow()
-	--end
-
-	--if (self.glowing and not spellGlows[self.spellID]) then
-	--	self:MACRO_StopGlow()
-	--end
-
 	return texture
 end
 
@@ -1574,8 +1566,6 @@ function BUTTON:MACRO_SPELL_ACTIVATION_OVERLAY_GLOW_SHOW(...)
 
 	if (self.spellGlow and self.spellID and spellID == self.spellID) then
 
-		spellGlows[spellID] = true
-
 		self:MACRO_UpdateTimers(...)
 
 		self:MACRO_StartGlow()
@@ -1587,8 +1577,6 @@ function BUTTON:MACRO_SPELL_ACTIVATION_OVERLAY_GLOW_HIDE(...)
 	local spellID = select(2, ...)
 
 	if ((self.overlay or self.spellGlow) and self.spellID and spellID == self.spellID) then
-
-		spellGlows[spellID] = nil
 
 		self:MACRO_StopGlow()
 
@@ -3139,14 +3127,6 @@ local function controlOnEvent(self, event, ...)
 			updateAuraInfo(k)
 		end
 
-	elseif (event == "SPELL_ACTIVATION_OVERLAY_GLOW_SHOW") then
-
-		spellGlows[select(1,...)] = true
-
-	elseif (event == "SPELL_ACTIVATION_OVERLAY_GLOW_HIDE") then
-
-		spellGlows[select(1,...)] = nil
-
 	elseif (event == "ADDON_LOADED" and ... == "Ion") then
 
 		GDB, CDB = IonGDB, IonCDB
@@ -3214,10 +3194,6 @@ local function controlOnEvent(self, event, ...)
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 
-		for spell in pairs(spellGlows) do
-			print(spell)
-		end
-
 		PEW = true
 
 	elseif (event == "ACTIONBAR_SHOWGRID") then
@@ -3244,5 +3220,3 @@ frame:RegisterEvent("UNIT_SPELLCAST_SENT")
 frame:RegisterEvent("UNIT_SPELLCAST_START")
 frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-frame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-frame:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
