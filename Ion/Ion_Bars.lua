@@ -453,6 +453,10 @@ function HANDLER:BuildStateMap(bar, remapState)
 
 		map, remap = (":"):split(states)
 
+		if (remapState == "stance" and ION.class == "ROGUE" and map == "2") then
+			map = "3"
+		end
+
 		if (not homestate) then
 			statemap = statemap.."["..state..":"..map.."] homestate; "; homestate = true
 		else
@@ -1404,16 +1408,7 @@ function BAR:SetRemap_Paged()
 
 end
 
-local druidForms = {
-
-	[1066] = { "Aquatic Form", 0 },
-	[5487] = { "Bear Form", 5487 },
-	[768] = { "Cat Form", 768 },
-	[24858] = { "Moonkin Form", 24858 },
-	[40120] = { "Swift Flight Form", 0 },
-	[783] = { "Travel Form", 0 },
-	[114282] = { "Treant Form", 0 },
-}
+local druidForms = { [1066] = true, [40120] = true, [783] = true, [114282] = true }
 
 function BAR:SetRemap_Stance()
 
@@ -1430,16 +1425,12 @@ function BAR:SetRemap_Stance()
 		self.cdata.remap = gsub(self.cdata.remap, ";$", "")
 
 		if (ION.class == "DRUID") then
-			self.cdata.remap = gsub(self.cdata.remap, "2:2", "2:0")
-			self.cdata.remap = gsub(self.cdata.remap, "4:4", "4:0")
-			self.cdata.remap = gsub(self.cdata.remap, "5:5", "5:0")
+			for i,id in pairs(ION.StanceIndex) do
+				if (druidForms[id]) then
+					self.cdata.remap = gsub(self.cdata.remap, i..":"..i, i..":0")
+				end
+			end
 		end
-
-		if (ION.class == "ROGUE") then
-			self.cdata.remap = self.cdata.remap..";3:1"
-		end
-
-		--print(self.cdata.remap)
 	end
 end
 
@@ -1499,10 +1490,10 @@ end
 
 function BAR:OnClick(...)
 
-	local click, down = select(1, ...), select(2, ...)
+	local click, down, newBar = select(1, ...), select(2, ...)
 
 	if (not down) then
-		self.newBar = ION:ChangeBar(self)
+		newBar = ION:ChangeBar(self)
 	end
 
 	self.click = click
@@ -1533,7 +1524,7 @@ function BAR:OnClick(...)
 	elseif (click == "MiddleButton") then
 
 		if (GetMouseFocus() ~= ION.CurrentBar) then
-			self.newBar = ION:ChangeBar(self)
+			newBar = ION:ChangeBar(self)
 		end
 
 		if (down) then
@@ -1549,7 +1540,7 @@ function BAR:OnClick(...)
 		end
 
 		if (IonBarEditor) then
-			if (not self.newBar and IonBarEditor:IsVisible()) then
+			if (not newBar and IonBarEditor:IsVisible()) then
 				IonBarEditor:Hide()
 			else
 				IonBarEditor:Show()
@@ -1558,14 +1549,14 @@ function BAR:OnClick(...)
 
 	elseif (not down) then
 
-		if (not self.newBar) then
+		if (not newBar) then
 			--updateState(self, 1)
 		end
 
 	end
 
 	if (not down and IonBarEditor and IonBarEditor:IsVisible()) then
-		ION:UpdateBarGUI()
+		ION:UpdateBarGUI(newBar)
 	end
 
 end
@@ -2057,17 +2048,20 @@ function BAR:AddObjects(num)
 
 				self:AddObjectToList(object)
 
-				self:LoadObjects()
-
-				self:SetObjectLoc()
-
-				self:SetPerimeter()
-
-				self:SetSize()
-
-				self:Update()
 			end
 		end
+
+		self:LoadObjects()
+
+		self:SetObjectLoc()
+
+		self:SetPerimeter()
+
+		self:SetSize()
+
+		self:Update()
+
+		self:UpdateObjectGrid(ION.BarsShown)
 	end
 end
 

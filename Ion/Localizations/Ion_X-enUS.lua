@@ -218,6 +218,10 @@ L.PRIEST_HEALER = "Healer Form"
 L.ROGUE_MELEE = "Melee"
 L.WARLOCK_CASTER = "Caster Form"
 
+L.MINIMAP_TOOLTIP1 = "Left-Click to Configure Bars"
+L.MINIMAP_TOOLTIP2 = "Right-Click to Edit Buttons"
+L.MINIMAP_TOOLTIP3 = "Middle-Click or Alt-Click to Edit Key Bindings"
+
 L.KEYBIND_TOOLTIP1 = "\nHit a key to bind it to"
 L.KEYBIND_TOOLTIP2 = "Left-Click to |cfff00000LOCK|r this %s's bindings\n\nRight-Click to make this %s's bindings a |cff00ff00PRIORITY|r bind\n\nHit |cfff00000ESC|r to clear this %s's current binding(s)"
 L.KEYBIND_TOOLTIP3 = "Current Binding(s):"

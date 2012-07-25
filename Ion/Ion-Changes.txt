@@ -1,2 +1,7 @@
-Added integrated broker plugin.
-Added the ability to use custom icons.
+7/25/2012
+Blizzard Equipment sets can now be added to Ion buttons.
+A new flyout type for equipments sets available - /flyout equip:<keys>: ... - where <keys> can be #all for all equipment sets or a filter for the names of specific sets.
+Fixed cooldown refresh issue.
+Added cooldowns to pet buttons.
+Fixed pet button autocast shapes not updating when changing skins via Masque.
+Fixed snapto issue with left/right sides of the screen.

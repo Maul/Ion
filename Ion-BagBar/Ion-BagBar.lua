@@ -232,6 +232,7 @@ function ANCHOR:SetSkinned()
 			local btnData = { Icon = self.element.icon }
 
 			SKIN:Group("Ion", bar.gdata.name):AddButton(self.element, btnData)
+
 		end
 	end
 end

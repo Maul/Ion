@@ -179,8 +179,6 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 	end
 end
 
-PETBTN.SetTimer = ION.SetTimer
-
 function PETBTN:PET_UpdateCooldown()
 
 	local actionID = self.actionID
@@ -464,6 +462,14 @@ function PETBTN:SetData(bar)
 
 		self.bar = bar
 
+		self.cdText = bar.cdata.cdText
+
+		if (bar.cdata.cdAlpha) then
+			self.cdAlpha = 0.2
+		else
+			self.cdAlpha = 1
+		end
+
 		self.upClicks = bar.cdata.upClicks
 		self.downClicks = bar.cdata.downClicks
 
@@ -486,6 +492,15 @@ function PETBTN:SetData(bar)
 
 	self:RegisterForClicks(down, up)
 	self:RegisterForDrag("LeftButton", "RightButton")
+
+	self.cdcolor1 = { 1, 0.82, 0, 1 }
+	self.cdcolor2 = { 1, 0.1, 0.1, 1 }
+	self.auracolor1 = { 0, 0.82, 0, 1 }
+	self.auracolor2 = { 1, 0.1, 0.1, 1 }
+	self.buffcolor = { 0, 0.8, 0, 1 }
+	self.debuffcolor = { 0.8, 0, 0, 1 }
+	self.manacolor = { 0.5, 0.5, 1.0 }
+	self.rangecolor = { 0.7, 0.15, 0.15, 1 }
 
 	self:SetFrameLevel(4)
 	self.iconframe:SetFrameLevel(2)
@@ -630,9 +645,9 @@ local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Ion-PetBar") then
 
-		PETBTN.SetTimer = ION.SetTimer
-		PETBTN.SetSkinned = ION.SetSkinned
-		PETBTN.GetSkinned = ION.GetSkinned
+		PETBTN.SetTimer = BUTTON.SetTimer
+		PETBTN.SetSkinned = BUTTON.SetSkinned
+		PETBTN.GetSkinned = BUTTON.GetSkinned
 		PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
 		GDB = IonPetGDB; CDB = IonPetCDB

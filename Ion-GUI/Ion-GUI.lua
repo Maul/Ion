@@ -70,25 +70,34 @@ local function insertLink(text)
 
 	local item = GetItemInfo(text)
 
-	if (IBTNE.flyoutedit and IBTNE.flyoutedit.keyedit.edit:IsVisible()) then
+	--if (IBTNE.flyoutedit and IBTNE.flyoutedit.keyedit.edit:IsVisible()) then
 
-		IBTNE.flyoutedit.keyedit.edit:Insert(item or text)
+	--	IBTNE.flyoutedit.keyedit.edit:Insert(item or text)
 
-	elseif (IBTNE.macroedit.edit:GetText() == "") then
+	--	return
 
-		if (item) then
+	--end
 
-			if (GetItemSpell(text)) then
-				IBTNE.macroedit.edit:Insert(SLASH_USE1.." "..item)
+	if (IBTNE.macroedit.edit:IsVisible()) then
+
+		IBTNE.macroedit.edit:SetFocus()
+
+		if (IBTNE.macroedit.edit:GetText() == "") then
+
+			if (item) then
+
+				if (GetItemSpell(text)) then
+					IBTNE.macroedit.edit:Insert(SLASH_USE1.." "..item)
+				else
+					IBTNE.macroedit.edit:Insert(SLASH_EQUIP1.." "..item)
+				end
+
 			else
-				IBTNE.macroedit.edit:Insert(SLASH_EQUIP1.." "..item)
+				IBTNE.macroedit.edit:Insert(SLASH_CAST1.." "..text)
 			end
-
 		else
-			IBTNE.macroedit.edit:Insert(SLASH_CAST1.." "..text)
+			IBTNE.macroedit.edit:Insert(item or text)
 		end
-	else
-		IBTNE.macroedit.edit:Insert(item or text)
 	end
 end
 
@@ -292,7 +301,7 @@ local function IonPanelTemplates_TabResize(tab, padding, absoluteSize, minWidth,
 
 end
 
-function ION:UpdateBarGUI()
+function ION:UpdateBarGUI(newBar)
 
 	ION.BarListScrollFrameUpdate()
 
@@ -369,6 +378,11 @@ function ION:UpdateBarGUI()
 
 			ION.EditBox_PopUpInitialize(barOpt.remap.popup, popupData)
 			ION.EditBox_PopUpInitialize(barOpt.remapto.popup, popupData)
+
+			if (newBar) then
+				barOpt.remap:SetText("")
+				barOpt.remapto:SetText("")
+			end
 
 			for i,f in ipairs(barOpt.chk) do
 				f:ClearAllPoints(); f:Hide()
@@ -1026,8 +1040,6 @@ local function remapToOnTextChanged(frame)
 		local value = barOpt.remap.value
 
 		bar.cdata.remap = bar.cdata.remap:gsub(value..":%d+", value..":"..frame.value)
-
-		print(bar.cdata.remap)
 
 		if (bar.cdata.paged) then
 			bar.paged.registered = false
@@ -2249,11 +2261,7 @@ end
 
 local function hookPetJournalButtons()
 
-	print("prehook")
-
 	if (PetJournal.listScroll.buttons) then
-
-		print("hook")
 
 		for i,btn in pairs(PetJournal.listScroll.buttons) do
 			btn.dragButton:HookScript("OnClick", modifiedPetJournalClick)

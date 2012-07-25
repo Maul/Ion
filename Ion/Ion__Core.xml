@@ -1062,7 +1062,7 @@
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture name="$parentTexture" parentKey="texture">
-					<Size x="13" y="13"/>
+					<Size x="12.5" y="12.5"/>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>

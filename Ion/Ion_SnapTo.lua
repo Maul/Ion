@@ -140,11 +140,17 @@ function BAR:StickToEdge()
 		end
 	end
 
-	if (find(point, "CENTER")) then	calcX(3); calcY(3) end
-	if (find(point, "LEFT")) then calcX(1); calcY(3) end
-	if (find(point, "RIGHT")) then calcX(2); calcY(3) end
-	if (find(point, "BOTTOM")) then	calcX(3); calcY(1) end
-	if (find(point, "TOP")) then calcX(3); calcY(2) end
+	if (point == "CENTER") then calcX(3); calcY(3) end
+
+	if (point:find("LEFT")) then calcX(1); calcY(3) end
+
+	if (point:find("RIGHT")) then	calcX(2); calcY(3) end
+
+	if (not changed and point:find("BOTTOM")) then calcX(3); calcY(1) end
+
+	if (not changed and point:find("TOP")) then calcX(3); calcY(2) end
+
+	print(point)
 
 	if (changed) then
 		self.gdata.point = point; self.gdata.x = x; self.gdata.y = y

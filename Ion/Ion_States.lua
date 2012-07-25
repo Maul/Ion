@@ -1,4 +1,5 @@
 ﻿--Ion, a World of Warcraft® user interface addon.
+--Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
 Ion.MANAGED_ACTION_STATES = {
 

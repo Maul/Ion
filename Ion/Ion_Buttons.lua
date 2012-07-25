@@ -7,7 +7,7 @@ ION.BUTTON = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local BUTTON = ION.BUTTON
 
-local BTNIndex = ION.BTNIndex
+local BTNIndex, SKINIndex = ION.BTNIndex, ION.SKINIndex
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
 
@@ -63,9 +63,10 @@ local GetItemIcon = _G.GetItemIcon
 local IsCurrentItem = _G.IsCurrentItem
 local IsItemInRange = _G.IsItemInRange
 local IsEquippableItem = _G.IsEquippableItem
+local GetEquipmentSetInfoByName = _G.GetEquipmentSetInfoByName
 
 local GetPossessInfo = _G.GetPossessInfo
---local GetCompanionInfo = _G.GetCompanionInfo
+local GetCompanionInfo = _G.GetCompanionInfo
 
 local ShowOverlayGlow = ActionButton_ShowOverlayGlow
 local HideOverlayGlow = ActionButton_HideOverlayGlow
@@ -174,6 +175,7 @@ local stateData = {
 	macro_Name = "",
 	macro_Auto = false,
 	macro_Watch = false,
+	macro_Equip = false,
 	macro_Note = "",
 	macro_UseNote = false,
 }
@@ -396,18 +398,11 @@ local function controlOnUpdate(self, elapsed)
 		end
 	end
 
-end
-
-
-local function mDragOnUpdate()
 	if (MacroDrag[0]) then
 		SetCursor(MacroDrag.texture)
 	end
-end
 
-local mDrag = CreateFrame("Frame", nil, UIParent)
-mDrag:SetScript("OnUpdate", mDragOnUpdate)
-mDrag:Show()
+end
 
 local function cooldownsOnUpdate(self, elapsed)
 
@@ -608,10 +603,12 @@ function BUTTON:SetTimer(cd, start, duration, enable, timer, color1, color2, cdA
 			if (cdAlpha) then
 				cdAlphas[cd] = true
 			end
+
+		elseif (cooldowns[cd]) then
+			cd.duration = 1
 		end
 	else
-		CooldownFrame_SetTimer(cd, 0, 0, 0)
-		cd.duration = 0
+		cd.duration = 0; cd.start = 0; CooldownFrame_SetTimer(cd, 0, 0, 0)
 	end
 end
 
@@ -819,6 +816,11 @@ function BUTTON:MACRO_SetSpellIcon(spell)
 
 		end
 
+		if (self.data.macro_Equip) then
+			texture = GetEquipmentSetInfoByName(self.data.macro_Equip)
+
+		end
+
 		if (texture) then
 			self.iconframeicon:SetTexture(texture)
 		else
@@ -952,7 +954,35 @@ function BUTTON:MACRO_UpdateIcon(...)
 
 	elseif (#self.data.macro_Text > 0) then
 
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		local equipset = self.data.macro_Text:match("/equipset%s+(%C+)")
+
+		if (equipset) then
+
+			equipset = equipset:gsub("%pnobtn:2%p ", "")
+
+			local icon, _, isEquipped = GetEquipmentSetInfoByName(equipset)
+
+			if (isEquipped) then
+				self.border:Show()
+			else
+				self.border:Hide()
+			end
+
+			if (icon) then
+				self.iconframeicon:SetTexture("INTERFACE\\ICONS\\"..icon:upper())
+			end
+
+		elseif (self.data.macro_Icon) then
+
+			self.iconframeicon:SetTexture(self.data.macro_Icon)
+
+		else
+
+			self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		end
+
+		self.iconframeicon:Show()
+
 	else
 		self.iconframeicon:SetTexture("")
 		self.iconframeicon:Hide()
@@ -1608,7 +1638,7 @@ function BUTTON:MACRO_MODIFIER_STATE_CHANGED(...)
 end
 
 function BUTTON:MACRO_ACTIONBAR_SLOT_CHANGED(...)
-	if (self.data.macro_Watch) then
+	if (self.data.macro_Watch or self.data.macro_Equip) then
 		self:MACRO_UpdateIcon()
 	end
 end
@@ -1642,6 +1672,20 @@ function BUTTON:MACRO_UPDATE_MACROS(...)
 	end
 end
 
+function BUTTON:MACRO_EQUIPMENT_SETS_CHANGED(...)
+
+	if (PEW and not InCombatLockdown() and self.data.macro_Equip) then
+		self:MACRO_PlaceBlizzEquipSet(self.data.macro_Equip)
+	end
+end
+
+function BUTTON:MACRO_PLAYER_EQUIPMENT_CHANGED(...)
+
+	if (self.data.macro_Equip) then
+		self:MACRO_UpdateIcon()
+	end
+end
+
 function BUTTON:MACRO_UPDATE_VEHICLE_ACTIONBAR(...)
 
 	if (self.vehicleID) then
@@ -1670,8 +1714,9 @@ function BUTTON:MACRO_PlaceMacro()
 	self.data.macro_Name = MacroDrag[4]
 	self.data.macro_Auto = MacroDrag[5]
 	self.data.macro_Watch = MacroDrag[6]
-	self.data.macro_Note = MacroDrag[7]
-	self.data.macro_UseNote = MacroDrag[8]
+	self.data.macro_Equip = MacroDrag[7]
+	self.data.macro_Note = MacroDrag[8]
+	self.data.macro_UseNote = MacroDrag[9]
 
 	if (not self.cursor) then
 		self:SetType(true)
@@ -1704,6 +1749,7 @@ function BUTTON:MACRO_PlaceSpell(action1, action2, hasAction)
 	 	self.data.macro_Icon = false
 		self.data.macro_Name = ""
 		self.data.macro_Watch = false
+		self.data.macro_Equip = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
@@ -1731,6 +1777,7 @@ function BUTTON:MACRO_PlaceItem(action1, action2, hasAction)
 	self.data.macro_Name = ""
 	self.data.macro_Auto = false
 	self.data.macro_Watch = false
+	self.data.macro_Equip = false
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 
@@ -1756,7 +1803,7 @@ function BUTTON:MACRO_PlaceBlizzMacro(action1)
 
 	 		self.data.macro_Text = body
 	 		self.data.macro_Name = name
-	 		self.data.macro_Watch = action1
+	 		self.data.macro_Watch = name
 	 		self.data.macro_Icon = iIndex[icon:upper()] or ""
 	 	else
 	 		self.data.macro_Text = ""
@@ -1765,6 +1812,42 @@ function BUTTON:MACRO_PlaceBlizzMacro(action1)
 	 		self.data.macro_Icon = false
 	 	end
 
+		self.data.macro_Equip = false
+		self.data.macro_Auto = false
+		self.data.macro_Note = ""
+		self.data.macro_UseNote = false
+
+		if (not self.cursor) then
+			self:SetType(true)
+		end
+
+		MacroDrag[0] = false
+
+		ClearCursor(); SetCursor(nil)
+	end
+end
+
+function BUTTON:MACRO_PlaceBlizzEquipSet(action1)
+
+	if (action1 == 0) then
+		return
+	else
+
+	 	local icon = GetEquipmentSetInfoByName(action1)
+
+	 	if (icon) then
+
+	 		self.data.macro_Text = "/equipset "..action1
+	 		self.data.macro_Equip = action1
+	 		self.data.macro_Icon = iIndex[icon:upper()] or "INTERFACE\\ICONS\\"..icon:upper()
+	 	else
+	 		self.data.macro_Text = ""
+			self.data.macro_Equip = false
+	 		self.data.macro_Icon = false
+	 	end
+
+ 		self.data.macro_Name = ""
+ 		self.data.macro_Watch = false
 		self.data.macro_Auto = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
@@ -1785,7 +1868,7 @@ function BUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 		return
 	else
 
-		--local _, _, spellID = GetCompanionInfo(action2, action1)
+		local _, _, spellID = GetCompanionInfo(action2, action1)
 	 	local name = GetSpellInfo(spellID)
 
 	 	if (name) then
@@ -1800,6 +1883,7 @@ function BUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 		self.data.macro_Icon = false
 		self.data.macro_Name = ""
 		self.data.macro_Watch = false
+		self.data.macro_Equip = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
@@ -1857,6 +1941,7 @@ function BUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 	 	self.data.macro_Name = ""
 		self.data.macro_Auto = false
 		self.data.macro_Watch = false
+		self.data.macro_Equip = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
@@ -1886,6 +1971,7 @@ function BUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
 	 	self.data.macro_Icon = false
 		self.data.macro_Name = ""
 		self.data.macro_Watch = false
+		self.data.macro_Equip = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
@@ -1939,8 +2025,9 @@ function BUTTON:MACRO_PickUpMacro()
 			MacroDrag[4] = self.data.macro_Name
 			MacroDrag[5] = self.data.macro_Auto
 			MacroDrag[6] = self.data.macro_Watch
-			MacroDrag[7] = self.data.macro_Note
-			MacroDrag[8] = self.data.macro_UseNote
+			MacroDrag[7] = self.data.macro_Equip
+			MacroDrag[8] = self.data.macro_Note
+			MacroDrag[9] = self.data.macro_UseNote
 			MacroDrag.texture = texture
 
 			self.data.macro_Text = ""
@@ -1948,6 +2035,7 @@ function BUTTON:MACRO_PickUpMacro()
 			self.data.macro_Name = ""
 			self.data.macro_Auto = false
 			self.data.macro_Watch = false
+			self.data.macro_Equip = false
 			self.data.macro_Note = ""
 			self.data.macro_UseNote = false
 
@@ -1972,9 +2060,9 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 
 	local cursorType, action1, action2, ID = GetCursorInfo()
 
-	for i=1,select("#",GetCursorInfo()) do
-		print(i..": "..select(i,GetCursorInfo()))
-	end
+	--for i=1,select("#",GetCursorInfo()) do
+	--	print(i..": "..select(i,GetCursorInfo()))
+	--end
 
 	local texture = self.iconframeicon:GetTexture()
 
@@ -1989,9 +2077,9 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 		currMacro[4] = self.data.macro_Name
 		currMacro[5] = self.data.macro_Auto
 		currMacro[6] = self.data.macro_Watch
-		currMacro[7] = self.data.macro_Note
-		currMacro[8] = self.data.macro_UseNote
-
+		currMacro[7] = self.data.macro_Equip
+		currMacro[8] = self.data.macro_Note
+		currMacro[9] = self.data.macro_UseNote
 
 		currMacro.texture = texture
 
@@ -2018,6 +2106,10 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 		elseif (cursorType == "macro") then
 
 			self:MACRO_PlaceBlizzMacro(action1)
+
+		elseif (cursorType == "equipmentset") then
+
+			self:MACRO_PlaceBlizzEquipSet(action1)
 
 		elseif (cursorType == "companion") then
 
@@ -2279,8 +2371,15 @@ function BUTTON:MACRO_SetTooltip(edit)
 		else
 			self:MACRO_SetSpellTooltip(show:lower())
 		end
-	else
-		if (#self.data.macro_Name>0) then
+
+	elseif (self.data.macro_Text and #self.data.macro_Text > 0) then
+
+		local equipset = self.data.macro_Text:match("/equipset%s+(%C+)")
+
+		if (equipset) then
+			equipset = equipset:gsub("%pnobtn:2%p ", "")
+			GameTooltip:SetEquipmentSet(equipset)
+		elseif (self.data.macro_Name and #self.data.macro_Name>0) then
 			GameTooltip:SetText(self.data.macro_Name)
 		end
 	end
@@ -2516,6 +2615,8 @@ function BUTTON:SetSkinned(flyout)
 			end
 
 			self.skinned = true
+
+			SKINIndex[self] = true
 		end
 	end
 end
@@ -2799,6 +2900,8 @@ function BUTTON:Reset()
 	self:UnregisterEvent("UNIT_FLAGS")
 	self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 	self:UnregisterEvent("UPDATE_MACROS")
+	self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+	self:UnregisterEvent("EQUIPMENT_SETS_CHANGED")
 
 	self:MACRO_Reset()
 end
@@ -2875,6 +2978,8 @@ function BUTTON:SetType(save, kill, init)
 		self:RegisterEvent("ACTIONBAR_HIDEGRID")
 		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		self:RegisterEvent("UPDATE_MACROS")
+		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
 		self:MACRO_UpdateParse()
 
@@ -2910,11 +3015,11 @@ function BUTTON:SetType(save, kill, init)
 						]])
 
 		if (ION.TOCVersion < 50000) then
-			self:SetAttribute("possessID_Offset", 120)
+			self:SetAttribute("overrideID_Offset", 120)
 			self:SetAttribute("vehicleID_Offset", 120)
 			self:SetAttribute("vehicleExit_Macro", "/click VehicleMenuBarLeaveButton")
 		else
-			self:SetAttribute("possessID_Offset", 157)
+			self:SetAttribute("overrideID_Offset", 157)
 			self:SetAttribute("vehicleID_Offset", 132)
 			self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
 		end
@@ -2931,11 +3036,7 @@ function BUTTON:SetType(save, kill, init)
 
 							self:SetAttribute("type", "macro")
 
-							if (UnitHasVehicleUI("player")) then
-								self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-							else
-								self:SetAttribute("*macrotext*", "/click PossessButton2")
-							end
+							self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
 
 							self:SetAttribute("*action*", 0)
 
@@ -2943,15 +3044,51 @@ function BUTTON:SetType(save, kill, init)
 
 							self:SetAttribute("type", "action")
 
-							--new action ID's for possess 157-162
-
 							--new action ID's for vehicle 133-138
 
-							--if (UnitHasVehicleUI("player")) then
-								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-							--else
-							--	self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("possessID_Offset"))
-							--end
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+						end
+
+						self:Show()
+
+					elseif (msg:find("possess")) then
+
+						if (self:GetAttribute("lastPos")) then
+
+							self:SetAttribute("type", "macro")
+
+							self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
+
+							self:SetAttribute("*action*", 0)
+
+						else
+
+							self:SetAttribute("type", "action")
+
+							--new action ID's for possess 133-138
+
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+						end
+
+						self:Show()
+
+					elseif (msg:find("override")) then
+
+						if (self:GetAttribute("lastPos")) then
+
+							self:SetAttribute("type", "macro")
+
+							self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
+
+							self:SetAttribute("*action*", 0)
+
+						else
+
+							self:SetAttribute("type", "action")
+
+							--new action ID's for override 157-162
+
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
 						end
 
 						self:Show()
@@ -3003,11 +3140,7 @@ function BUTTON:SetFauxState(state)
 
 				self:SetAttribute("type", "macro")
 
-				if (UnitHasVehicleUI("player")) then
-					self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-				else
-					self:SetAttribute("*macrotext*", "/click PossessButton2")
-				end
+				self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
 
 				self:SetAttribute("*action*", 0)
 
@@ -3015,15 +3148,51 @@ function BUTTON:SetFauxState(state)
 
 				self:SetAttribute("type", "action")
 
-				--new action ID's for possess 157-162
-
 				--new action ID's for vehicle 133-138
 
-				--if (UnitHasVehicleUI("player")) then
-					self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-				--else
-				--	self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("possessID_Offset"))
-				--end
+				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+			end
+
+			self:Show()
+
+		elseif (msg:find("possess")) then
+
+			if (self:GetAttribute("lastPos")) then
+
+				self:SetAttribute("type", "macro")
+
+				self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
+
+				self:SetAttribute("*action*", 0)
+
+			else
+
+				self:SetAttribute("type", "action")
+
+				--new action ID's for possess 133-138
+
+				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+			end
+
+			self:Show()
+
+		elseif (msg:find("override")) then
+
+			if (self:GetAttribute("lastPos")) then
+
+				self:SetAttribute("type", "macro")
+
+				self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
+
+				self:SetAttribute("*action*", 0)
+
+			else
+
+				self:SetAttribute("type", "action")
+
+				--new action ID's for override 157-162
+
+				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
 			end
 
 			self:Show()
@@ -3102,10 +3271,15 @@ end
 
 --callback(arg and arg, Group, SkinID, Gloss, Backdrop, Colors, Fonts)
 
-function ION:SKINCallback(...)
+function ION:SKINCallback(group,...)
 
-	--print(...)
-
+	if (group) then
+		for btn in pairs(SKINIndex) do
+			if (btn.bar and btn.bar.gdata.name == group) then
+				btn:GetSkinned()
+			end
+		end
+	end
 end
 
 local function controlOnEvent(self, event, ...)
@@ -3169,10 +3343,6 @@ local function controlOnEvent(self, event, ...)
 
 		ION.AutoCastStart = AutoCastStart
 		ION.AutoCastStop = AutoCastStop
-
-		ION.SetTimer = BUTTON.SetTimer
-		ION.SetSkinned = BUTTON.SetSkinned
-		ION.GetSkinned = BUTTON.GetSkinned
 
 		if (SKIN) then
 			SKIN:Register("Ion", ION.SKINCallback, true)

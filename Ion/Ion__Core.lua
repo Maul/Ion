@@ -7,6 +7,7 @@ Ion = {
 	sIndex = {},
 	iIndex = { [1] = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK" },
 	cIndex = {},
+	StanceIndex = {},
 	ShowGrids = {},
 	HideGrids = {},
 	BARIndex = {},
@@ -14,6 +15,7 @@ Ion = {
 	BTNIndex = {},
 	EDITIndex = {},
 	BINDIndex = {},
+	SKINIndex = {},
 	ModuleIndex = 0,
 	RegisteredBarData = {},
 	RegisteredGUIData = {},
@@ -832,7 +834,9 @@ function ION:UpdateStanceStrings()
 	    ION.class == "WARRIOR" or
 	    ION.class == "WARLOCK") then
 
-		local _, name
+	    	wipe(ION.StanceIndex)
+
+		local _, name, spellID
 
 		local states = "[stance:0] stance0; "
 
@@ -845,6 +849,19 @@ function ION:UpdateStanceStrings()
 			_, name = GetShapeshiftFormInfo(i)
 
 			if (name) then
+
+				link = GetSpellLink(name)
+
+				if (link) then
+
+					_, spellID = link:match("(spell:)(%d+)")
+
+					spellID = tonumber(spellID)
+
+					if (spellID) then
+						ION.StanceIndex[i] = spellID
+					end
+				end
 
 				ION.STATES["stance"..i] = name
 
@@ -1058,7 +1075,12 @@ function ION.PopUp_Update(popupFrame)
 	end
 
 	popupFrame:SetWidth(width+40)
-	popupFrame:SetHeight(height + 10)
+
+	if (height < popupFrame:GetParent():GetHeight()) then
+		popupFrame:SetHeight(popupFrame:GetParent():GetHeight())
+	else
+		popupFrame:SetHeight(height + 10)
+	end
 end
 
 --From http://www.wowpedia.org/GetMinimapShape
@@ -1249,6 +1271,12 @@ end
 
 function ION:MinimapButton_OnEnter(minimap)
 
+	GameTooltip_SetDefaultAnchor(GameTooltip, minimap)
+
+	GameTooltip:SetText(L.ION, 1, 1, 1)
+	GameTooltip:AddLine(L.MINIMAP_TOOLTIP1, 1, 1, 1)
+	GameTooltip:AddLine(L.MINIMAP_TOOLTIP2, 1, 1, 1)
+	GameTooltip:AddLine(L.MINIMAP_TOOLTIP3, 1, 1, 1)
 
 	GameTooltip:Show()
 end

@@ -498,6 +498,68 @@ function BUTTON:GetBlizzData(data)
 	return data
 end
 
+function BUTTON:GetEquipSetFromName(data, name, icon)
+
+	local keys, found, mandatory, optional, excluded = self.flyout.keys, 0, 0, 0
+
+	for ckey in gmatch(keys, "[^,]+") do
+
+		local cmd, key = (ckey):match("(%p*)(%P+)")
+
+		if (cmd ~= "#") then
+
+			if (not cmd or #cmd < 1) then
+				mandatory = mandatory + 1
+			elseif (cmd == "~") then
+				optional = 1
+			end
+
+   			if (key and name:lower():find(key)) then
+
+   				if (cmd == "!") then
+					excluded = true
+   				else
+   					found = found + 1
+   				end
+   			end
+   		end
+   	end
+
+	if (found >= (mandatory+optional) and not excluded) then
+		data[name] = "equipset;"..icon
+	end
+end
+
+function BUTTON:GetEquipSetData(data)
+
+	local keys, found, mandatory, optional, excluded, name, icon = self.flyout.keys, 0, 0, 0
+
+	if (keys and (keys:lower():find("#all") or #keys < 1)) then
+
+		for i=1,GetNumEquipmentSets() do
+
+			name, icon = GetEquipmentSetInfo(i)
+
+			if (name) then
+				data[name] = "equipset;"..icon
+			end
+		end
+
+	else
+		for i=1,GetNumEquipmentSets() do
+
+			name, icon = GetEquipmentSetInfo(i)
+
+			if (name and icon) then
+				self:GetEquipSetFromName(data, name, icon)
+			end
+		end
+
+	end
+
+	return data
+end
+
 function BUTTON:GetDataList(options)
 
 	local tooltip
@@ -511,6 +573,10 @@ function BUTTON:GetDataList(options)
 		if (types:find("^b")) then
 
 			return self:GetBlizzData(scanData)
+
+		elseif (types:find("^e")) then
+
+			return self:GetEquipSetData(scanData)
 
 		elseif (types:find("^s")) then
 
@@ -563,7 +629,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 
 		if (data) then
 
-			for spell,source in keySort(data) do
+			for spell, source in keySort(data) do
 
 				button = self:Flyout_GetButton()
 
@@ -576,6 +642,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 					end
 
 					button:SetAttribute("prefix", "/cast ")
+					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
 
 					prefix = "/cast "
 
@@ -588,6 +655,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 					end
 
 					button:SetAttribute("prefix", "/use ")
+					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
 
 					prefix = "/use "
 
@@ -612,16 +680,47 @@ function BUTTON:Flyout_UpdateButtons(init)
 					end
 
 					button:SetAttribute("prefix", prefix)
+
+					if (slot) then
+						button:SetAttribute("showtooltip", "#showtooltip "..button:GetAttribute("slot").."\n")
+					else
+						button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
+					end
+
+				elseif (source:find("equipset")) then
+
+					local _, icon = (";"):split(source)
+
+					button.macroshow = spell
+
+					button.data.macro_Equip = spell
+
+					button:SetAttribute("prefix", "/equipset ")
+					button:SetAttribute("showtooltip", "")
+
+					prefix = "/equipset "
+
+					if (icon) then
+						button.data.macro_Icon = icon
+					else
+						button.data.macro_Icon = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
+					end
+
+				else
+					--should never get here
+					button.macroshow = ""
+					button:SetAttribute("prefix", "")
+					button:SetAttribute("showtooltip", "")
 				end
 
 				if (slot) then
 					button:SetAttribute("macro_Text", button:GetAttribute("prefix").."[nobtn:2] "..button:GetAttribute("slot"))
 					button:SetAttribute("*macrotext1", prefix.."[nobtn:2] "..button:GetAttribute("slot")..button.macroshow)
-					button:SetAttribute("flyoutMacro", "#showtooltip "..button:GetAttribute("slot").."\n"..button:GetAttribute("prefix").."[nobtn:2] "..button:GetAttribute("slot").."\n/stopmacro [nobtn:2]\n/flyout "..options)
+					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..button:GetAttribute("slot").."\n/stopmacro [nobtn:2]\n/flyout "..options)
 				else
 					button:SetAttribute("macro_Text", button:GetAttribute("prefix").."[nobtn:2] "..button.macroshow)
 					button:SetAttribute("*macrotext1", prefix.."[nobtn:2] "..button.macroshow)
-					button:SetAttribute("flyoutMacro", "#showtooltip "..button.macroshow.."\n"..button:GetAttribute("prefix").."[nobtn:2] "..button.macroshow.."\n/stopmacro [nobtn:2]\n/flyout "..flyout.options)
+					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..button.macroshow.."\n/stopmacro [nobtn:2]\n/flyout "..flyout.options)
 				end
 
 				if (not macroSet and not self.data.macro_Text:find("nobtn:2")) then
@@ -826,6 +925,8 @@ function BUTTON:Flyout_ReleaseButton(button)
 	button.stored = true
 
 	button.data.macro_Text = ""
+	button.data.macro_Equip = false
+	button.data.macro_Icon = false
 
 	button.macrospell = nil
 	button.macroitem = nil
@@ -957,8 +1058,8 @@ function BUTTON:Flyout_GetButton()
 	button:SetScript("OnEvent", self:GetScript("OnEvent"))
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
-	button:HookScript("OnShow", function(self) self:MACRO_UpdateButton() self:MACRO_UpdateState() end)
-	button:HookScript("OnHide", function(self) self:MACRO_UpdateButton() self:MACRO_UpdateState() end)
+	button:HookScript("OnShow", function(self) self:MACRO_UpdateButton() self:MACRO_UpdateIcon() self:MACRO_UpdateState() end)
+	button:HookScript("OnHide", function(self) self:MACRO_UpdateButton() self:MACRO_UpdateIcon() self:MACRO_UpdateState() end)
 
 	button:WrapScript(button, "OnClick", [[
 
@@ -1471,6 +1572,19 @@ local function controlOnEvent(self, event, ...)
 
 		anchorUpdater:Show()
 
+	elseif (event == "EQUIPMENT_SETS_CHANGED" and PEW) then
+
+		for anchor in pairs(ANCHORIndex) do
+
+			for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+				if (types:find("^e")) then
+					tinsert(needsUpdate, anchor)
+				end
+			end
+		end
+
+		anchorUpdater:Show()
+
 	elseif (event == "ADDON_LOADED" and ... == "Ion") then
 
 		local strings = { tooltipScan:GetRegions() }
@@ -1517,6 +1631,7 @@ control:RegisterEvent("LEARNED_SPELL_IN_TAB")
 control:RegisterEvent("CHARACTER_POINTS_CHANGED")
 control:RegisterEvent("PET_STABLE_UPDATE")
 control:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
+control:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
 
 --[[
