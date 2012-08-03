@@ -175,6 +175,9 @@ L.GROUP = "group" -- keep in lower case
 L.FISHING = "fishing" -- keep in lower case
 L.VEHICLE = "vehicle" -- keep in lower case
 L.CUSTOM = "custom" -- keep in lower case
+L.POSSESS = "possess" -- keep in lower case
+L.OVERRIDE = "override" -- keep in lower case
+L.EXTRABAR = "extrabar" -- keep in lower case
 
 L.PAGED1 = "Page 1"
 L.PAGED2 = "Page 2"
@@ -206,8 +209,14 @@ L.GROUP2 = "Group: Party"
 L.FISHING0 = "No Fishing Pole"
 L.FISHING1 = "Fishing Pole"
 
-L.VEHICLE0 = "No Vehicle/Possess"
-L.VEHICLE1 = "Vehicle/Possess"
+L.VEHICLE0 = "No Vehicle"
+L.VEHICLE1 = "Vehicle"
+L.POSSESS0 = "No Possess"
+L.POSSESS1 = "Possess"
+L.OVERRIDE0 = "No Override Bar"
+L.OVERRIDE1 = "Override Bar"
+L.EXTRABAR0 = "No Extra Bar"
+L.EXTRABAR1 = "Extra Bar"
 
 L.CUSTOM0 = "Custom States"
 

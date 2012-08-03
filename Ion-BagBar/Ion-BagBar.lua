@@ -413,7 +413,7 @@ local function controlOnEvent(self, event, ...)
 
 		ION:RegisterBarClass("bag", "Bag Bar", "Bag Button", bagbarsGDB, bagbarsCDB, BAGIndex, bagbtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, true, STORAGE, gDef, nil, true)
 
-		ION:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
+		ION:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then
 

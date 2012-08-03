@@ -56,9 +56,10 @@ ION.barGDEF = {
 	x = 0,
 	y = 190,
 
+	scale = 1,
 	shape = 1,
 	columns = false,
-	scale = 1,
+
 	alpha = 1,
 	alphaUp = 1,
 	fadeSpeed = 0.5,
@@ -78,9 +79,31 @@ ION.barGDEF = {
 
 	autoHide = false,
 	showGrid = false,
+
+	bindColor = "1;1;1;1",
+	macroColor = "1;1;1;1",
+	countColor = "1;1;1;1",
+	cdcolor1 = "1;0.82;0;1",
+	cdcolor2 = "1;0.1;0.1;1",
+	auracolor1 = "0;0.82;0;1",
+	auracolor2 = "1;0.1;0.1;1",
+	buffcolor = "0;0.8;0;1",
+	debuffcolor = "0.8;0;0;1",
+	rangecolor = "0.7;0.15;0.15;1",
 }
 
 ION.barCDEF = {
+
+	upClicks = true,
+	downClicks = false,
+
+	conceal = false,
+
+	dualSpec = false,
+
+	spellGlow = true,
+	spellGlowDef = true,
+	spellGlowAlt = false,
 
 	barLock = false,
 	barLockAlt = false,
@@ -91,23 +114,15 @@ ION.barCDEF = {
 	tooltipsEnhanced = true,
 	tooltipsCombat = false,
 
-	spellGlow = true,
-	spellGlowDef = true,
-	spellGlowAlt = false,
-
 	bindText = true,
 	macroText = true,
 	countText = true,
+	rangeInd = true,
 
 	cdText = false,
 	cdAlpha = false,
 	auraText = false,
 	auraInd = false,
-
-	upClicks = true,
-	downClicks = false,
-
-	rangeInd = true,
 
 	homestate = true,
 	paged = false,
@@ -120,6 +135,9 @@ ION.barCDEF = {
 	pet = false,
 	fishing = false,
 	vehicle = false,
+	possess = false,
+	override = false,
+	extrabar = false,
 	alt = false,
 	ctrl = false,
 	shift = false,
@@ -129,11 +147,6 @@ ION.barCDEF = {
 	customNames = false,
 
 	remap = false,
-
-	conceal = false,
-
-	dualSpec = false,
-
 }
 
 local gDef = {
@@ -205,11 +218,11 @@ local function controlOnUpdate(self, elapsed)
 				end
 
 				if (not IsMouseOverSelfOrWatchFrame(k)) then
-					if (v:GetAlpha() > 0) then
-						if (v:GetAlpha()-v.fadeSpeed >= 0) then
+					if (v:GetAlpha() > k.alpha) then
+						if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
 							v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
 						else
-							v:SetAlpha(0)
+							v:SetAlpha(k.alpha)
 						end
 					else
 						k.seen = 0;
@@ -250,7 +263,7 @@ local function controlOnUpdate(self, elapsed)
 							end
 						else
 							if (v:GetAlpha() > k.alpha) then
-								if (v:GetAlpha()-v.fadeSpeed >= 0) then
+								if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
 									v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
 								else
 									v:SetAlpha(k.alpha)
@@ -261,7 +274,7 @@ local function controlOnUpdate(self, elapsed)
 						end
 					else
 						if (v:GetAlpha() > k.alpha) then
-							if (v:GetAlpha()-v.fadeSpeed >= 0) then
+							if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
 								v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
 							else
 								v:SetAlpha(k.alpha)
@@ -301,7 +314,7 @@ local function controlOnUpdate(self, elapsed)
 							end
 						else
 							if (v:GetAlpha() > k.alpha) then
-								if (v:GetAlpha()-v.fadeSpeed >= 0) then
+								if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
 									v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
 								else
 									v:SetAlpha(k.alpha)
@@ -312,7 +325,7 @@ local function controlOnUpdate(self, elapsed)
 						end
 					else
 						if (v:GetAlpha() > k.alpha) then
-							if (v:GetAlpha()-v.fadeSpeed >= 0) then
+							if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
 								v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
 							else
 								v:SetAlpha(k.alpha)
@@ -337,7 +350,7 @@ local function controlOnUpdate(self, elapsed)
 					end
 				else
 					if (v:GetAlpha() > k.alpha) then
-						if (v:GetAlpha()-v.fadeSpeed >= 0) then
+						if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
 							v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
 						else
 							v:SetAlpha(k.alpha)
@@ -392,18 +405,19 @@ function HANDLER:AddVisibilityDriver(bar, state, conditions)
 
 	if (MBS[state]) then
 		RegisterStateDriver(self, state, conditions)
+
+		if (self:GetAttribute("activestates"):find(state)) then
+			self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-"..state)..";"))
+		elseif (self:GetAttribute("activestates") and self:GetAttribute("state-"..state)) then
+			self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-"..state)..";")
+		end
+
+		if (self:GetAttribute("state-"..state)) then
+			self:SetAttribute("state-"..state, self:GetAttribute("state-"..state))
+		end
+
+		bar.vis[state].registered = true
 	end
-
-	if (self:GetAttribute("activestates"):find(state)) then
-		self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-"..state)..";"))
-	else
-		self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-"..state)..";")
-	end
-
-	self:SetAttribute("state-"..state, self:GetAttribute("state-"..state))
-
-	bar.vis[state].registered = true
-
 end
 
 function HANDLER:ClearVisibilityDriver(bar, state)
@@ -718,6 +732,57 @@ function BAR:CreateDriver()
 
 						]])
 
+	driver:SetAttribute("_onstate-possess", [[
+
+						local state = self:GetAttribute("state-possess"):match("%a+")
+
+						if (state) then
+
+							if (self:GetAttribute("activestates"):find(state)) then
+								self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-possess")..";"))
+							else
+								self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-possess")..";")
+							end
+
+							control:ChildUpdate("possess", self:GetAttribute("activestates"))
+						end
+
+						]])
+
+	driver:SetAttribute("_onstate-override", [[
+
+						local state = self:GetAttribute("state-override"):match("%a+")
+
+						if (state) then
+
+							if (self:GetAttribute("activestates"):find(state)) then
+								self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-override")..";"))
+							else
+								self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-override")..";")
+							end
+
+							control:ChildUpdate("override", self:GetAttribute("activestates"))
+						end
+
+						]])
+
+	driver:SetAttribute("_onstate-extrabar", [[
+
+						local state = self:GetAttribute("state-extrabar"):match("%a+")
+
+						if (state) then
+
+							if (self:GetAttribute("activestates"):find(state)) then
+								self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-extrabar")..";"))
+							else
+								self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-extrabar")..";")
+							end
+
+							control:ChildUpdate("extrabar", self:GetAttribute("activestates"))
+						end
+
+						]])
+
 	driver:SetAttribute("_onstate-alt", [[
 
 						local state = self:GetAttribute("state-alt"):match("%a+")
@@ -966,6 +1031,60 @@ function BAR:CreateHandler()
 
 						]])
 
+	handler:SetAttribute("_onstate-possess", [[
+
+						self:SetAttribute("assertstate", "possess")
+
+						if (self:GetAttribute("state-possess") == "laststate") then
+							self:SetAttribute("state-last", self:GetAttribute("state-last-possess"))
+							self:SetAttribute("state-current", self:GetAttribute("state-last"))
+							control:ChildUpdate("possess", self:GetAttribute("state-last") or "homestate")
+							self:SetAttribute("state-last-possess", nil)
+						else
+							self:SetAttribute("state-last-possess", self:GetAttribute("state-last"))
+							self:SetAttribute("state-last", self:GetAttribute("state-possess"))
+							self:SetAttribute("state-current", self:GetAttribute("state-possess"))
+							control:ChildUpdate("possess", self:GetAttribute("state-possess"))
+						end
+
+						]])
+
+	handler:SetAttribute("_onstate-override", [[
+
+						self:SetAttribute("assertstate", "override")
+
+						if (self:GetAttribute("state-override") == "laststate") then
+							self:SetAttribute("state-last", self:GetAttribute("state-last-override"))
+							self:SetAttribute("state-current", self:GetAttribute("state-last"))
+							control:ChildUpdate("override", self:GetAttribute("state-last") or "homestate")
+							self:SetAttribute("state-last-override", nil)
+						else
+							self:SetAttribute("state-last-override", self:GetAttribute("state-last"))
+							self:SetAttribute("state-last", self:GetAttribute("state-override"))
+							self:SetAttribute("state-current", self:GetAttribute("state-override"))
+							control:ChildUpdate("override", self:GetAttribute("state-override"))
+						end
+
+						]])
+
+	handler:SetAttribute("_onstate-extrabar", [[
+
+						self:SetAttribute("assertstate", "extrabar")
+
+						if (self:GetAttribute("state-extrabar") == "laststate") then
+							self:SetAttribute("state-last", self:GetAttribute("state-last-extrabar"))
+							self:SetAttribute("state-current", self:GetAttribute("state-last"))
+							control:ChildUpdate("extrabar", self:GetAttribute("state-last") or "homestate")
+							self:SetAttribute("state-last-extrabar", nil)
+						else
+							self:SetAttribute("state-last-extrabar", self:GetAttribute("state-last"))
+							self:SetAttribute("state-last", self:GetAttribute("state-extrabar"))
+							self:SetAttribute("state-current", self:GetAttribute("state-extrabar"))
+							control:ChildUpdate("extrabar", self:GetAttribute("state-extrabar"))
+						end
+
+						]])
+
 	handler:SetAttribute("_onstate-alt", [[
 
 						self:SetAttribute("assertstate", "alt")
@@ -1067,14 +1186,27 @@ end
 
 function BAR:CreateWatcher()
 
-	local watcher = CreateFrame("Frame", "IonBarWatcher"..self:GetID(), self.handler, "SecureHandlerAttributeTemplate")
+	if (ION.TOCVersion >= 50000) then
 
-	setmetatable(watcher, { __index = HANDLER })
+		local watcher = CreateFrame("Frame", "IonBarWatcher"..self:GetID(), self.handler, "SecureHandlerStateTemplate")
 
-	watcher:SetID(self:GetID())
+		setmetatable(watcher, { __index = HANDLER })
 
-	watcher:SetAttribute("_onattributechanged", [[ print(message) ]])
+		watcher:SetID(self:GetID())
 
+		watcher:SetAttribute("_onattributechanged", [[ ]])
+
+		watcher:SetAttribute("_onstate-petbattle", [[
+
+				if (self:GetAttribute("state-petbattle") == "hide") then
+					self:GetParent():Hide()
+				elseif (not self:GetParent():IsShown() and not self:GetParent():GetAttribute("vishide")) then
+					self:GetParent():Show()
+				end
+		]])
+
+		RegisterStateDriver(watcher, "petbattle", "[petbattle] hide; [nopetbattle] show")
+	end
 
 end
 
@@ -1160,7 +1292,7 @@ end
 function BAR:SetPosition()
 
 	if (self.gdata.snapToPoint and self.gdata.snapToFrame) then
-		self:StickToPoint(_G[self.gdata.snapToFrame], self.gdata.snapToPoint, self.gdata.snapToPad, self.gdata.snapToPad)
+		self:StickToPoint(_G[self.gdata.snapToFrame], self.gdata.snapToPoint, self.gdata.padH, self.gdata.padV)
 	else
 
 		local point, x, y = self.gdata.point, self.gdata.x, self.gdata.y
@@ -1479,12 +1611,10 @@ function BAR:ACTIVE_TALENT_GROUP_CHANGED(...)
 end
 
 
-function BAR:OnEvent(...)
+function BAR:OnEvent(event, ...)
 
-	local event = select(1,...)
-
-	if (BAR[event]) then
-		BAR[event](self, ...)
+	if (self[event]) then
+		self[event](self, ...)
 	end
 end
 
@@ -1615,7 +1745,7 @@ function BAR:OnDragStop(...)
 
 		if (not point and self.gdata.snapTo and bar.gdata.snapTo and self ~= bar) then
 
-			point = self:Stick(bar, GDB.snapToTol, self.gdata.snapToPad, self.gdata.snapToPad)
+			point = self:Stick(bar, GDB.snapToTol, self.gdata.padH, self.gdata.padV)
 
 			if (point) then
 				self.gdata.snapToPoint = point
@@ -2151,7 +2281,7 @@ end
 
 local statetable = {}
 
-function BAR:SetState(msg, gui, silent)
+function BAR:SetState(msg, gui, checked, query)
 
 	if (msg) then
 
@@ -2159,19 +2289,32 @@ function BAR:SetState(msg, gui, silent)
 		local command = msg:gsub(state, ""); command = command:gsub("^%s+", "")
 
 		if (not MAS[state]) then
-			if (not silent) then
+			if (not gui) then
 				ION:PrintStateList()
-				return
+			else
+				print("GUI option error")
 			end
+
+			return
 		end
 
-		if (self.cdata[state] and not gui) then
+		if (gui) then
 
-			self.cdata[state] = false
+			if (checked) then
+				self.cdata[state] = true
+			else
+				self.cdata[state] = false
+			end
 
-		elseif (not gui) then
+		else
 
-			self.cdata[state] = true
+			local toggle = self.cdata[state]
+
+			if (toggle) then
+				self.cdata[state] = false
+			else
+				self.cdata[state] = true
+			end
 		end
 
 		if (state == "paged") then
@@ -2264,7 +2407,7 @@ function BAR:SetState(msg, gui, silent)
 
 end
 
-function BAR:SetVisibility(msg, gui, silent)
+function BAR:SetVisibility(msg, gui, checked, query)
 
 	if (msg) then
 
@@ -2546,10 +2689,72 @@ function BAR:SnapToBar(msg, gui, checked, query)
 	self:Update()
 end
 
+function BAR:UpClicksSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.cdata.upClicks
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.upClicks = true
+		else
+			self.cdata.upClicks = false
+		end
+
+	else
+
+		if (self.cdata.upClicks) then
+			self.cdata.upClicks = false
+		else
+			self.cdata.upClicks = true
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+
+end
+
+function BAR:DownClicksSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.cdata.downClicks
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.downClicks = true
+		else
+			self.cdata.downClicks = false
+		end
+
+	else
+
+		if (self.cdata.downClicks) then
+			self.cdata.downClicks = false
+		else
+			self.cdata.downClicks = true
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+end
+
 function BAR:DualSpecSet(msg, gui, checked, query)
 
 	if (query) then
 		return self.cdata.dualSpec
+	end
+
+	if (true) then
+		print("Feature Not In Yet")
+		return
 	end
 
 	if (gui) then
@@ -3109,13 +3314,17 @@ function BAR:AlphaUpSpeedSet(command, gui, query, skipupdate)
 	end
 end
 
-function BAR:XAxisSet(command)
+function BAR:XAxisSet(command, gui, query, skipupdate)
+
+	if (query) then
+		return self.gdata.x
+	end
 
 	local x = tonumber(command)
 
 	if (x) then
 
-		self.gdata.x = self.gdata.x + x
+		self.gdata.x = round(x, 2)
 
 		self.gdata.snapTo = false
 		self.gdata.snapToPoint = false
@@ -3125,22 +3334,33 @@ function BAR:XAxisSet(command)
 
 		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
 
-		self.message:Show()
-		self.messagebg:Show()
+		if (not gui) then
+			self.message:Show()
+			self.messagebg:Show()
+		end
 
-		self:Update()
-	else
+		if (not skipupdate) then
+			self:Update()
+		end
+
+	elseif (not gui) then
+
 		print(L.BAR_XPOS)
+
 	end
 end
 
-function BAR:YAxisSet(command)
+function BAR:YAxisSet(command, gui, query, skipupdate)
+
+	if (query) then
+		return self.gdata.y
+	end
 
 	local y = tonumber(command)
 
 	if (y) then
 
-		self.gdata.y = self.gdata.y + y
+		self.gdata.y = round(y, 2)
 
 		self.gdata.snapTo = false
 		self.gdata.snapToPoint = false
@@ -3150,48 +3370,43 @@ function BAR:YAxisSet(command)
 
 		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
 
-		self.message:Show()
-		self.messagebg:Show()
+		if (not gui) then
+			self.message:Show()
+			self.messagebg:Show()
+		end
 
-		self:Update()
-	else
+		if (not skipupdate) then
+			self:Update()
+		end
+
+	elseif (not gui) then
+
 		print(L.BAR_YPOS)
+
 	end
 end
 
-function BAR:BindTextSet()
+function BAR:BindTextSet(msg, gui, checked, query)
 
-	if (self.cdata.bindText) then
-		self.cdata.bindText = false
-	else
-		self.cdata.bindText = true
+	if (query) then
+		return self.cdata.bindText, self.gdata.bindColor
 	end
 
-	self:UpdateObjectData()
+	if (gui) then
 
-	self:Update()
-end
+		if (checked) then
+			self.cdata.bindText = true
+		else
+			self.cdata.bindText = false
+		end
 
-function BAR:MacroTextSet()
-
-	if (self.cdata.macroText) then
-		self.cdata.macroText = false
 	else
-		self.cdata.macroText = true
-	end
 
-	self:UpdateObjectData()
-
-	self:Update()
-
-end
-
-function BAR:CountTextSet()
-
-	if (self.cdata.countText) then
-		self.cdata.countText = false
-	else
-		self.cdata.countText = true
+		if (self.cdata.bindText) then
+			self.cdata.bindText = false
+		else
+			self.cdata.bindText = true
+		end
 	end
 
 	self:UpdateObjectData()
@@ -3199,65 +3414,27 @@ function BAR:CountTextSet()
 	self:Update()
 end
 
-function BAR:CDTextSet()
+function BAR:MacroTextSet(msg, gui, checked, query)
 
-	if (self.cdata.cdText) then
-		self.cdata.cdText = false
-	else
-		self.cdata.cdText = true
+	if (query) then
+		return self.cdata.macroText, self.gdata.macroColor
 	end
 
-	self:UpdateObjectData()
+	if (gui) then
 
-	self:Update()
+		if (checked) then
+			self.cdata.macroText = true
+		else
+			self.cdata.macroText = false
+		end
 
-end
-
-function BAR:CDAlphaSet()
-
-	if (self.cdata.cdAlpha) then
-		self.cdata.cdAlpha = false
 	else
-		self.cdata.cdAlpha = true
-	end
 
-	self:UpdateObjectData()
-
-	self:Update()
-end
-
-function BAR:AuraTextSet()
-
-	if (self.cdata.auraText) then
-		self.cdata.auraText = false
-	else
-		self.cdata.auraText = true
-	end
-
-	self:UpdateObjectData()
-
-	self:Update()
-end
-
-function BAR:AuraIndSet()
-
-	if (self.cdata.auraInd) then
-		self.cdata.auraInd = false
-	else
-		self.cdata.auraInd = true
-	end
-
-	self:UpdateObjectData()
-
-	self:Update()
-end
-
-function BAR:UpClicksSet()
-
-	if (self.cdata.upClicks) then
-		self.cdata.upClicks = false
-	else
-		self.cdata.upClicks = true
+		if (self.cdata.macroText) then
+			self.cdata.macroText = false
+		else
+			self.cdata.macroText = true
+		end
 	end
 
 	self:UpdateObjectData()
@@ -3266,12 +3443,168 @@ function BAR:UpClicksSet()
 
 end
 
-function BAR:DownClicksSet()
+function BAR:CountTextSet(msg, gui, checked, query)
 
-	if (self.cdata.downClicks) then
-		self.cdata.downClicks = false
+	if (query) then
+		return self.cdata.countText, self.gdata.countColor
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.countText = true
+		else
+			self.cdata.countText = false
+		end
+
 	else
-		self.cdata.downClicks = true
+
+		if (self.cdata.countText) then
+			self.cdata.countText = false
+		else
+			self.cdata.countText = true
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+end
+
+function BAR:RangeIndSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.cdata.rangeInd, self.gdata.rangecolor
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.rangeInd = true
+		else
+			self.cdata.rangeInd = false
+		end
+
+	else
+
+		if (self.cdata.rangeInd) then
+			self.cdata.rangeInd = false
+		else
+			self.cdata.rangeInd = true
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+end
+
+function BAR:CDTextSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.cdata.cdText, self.gdata.cdcolor1, self.gdata.cdcolor2
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.cdText = true
+		else
+			self.cdata.cdText = false
+		end
+
+	else
+
+		if (self.cdata.cdText) then
+			self.cdata.cdText = false
+		else
+			self.cdata.cdText = true
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+
+end
+
+function BAR:CDAlphaSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.cdata.cdAlpha
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.cdAlpha = true
+		else
+			self.cdata.cdAlpha = false
+		end
+
+	else
+
+		if (self.cdata.cdAlpha) then
+			self.cdata.cdAlpha = false
+		else
+			self.cdata.cdAlpha = true
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+end
+
+function BAR:AuraTextSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.cdata.auraText, self.gdata.auracolor1, self.gdata.auracolor2
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.auraText = true
+		else
+			self.cdata.auraText = false
+		end
+
+	else
+
+		if (self.cdata.auraText) then
+			self.cdata.auraText = false
+		else
+			self.cdata.auraText = true
+		end
+	end
+
+	self:UpdateObjectData()
+
+	self:Update()
+end
+
+function BAR:AuraIndSet(msg, gui, checked, query)
+
+	if (query) then
+		return self.cdata.auraInd, self.gdata.buffcolor, self.gdata.debuffcolor
+	end
+
+	if (gui) then
+
+		if (checked) then
+			self.cdata.auraInd = true
+		else
+			self.cdata.auraInd = false
+		end
+
+	else
+
+		if (self.cdata.auraInd) then
+			self.cdata.auraInd = false
+		else
+			self.cdata.auraInd = true
+		end
 	end
 
 	self:UpdateObjectData()
@@ -3308,7 +3641,24 @@ local function controlOnEvent(self, event, ...)
 
 		ION:RegisterBarClass("bar", "Action Bar", "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
 
-		ION:RegisterGUIOptions("bar",	{ AUTOHIDE = true, SHOWGRID = true,	SPELLGLOW = true,	SNAPTO = true, DUALSPEC = true, HIDDEN = true, LOCKBAR = true, TOOLTIPS = true }, true)
+		ION:RegisterGUIOptions("bar",	{ AUTOHIDE = true,
+							  SHOWGRID = true,
+							  SPELLGLOW = true,
+							  SNAPTO = true,
+							  UPCLICKS = true,
+							  DOWNCLICKS = true,
+							  DUALSPEC = true,
+							  HIDDEN = true,
+							  LOCKBAR = true,
+							  TOOLTIPS = true,
+							  BINDTEXT = true,
+							  MACROTEXT = true,
+							  COUNTTEXT = true,
+							  RANGEIND = true,
+							  CDTEXT = true,
+							  CDALPHA = true,
+							  AURATEXT = true,
+							  AURAIND = true }, true, 115)
 
 		if (GDB.firstRun) then
 

@@ -11,6 +11,7 @@ local tempMacro = {
 	macro_Name = "",
 	macro_Auto = false,
 	macro_Watch = false,
+	macro_Equip = false,
 	macro_Note = "",
 	macro_UseNote = false,
 }

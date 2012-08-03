@@ -56,7 +56,7 @@ end
 
 function OBJEDITOR:OnClick(button)
 
-	local newObj = ION:ChangeObject(self.object)
+	local newObj, newEditor = ION:ChangeObject(self.object)
 
 	if (button == "RightButton") then
 
@@ -67,14 +67,14 @@ function OBJEDITOR:OnClick(button)
 		if (IonObjectEditor) then
 			if (not newObj and IonObjectEditor:IsVisible()) then
 				IonObjectEditor:Hide()
-			elseif (newObj) then
+			elseif (newObj and newEditor) then
 				ION:ObjectEditor_OnShow(IonObjectEditor); IonObjectEditor:Show()
 			else
 				IonObjectEditor:Show()
 			end
 		end
 
-	elseif (newObj and IonObjectEditor:IsVisible()) then
+	elseif (newObj and newEditor and IonObjectEditor:IsVisible()) then
 		ION:ObjectEditor_OnShow(IonObjectEditor); IonObjectEditor:Show()
 	end
 
@@ -83,42 +83,73 @@ function OBJEDITOR:OnClick(button)
 	end
 end
 
+function OBJEDITOR:ACTIONBAR_SHOWGRID(...)
+
+	if (not InCombatLockdown() and self:IsVisible()) then
+		self:Hide(); self.showgrid = true
+	end
+
+end
+
+function OBJEDITOR:ACTIONBAR_HIDEGRID(...)
+
+	if (not InCombatLockdown() and self.showgrid) then
+		self:Show(); self.showgrid = nil
+	end
+
+end
+
+function OBJEDITOR:OnEvent(event, ...)
+
+	if (self[event]) then
+		self[event](self, ...)
+	end
+
+end
+
 local OBJEDITOR_MT = { __index = OBJEDITOR }
 
 function BUTTON:CreateEditFrame(index)
 
-	local OBJEDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "IonEditFrameTemplate")
+	local EDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "IonEditFrameTemplate")
 
-	setmetatable(OBJEDITOR, OBJEDITOR_MT)
+	setmetatable(EDITOR, OBJEDITOR_MT)
 
-	OBJEDITOR:EnableMouseWheel(true)
-	OBJEDITOR:RegisterForClicks("AnyDown")
-	OBJEDITOR:SetAllPoints(self)
-	OBJEDITOR:SetScript("OnShow", OBJEDITOR.OnShow)
-	OBJEDITOR:SetScript("OnHide", OBJEDITOR.OnHide)
-	OBJEDITOR:SetScript("OnEnter", OBJEDITOR.OnEnter)
-	OBJEDITOR:SetScript("OnLeave", OBJEDITOR.OnLeave)
-	OBJEDITOR:SetScript("OnClick", OBJEDITOR.OnClick)
+	EDITOR:EnableMouseWheel(true)
+	EDITOR:RegisterForClicks("AnyDown")
+	EDITOR:SetAllPoints(self)
+	EDITOR:SetScript("OnShow", OBJEDITOR.OnShow)
+	EDITOR:SetScript("OnHide", OBJEDITOR.OnHide)
+	EDITOR:SetScript("OnEnter", OBJEDITOR.OnEnter)
+	EDITOR:SetScript("OnLeave", OBJEDITOR.OnLeave)
+	EDITOR:SetScript("OnClick", OBJEDITOR.OnClick)
+	EDITOR:SetScript("OnEvent", OBJEDITOR.OnEvent)
+	EDITOR:RegisterEvent("ACTIONBAR_SHOWGRID")
+	EDITOR:RegisterEvent("ACTIONBAR_HIDEGRID")
 
-	OBJEDITOR.type:SetText(L.EDITFRAME_EDIT)
-	OBJEDITOR.object = self
-	OBJEDITOR.editType = "button"
+	EDITOR.type:SetText(L.EDITFRAME_EDIT)
+	EDITOR.object = self
+	EDITOR.editType = "button"
 
-	self.OBJEDITOR = OBJEDITOR
+	self.OBJEDITOR = EDITOR
 
-	EDITIndex["BUTTON"..index] = OBJEDITOR
+	EDITIndex["BUTTON"..index] = EDITOR
 
-	OBJEDITOR:Hide()
+	EDITOR:Hide()
 
 end
 
 function ION:ChangeObject(object)
 
-	local newObj = false
+	local newObj, newEditor = false, false
 
 	if (PEW) then
 
 		if (object and object ~= ION.CurrentObject) then
+
+			if (ION.CurrentObject and ION.CurrentObject.OBJEDITOR.editType ~= object.OBJEDITOR.editType) then
+				newEditor = true
+			end
 
 			if (ION.CurrentObject and ION.CurrentObject.bar ~= object.bar) then
 
@@ -153,7 +184,7 @@ function ION:ChangeObject(object)
 		end
 	end
 
-	return newObj
+	return newObj, newEditor
 end
 
 function ION:ToggleEditFrames(show, hide)
@@ -208,7 +239,7 @@ local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Ion") then
 
-	ION.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
+		ION.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 

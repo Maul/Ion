@@ -2247,7 +2247,10 @@ local function controlOnEvent(self, event, ...)
 
 		ION:RegisterBarClass("status", "Status Bar Group", "Status Bar", statusbarsGDB, statusbarsCDB, STATUSIndex, statusbtnsGDB, "Button", "IonStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
 
-		ION:RegisterGUIOptions("status", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
+		ION:RegisterGUIOptions("status", { AUTOHIDE = true,
+							     SNAPTO = true,
+							     HIDDEN = true,
+							     TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then
 

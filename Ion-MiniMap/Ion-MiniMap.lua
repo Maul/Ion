@@ -353,7 +353,7 @@ local function controlOnEvent(self, event, ...)
 
 		ION:RegisterBarClass("minimap", "MiniMap Bar", "MiniMap", minimapbarsGDB, minimapbarsCDB, MINIMAPIndex, minimapbtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #minimapElements, false, STORAGE, gDef, nil, false)
 
-		ION:RegisterGUIOptions("minimap", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
+		ION:RegisterGUIOptions("minimap", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then
 

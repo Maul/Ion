@@ -168,7 +168,7 @@ local keyDefaults = {
 
 local stateData = {
 
-	actionID = 1,
+	actionID = false,
 
 	macro_Text = "",
 	macro_Icon = false,
@@ -180,13 +180,13 @@ local stateData = {
 	macro_UseNote = false,
 }
 
-ION.VehicleActions = {
-	exit_veh = { "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up", { 0.140625, 0.859375, 0.140625, 0.859375 }, "vehicle_exit" },
-	--exit_veh = { "Interface\\PlayerActionBarAlt\\DarkMoon", { 0.0859375, 0.1679688, 0.359375, 0.4414063 }, "vehicle_exit" },
-	exit_pos = { "Interface\\Icons\\Spell_Shadow_SacrificialShield", { 0, 1, 0, 1 }, "possess_exit" },
-}
+if (ION.TOCVersion < 50000) then
+	ION.SpecialActions = { vehicle = "Interface\\AddOns\\Ion\\Images\\old_vehicle_exit", possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield" }
+else
+	ION.SpecialActions = { vehicle = "Interface\\AddOns\\Ion\\Images\\new_vehicle_exit", possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield" }
+end
 
-local VehicleActions = ION.VehicleActions
+local SpecialActions = ION.SpecialActions
 
 ION.PetActions = {
 	petattack = { "Interface\\Icons\\Ability_GhoulFrenzy", L.PETATTACK, { 0, 1, 0, 1 }, "/petattack" },
@@ -616,11 +616,11 @@ function BUTTON:MACRO_HasAction()
 
 	local hasAction = self.data.macro_Text
 
-	if (self.vehicleID) then
-		if (self.vehicleID == 0) then
+	if (self.actionID) then
+		if (self.actionID == 0) then
 			return true
 		else
-			return HasAction(self.vehicleID)
+			return HasAction(self.actionID)
 		end
 	elseif (hasAction and #hasAction>0) then
 		return true
@@ -899,12 +899,10 @@ function BUTTON:ACTION_SetIcon(action)
 
 		if (actionID == 0) then
 
-			if (UnitHasVehicleUI("player")) then
-				self.iconframeicon:SetTexture(VehicleActions.exit_veh[1])
-				self.iconframeicon:SetTexCoord(unpack(VehicleActions.exit_veh[2]))
+			if (self.specAction and SpecialActions[self.specAction]) then
+				self.iconframeicon:SetTexture(SpecialActions[self.specAction])
 			else
-				self.iconframeicon:SetTexture(VehicleActions.exit_pos[1])
-				self.iconframeicon:SetTexCoord(unpack(VehicleActions.exit_pos[2]))
+				self.iconframeicon:SetTexture(0,0,0)
 			end
 
 		else
@@ -932,9 +930,9 @@ function BUTTON:MACRO_UpdateIcon(...)
 
 	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow or self.macroicon
 
-	if (self.vehicleID) then
+	if (self.actionID) then
 
-		texture = self:ACTION_SetIcon(self.vehicleID)
+		texture = self:ACTION_SetIcon(self.actionID)
 
 	elseif (show and #show>0) then
 
@@ -987,10 +985,6 @@ function BUTTON:MACRO_UpdateIcon(...)
 		self.iconframeicon:SetTexture("")
 		self.iconframeicon:Hide()
 		self.border:Hide()
-	end
-
-	if (not self.vehicleID and not self.skinned) then
-		self.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
 	end
 
 	if (self.spellID and IsSpellOverlayed(self.spellID)) then
@@ -1058,6 +1052,8 @@ function BUTTON:MACRO_SetSpellState(spell)
 	else
 		self.mac_flash = false
 	end
+
+	self.macroname:SetText(self.data.macro_Name)
 end
 
 function BUTTON:MACRO_SetItemState(item)
@@ -1073,6 +1069,8 @@ function BUTTON:MACRO_SetItemState(item)
 	else
 		self:SetChecked(nil)
 	end
+
+	self.macroname:SetText(self.data.macro_Name)
 end
 
 function BUTTON:ACTION_UpdateState(action)
@@ -1082,6 +1080,8 @@ function BUTTON:ACTION_UpdateState(action)
 	self.count:SetText("")
 
 	if (actionID) then
+
+		self.macroname:SetText("")
 
 		if (IsCurrentAction(actionID) or IsAutoRepeatAction(actionID)) then
 			self:SetChecked(1)
@@ -1104,11 +1104,9 @@ function BUTTON:MACRO_UpdateState(...)
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
-	self.macroname:SetText(self.data.macro_Name)
+	if (self.actionID) then
 
-	if (self.vehicleID) then
-
-		self:ACTION_UpdateState(self.vehicleID)
+		self:ACTION_UpdateState(self.actionID)
 
 	elseif (show and #show>0) then
 
@@ -1183,15 +1181,17 @@ function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
 				end
 
 				self.iconframeaurawatch.queueinfo = unit..":"..spell
+			else
+
 			end
 
 			if (self.iconframecooldown.timer:IsShown()) then
 				self.auraQueue = unit..":"..spell; self.iconframeaurawatch.uaw_duration = 0; self.iconframeaurawatch:Hide()
-			elseif (self.auraInd or self.auraText) then
-				if (self.auraText) then
-					self:SetTimer(self.iconframecooldown, 0, 0, 0)
-				end
+			elseif (self.auraText) then
+				self:SetTimer(self.iconframecooldown, 0, 0, 0)
 				self:SetTimer(self.iconframeaurawatch, uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color)
+			else
+				self:SetTimer(self.iconframeaurawatch, 0, 0, 0)
 			end
 
 			self.auraWatchUnit = unit
@@ -1285,9 +1285,9 @@ function BUTTON:MACRO_UpdateCooldown(update)
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
-	if (self.vehicleID) then
+	if (self.actionID) then
 
-		self:ACTION_SetCooldown(self.vehicleID)
+		self:ACTION_SetCooldown(self.actionID)
 
 	elseif (show and #show>0) then
 
@@ -1358,21 +1358,29 @@ function BUTTON:MACRO_UpdateUsableSpell(spell)
 	if (notEnoughMana) then
 
 		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+		--self.iconframerange:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3], 0.5)
+		--self.iconframerange:Show()
 
 	elseif (isUsable) then
 
 		if (self.rangeInd and IsSpellInRange(spell, self.unit) == 0) then
 			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+			--self.iconframerange:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], 0.5)
+			--self.iconframerange:Show()
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			--self.iconframerange:Hide()
 		end
 
 	else
 		if (sIndex[(spell):lower()]) then
 
 			self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+			--self.iconframerange:SetVertexColor(0.4, 0.4, 0.4, 0.5)
+			--self.iconframerange:Show()
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			--self.iconframerange:Hide()
 		end
 	end
 
@@ -1439,9 +1447,9 @@ function BUTTON:MACRO_UpdateButton(...)
 
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
 
-	elseif (self.vehicleID) then
+	elseif (self.actionID) then
 
-		self:ACTION_UpdateUsable(self.vehicleID)
+		self:ACTION_UpdateUsable(self.actionID)
 
 	elseif (self.macroshow and #self.macroshow>0) then
 
@@ -1688,12 +1696,14 @@ end
 
 function BUTTON:MACRO_UPDATE_VEHICLE_ACTIONBAR(...)
 
-	if (self.vehicleID) then
+	if (self.actionID) then
 		self:MACRO_UpdateAll(true)
 	end
 end
 
 BUTTON.MACRO_UPDATE_POSSESS_BAR = BUTTON.MACRO_UPDATE_VEHICLE_ACTIONBAR
+BUTTON.MACRO_UPDATE_OVERRIDE_ACTIONBAR = BUTTON.MACRO_UPDATE_VEHICLE_ACTIONBAR
+BUTTON.MACRO_UPDATE_EXTRA_ACTIONBAR = BUTTON.MACRO_UPDATE_VEHICLE_ACTIONBAR
 
 --for 4.x compatibility
 BUTTON.MACRO_UPDATE_BONUS_ACTIONBAR = BUTTON.MACRO_UPDATE_VEHICLE_ACTIONBAR
@@ -2139,11 +2149,15 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 
 	StartDrag = false
 
+	if (IonObjectEditor and IonObjectEditor:IsVisible()) then
+		ION:UpdateObjectGUI()
+	end
+
 end
 
 function BUTTON:MACRO_OnDragStart(button)
 
-	if (InCombatLockdown() or not self.bar or self.vehicle_edit or self.vehicleID) then
+	if (InCombatLockdown() or not self.bar or self.vehicle_edit or self.actionID) then
 		StartDrag = false; return
 	end
 
@@ -2190,8 +2204,12 @@ function BUTTON:MACRO_OnDragStart(button)
 		self.iconframeaurawatch.timer:SetText("")
 		self.iconframeaurawatch:Hide()
 
+		self.macroname:SetText("")
+		self.count:SetText("")
+
 		self.macrospell = nil
 		self.spellID = nil
+		self.actionID = nil
 		self.macroitem = nil
 		self.macroshow = nil
 		self.macroicon = nil
@@ -2342,9 +2360,9 @@ function BUTTON:MACRO_SetTooltip(edit)
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
-	if (self.vehicleID) then
+	if (self.actionID) then
 
-		self:ACTION_SetTooltip(self.vehicleID)
+		self:ACTION_SetTooltip(self.actionID)
 
 	elseif (show and #show>0) then
 
@@ -2533,9 +2551,9 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 
 		if (name == "activestate") then
 
-			if (value:find("vehicle")) then
+			if (self:GetAttribute("HasActionID")) then
 
-				self.vehicleID = self:GetAttribute("*action*")
+				self.actionID = self:GetAttribute("*action*")
 
 			else
 
@@ -2553,9 +2571,11 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 
 				self:MACRO_Reset()
 
-				self.vehicleID = false
+				self.actionID = false
 
 			end
+
+			self.specAction = self:GetAttribute("SpecialAction")
 
 			self:MACRO_UpdateAll(true)
 		end
@@ -2688,12 +2708,58 @@ function BUTTON:SetData(bar)
 		self.auraText = bar.cdata.auraText
 		self.auraInd = bar.cdata.auraInd
 
+		self.rangeInd = bar.cdata.rangeInd
+
 		self.upClicks = bar.cdata.upClicks
 		self.downClicks = bar.cdata.downClicks
 
-		self.rangeInd = bar.cdata.rangeInd
-
 		self.showGrid = bar.gdata.showGrid
+
+		self.bindColor = bar.gdata.bindColor
+		self.macroColor = bar.gdata.macroColor
+		self.countColor = bar.gdata.countColor
+
+		if (not self.cdcolor1) then
+			self.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
+		else
+			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
+		end
+
+		if (not self.cdcolor2) then
+			self.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
+		else
+			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
+		end
+
+		if (not self.auracolor1) then
+			self.auracolor1 = { (";"):split(bar.gdata.auracolor1) }
+		else
+			self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], self.auracolor1[4] = (";"):split(bar.gdata.auracolor1)
+		end
+
+		if (not self.auracolor2) then
+			self.auracolor2 = { (";"):split(bar.gdata.auracolor2) }
+		else
+			self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], self.auracolor2[4] = (";"):split(bar.gdata.auracolor2)
+		end
+
+		if (not self.buffcolor) then
+			self.buffcolor = { (";"):split(bar.gdata.buffcolor) }
+		else
+			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.gdata.buffcolor)
+		end
+
+		if (not self.debuffcolor) then
+			self.debuffcolor = { (";"):split(bar.gdata.debuffcolor) }
+		else
+			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.gdata.debuffcolor)
+		end
+
+		if (not self.rangecolor) then
+			self.rangecolor = { (";"):split(bar.gdata.rangecolor) }
+		else
+			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.gdata.rangecolor)
+		end
 
 		self:SetFrameStrata(bar.gdata.objectStrata)
 
@@ -2701,16 +2767,32 @@ function BUTTON:SetData(bar)
 
 	end
 
-	if (self.bindText) then self.hotkey:Show() else self.hotkey:Hide() end
-	if (self.macroText) then self.macroname:Show() else self.macroname:Hide() end
-	if (self.countText) then self.count:Show() else self.count:Hide() end
+	if (self.bindText) then
+		self.hotkey:Show()
+		if (self.bindColor) then
+			self.hotkey:SetTextColor((";"):split(self.bindColor))
+		end
+	else
+		self.hotkey:Hide()
+	end
 
-	--local ldown, rdown, lup, rup = "", "", "", ""
+	if (self.macroText) then
+		self.macroname:Show()
+		if (self.macroColor) then
+			self.macroname:SetTextColor((";"):split(self.macroColor))
+		end
+	else
+		self.macroname:Hide()
+	end
 
-	--if (self.downClicks) then ldown = ldown.."LeftButtonDown" rdown = rdown.."RightButtonDown" end
-	--if (self.upClicks) then lup = lup.."LeftButtonUp" rup = rup.."RightButtonUp" end
-
-	--self:RegisterForClicks(ldown, lup, rup, rdown)
+	if (self.countText) then
+		self.count:Show()
+		if (self.countColor) then
+			self.count:SetTextColor((";"):split(self.countColor))
+		end
+	else
+		self.count:Hide()
+	end
 
 	local down, up = "", ""
 
@@ -2721,15 +2803,17 @@ function BUTTON:SetData(bar)
 	self:RegisterForDrag("LeftButton", "RightButton")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-	self.equipcolor = { 0.1, 1, 0.1, 1 }
-	self.cdcolor1 = { 1, 0.82, 0, 1 }
-	self.cdcolor2 = { 1, 0.1, 0.1, 1 }
-	self.auracolor1 = { 0, 0.82, 0, 1 }
-	self.auracolor2 = { 1, 0.1, 0.1, 1 }
-	self.buffcolor = { 0, 0.8, 0, 1 }
-	self.debuffcolor = { 0.8, 0, 0, 1 }
-	self.manacolor = { 0.5, 0.5, 1.0 }
-	self.rangecolor = { 0.7, 0.15, 0.15, 1 }
+	if (not self.equipcolor) then
+		self.equipcolor = { 0.1, 1, 0.1, 1 }
+	else
+		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3], self.equipcolor[4] = 0.1, 1, 0.1, 1
+	end
+
+	if (not self.manacolor) then
+		self.manacolor = { 0.5, 0.5, 1.0, 1 }
+	else
+		self.manacolor[1], self.manacolor[2], self.manacolor[3], self.manacolor[4] = 0.5, 0.5, 1.0, 1
+	end
 
 	self:SetFrameLevel(4)
 	self.iconframe:SetFrameLevel(2)
@@ -2737,6 +2821,8 @@ function BUTTON:SetData(bar)
 	self.iconframeaurawatch:SetFrameLevel(3)
 
 	self:GetSkinned()
+
+	self:MACRO_UpdateTimers()
 end
 
 function BUTTON:SaveData(state)
@@ -2874,6 +2960,7 @@ function BUTTON:BuildStateData()
 
 	for state, data in pairs(self.statedata) do
 		self:SetAttribute(state.."-macro_Text", data.macro_Text)
+		self:SetAttribute(state.."-actionID", data.actionID)
 	end
 end
 
@@ -3018,10 +3105,16 @@ function BUTTON:SetType(save, kill, init)
 			self:SetAttribute("overrideID_Offset", 120)
 			self:SetAttribute("vehicleID_Offset", 120)
 			self:SetAttribute("vehicleExit_Macro", "/click VehicleMenuBarLeaveButton")
+			self:SetAttribute("possessExit_Macro", "/click PossessButton2")
 		else
-			self:SetAttribute("overrideID_Offset", 157)
+			--new action ID's for vehicle 133-138
+			--new action ID's for possess 133-138
+			--new action ID's for override 157-162
+
+			self:SetAttribute("overrideID_Offset", 156)
 			self:SetAttribute("vehicleID_Offset", 132)
 			self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
+			self:SetAttribute("possessExit_Macro", "/click PossessButton2")
 		end
 
 		self:SetAttribute("_childupdate", [[
@@ -3032,79 +3125,112 @@ function BUTTON:SetType(save, kill, init)
 
 					if (msg:find("vehicle")) then
 
-						if (self:GetAttribute("lastPos")) then
-
-							self:SetAttribute("type", "macro")
-
-							self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
-							self:SetAttribute("*action*", 0)
+						if (self:GetAttribute(msg.."-actionID")) then
 
 						else
 
-							self:SetAttribute("type", "action")
+							if (self:GetAttribute("lastPos")) then
 
-							--new action ID's for vehicle 133-138
+								self:SetAttribute("type", "macro")
 
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+								self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
+
+								self:SetAttribute("*action*", 0)
+
+							else
+
+								self:SetAttribute("type", "action")
+
+								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+							end
 						end
+
+						self:SetAttribute("SpecialAction", "vehicle")
+
+						self:SetAttribute("HasActionID", true)
 
 						self:Show()
 
 					elseif (msg:find("possess")) then
 
-						if (self:GetAttribute("lastPos")) then
-
-							self:SetAttribute("type", "macro")
-
-							self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
-							self:SetAttribute("*action*", 0)
+						if (self:GetAttribute(msg.."-actionID")) then
 
 						else
 
-							self:SetAttribute("type", "action")
+							if (self:GetAttribute("lastPos")) then
 
-							--new action ID's for possess 133-138
+								self:SetAttribute("type", "macro")
 
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+								self:SetAttribute("*macrotext*", self:GetAttribute("possessExit_Macro"))
+
+								self:SetAttribute("*action*", 0)
+
+							else
+
+								self:SetAttribute("type", "action")
+
+								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+							end
 						end
+
+						self:SetAttribute("SpecialAction", "possess")
+
+						self:SetAttribute("HasActionID", true)
 
 						self:Show()
 
 					elseif (msg:find("override")) then
 
-						if (self:GetAttribute("lastPos")) then
-
-							self:SetAttribute("type", "macro")
-
-							self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
-							self:SetAttribute("*action*", 0)
+						if (self:GetAttribute(msg.."-actionID")) then
 
 						else
 
-							self:SetAttribute("type", "action")
+							--if (self:GetAttribute("lastPos")) then
 
-							--new action ID's for override 157-162
+							--	self:SetAttribute("type", "macro")
 
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
+							--	self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
+
+							--	self:SetAttribute("*action*", 0)
+
+							--else
+
+								self:SetAttribute("type", "action")
+
+								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
+
+								self:SetAttribute("HasActionID", true)
+							--end
 						end
+
+						self:SetAttribute("SpecialAction", "override")
+
+						self:SetAttribute("HasActionID", true)
 
 						self:Show()
 
 					else
 
-						self:SetAttribute("type", "macro")
+						if (self:GetAttribute(msg.."-actionID")) then
 
-						self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
+							self:SetAttribute("HasActionID", true)
 
-						if ((self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or (self:GetAttribute("showgrid"))) then
-							self:Show()
-						elseif (not self:GetAttribute("isshown")) then
-							self:Hide()
+						else
+
+							self:SetAttribute("type", "macro")
+
+							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
+
+							if ((self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or (self:GetAttribute("showgrid"))) then
+								self:Show()
+							elseif (not self:GetAttribute("isshown")) then
+								self:Hide()
+							end
+
+							self:SetAttribute("HasActionID", false)
 						end
 
+						self:SetAttribute("SpecialAction", nil)
 					end
 
 					self:SetAttribute("useparent-unit", nil)
@@ -3136,73 +3262,100 @@ function BUTTON:SetFauxState(state)
 
 		if (msg:find("vehicle")) then
 
-			if (self:GetAttribute("lastPos")) then
-
-				self:SetAttribute("type", "macro")
-
-				self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
-				self:SetAttribute("*action*", 0)
+			if (self:GetAttribute(msg.."-actionID")) then
 
 			else
 
-				self:SetAttribute("type", "action")
+				if (self:GetAttribute("lastPos")) then
 
-				--new action ID's for vehicle 133-138
+					self:SetAttribute("type", "macro")
 
-				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+					self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
+
+					self:SetAttribute("*action*", 0)
+
+				else
+
+					self:SetAttribute("type", "action")
+
+					self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+
+					self:SetAttribute("HasActionID", true)
+				end
 			end
 
 			self:Show()
 
 		elseif (msg:find("possess")) then
 
-			if (self:GetAttribute("lastPos")) then
-
-				self:SetAttribute("type", "macro")
-
-				self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
-				self:SetAttribute("*action*", 0)
+			if (self:GetAttribute(msg.."-actionID")) then
 
 			else
 
-				self:SetAttribute("type", "action")
+				if (self:GetAttribute("lastPos")) then
 
-				--new action ID's for possess 133-138
+					self:SetAttribute("type", "macro")
 
-				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+					self:SetAttribute("*macrotext*", self:GetAttribute("possessExit_Macro"))
+
+					self:SetAttribute("*action*", 0)
+
+				else
+
+					self:SetAttribute("type", "action")
+
+					self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+
+					self:SetAttribute("HasActionID", true)
+				end
 			end
 
 			self:Show()
 
 		elseif (msg:find("override")) then
 
-			if (self:GetAttribute("lastPos")) then
-
-				self:SetAttribute("type", "macro")
-
-				self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
-				self:SetAttribute("*action*", 0)
+			if (self:GetAttribute(msg.."-actionID")) then
 
 			else
 
-				self:SetAttribute("type", "action")
+				--if (self:GetAttribute("lastPos")) then
 
-				--new action ID's for override 157-162
+				--	self:SetAttribute("type", "macro")
 
-				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
+				--	self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
+
+				--	self:SetAttribute("*action*", 0)
+
+				--else
+
+					self:SetAttribute("type", "action")
+
+					self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
+
+					self:SetAttribute("HasActionID", true)
+				--end
 			end
 
 			self:Show()
 
 		else
 
-			self:SetAttribute("type", "macro")
+			if (self:GetAttribute(msg.."-actionID")) then
 
-			self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
+			else
 
+				self:SetAttribute("type", "macro")
+
+				self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
+
+				if ((self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or (self:GetAttribute("showgrid"))) then
+					self:Show()
+				elseif (not self:GetAttribute("isshown")) then
+					self:Hide()
+				end
+
+				self:SetAttribute("HasActionID", false)
+			end
 		end
 
 		self:SetAttribute("activestate", msg)

@@ -394,20 +394,20 @@ end
 function ION:BindingsEditor_OnLoad(frame)
 
 	--this line was causing a crash on the beta
-      --ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+      ION.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	frame:SetBackdropColor(0,0,0,0.8)
 
 	frame:RegisterForDrag("LeftButton")
 
-	--for i = 1, select("#", frame:GetRegions()) do
-	--	local region = select(i, frame:GetRegions())
-	--	if (region and region.SetJustifyH) then
-	--		region:SetJustifyH("CENTER")
-	--		region:SetJustifyV("CENTER")
-	--	end
-	--end
+	for i = 1, select("#", frame:GetRegions()) do
+		local region = select(i, frame:GetRegions())
+		if (region and region.SetJustifyH) then
+			region:SetJustifyH("CENTER")
+			region:SetJustifyV("CENTER")
+		end
+	end
 
 	IonBindingsEditorTextLeft1:ClearAllPoints()
 	IonBindingsEditorTextLeft1:SetPoint("TOP", 0, -10)

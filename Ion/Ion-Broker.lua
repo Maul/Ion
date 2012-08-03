@@ -103,18 +103,31 @@ local function DelayedUpdate(self, elapsed)
 
 	if (self.elapsed > 3) then
 
+		--for key,value in pairs(_G) do
+		--	if (type(_G[key]) == "table" and _G[key].GetObjectType) then
+		--		local name = _G[key]:GetName()
+		--		if (name and name:find("IonHydrogen") and not ORB.foundicon) then
+		--			if (name:find("Titan") and name:find("ButtonIcon$")) then
+		--				ORB.anchorFrame = _G[key]
+		--			elseif (name and name:find("Icon") and not name:find("Titan")) then
+		--				ORB.anchorFrame = _G[key]; ORB.foundicon = true
+		--			elseif (_G[key]:GetObjectType() == "Button") then
+		--				ORB.anchorFrame = _G[key]
+		--			end
+		--		end
+		--	end
+		--end
+
 		for key,value in pairs(_G) do
-			if (type(_G[key]) == "table") then
-				if (_G[key].GetObjectType) then
-					local name = _G[key]:GetName()
-					if (name and name:find("IonHydrogen") and not ORB.foundicon) then
-						if (name:find("Titan") and name:find("ButtonIcon$")) then
-							ORB.anchorFrame = _G[key]
-						elseif (name and name:find("Icon") and not name:find("Titan")) then
-							ORB.anchorFrame = _G[key]; ORB.foundicon = true
-						elseif (_G[key]:GetObjectType() == "Button") then
-							ORB.anchorFrame = _G[key]
-						end
+			local obj = _G[key]
+			if (type(obj) == "table" and type(rawget(obj, 0)) == "userdata" and type(obj.GetName) == "function") then
+				local name = obj:GetName()
+				if (name and name:find("IonHydrogen") and not ORB.foundicon) then
+					if (name:find("Icon") and not name:find("Titan")) then
+						ORB.anchorFrame = obj
+						ORB.foundicon = true
+					elseif (name:find("Titan") and name:find("ButtonIcon$")) or (obj:GetObjectType() == "Button") then
+						ORB.anchorFrame = obj
 					end
 				end
 			end

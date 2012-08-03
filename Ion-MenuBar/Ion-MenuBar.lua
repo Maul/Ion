@@ -1017,7 +1017,9 @@ function ION.LatencyButton_AltOnEnter(self)
 
 			addon.lastUsage = currCPU
 
-			addon.avgCPU = currCPU / self.lastStart
+			if (self.lastStart > 0) then
+				addon.avgCPU = currCPU / self.lastStart
+			end
 		end
 
 		if (self.usage) then
@@ -1218,7 +1220,7 @@ local function controlOnEvent(self, event, ...)
 
 		ION:RegisterBarClass("menu", "Menu Bar", "Menu Button", menubarsGDB, menubarsCDB, MENUIndex, menubtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, true)
 
-		ION:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
+		ION:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then
 

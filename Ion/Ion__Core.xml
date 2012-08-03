@@ -410,22 +410,6 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parentKeyMap" parentKey="keymaptext" font="Fonts\FRIZQT__.TTF" justifyH="CENTER" justifyV="CENTER" hidden="true">
-					<Anchors>
-						<Anchor point="BOTTOMLEFT">
-							<Offset x="5" y="4"/>
-						</Anchor>
-					</Anchors>
-					<Shadow>
-						<Offset x="1" y="-1"/>
-						<Color r="0" g="0" b="0"/>
-					</Shadow>
-					<FontHeight>
-						<AbsValue val="20"/>
-					</FontHeight>
-					<Color r="0.9" g="0.9" b="0.9" a="0.9"/>
-				</FontString>
-
 				<Texture name="$parentAutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
 					<Anchors>
 						<Anchor point="TOPLEFT"/>
@@ -458,6 +442,13 @@
 								<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon" relativePoint="BOTTOMRIGHT"/>
 							</Anchors>
 							<Color r="1" g="0" b="0" a="0.5"/>
+						</Texture>
+						<Texture name="$parentRange" hidden="true">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPLEFT"/>
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon" relativePoint="BOTTOMRIGHT"/>
+							</Anchors>
+							<Color r="1" g="1" b="1" a="0.5"/>
 						</Texture>
 					</Layer>
 					<Layer level="BACKGROUND">

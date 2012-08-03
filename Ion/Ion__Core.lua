@@ -56,6 +56,8 @@ IonCDB = {
 
 	perCharBinds = false,
 
+	fix07312012 = false,
+
 	debug = {},
 }
 
@@ -822,13 +824,6 @@ function ION:UpdateStanceStrings()
 
 	if (ION.class == "DRUID" or
 	    ION.class == "MONK" or
-	    ION.class == "PRIEST") then
-
-	end
-
-
-	if (ION.class == "DRUID" or
-	    ION.class == "MONK" or
 	    ION.class == "PRIEST" or
 	    ION.class == "ROGUE" or
 	    ION.class == "WARRIOR" or
@@ -836,7 +831,7 @@ function ION:UpdateStanceStrings()
 
 	    	wipe(ION.StanceIndex)
 
-		local _, name, spellID
+		local _, name, spellID, catform
 
 		local states = "[stance:0] stance0; "
 
@@ -859,7 +854,12 @@ function ION:UpdateStanceStrings()
 					spellID = tonumber(spellID)
 
 					if (spellID) then
+
 						ION.StanceIndex[i] = spellID
+
+						if (ION.class == "DRUID" and spellID == 768) then
+							catform = i
+						end
 					end
 				end
 
@@ -877,8 +877,11 @@ function ION:UpdateStanceStrings()
 
 				ION.STATES.stance0 = L.DRUID_CASTER
 
-				ION.STATES.stance8 = L.DRUID_PROWL
+				ION.STATES.prowl = L.DRUID_PROWL
 
+				if (catform) then
+					states = "[stance:"..catform..",stealth] prowl; "..states
+				end
 			end
 
 			if (ION.class == "MONK") then
@@ -1464,6 +1467,10 @@ function ION:UpdateData(data, defaults)
 		if (defaults[key] == nil) then
 			data[key] = nil
 		end
+
+		if (not CDB.fix07312012 and key == "actionID") then
+			data.actionID = false
+		end
 	end
 	-- Kill old vars
 end
@@ -1989,6 +1996,7 @@ function ION:RegisterGUIOptions(class, ...)
 	ION.RegisteredGUIData[class] = {
 		chkOpt = select(1,...),
 		stateOpt = select(2,...),
+		adjOpt = select(3,...),
 	}
 end
 
@@ -2028,9 +2036,17 @@ local function control_OnEvent(self, event, ...)
 
 	if (event == "PLAYER_REGEN_DISABLED") then
 
-		ION:ToggleEditFrames(nil, true)
-		ION:ToggleBindings(nil, true)
-		ION:ToggleBars(nil, true)
+		if (ION.EditFrameShown) then
+			ION:ToggleEditFrames(nil, true)
+		end
+
+		if (ION.BindingMode) then
+			ION:ToggleBindings(nil, true)
+		end
+
+		if (ION.BarsShown) then
+			ION:ToggleBars(nil, true)
+		end
 
 	elseif (event == "ADDON_LOADED" and ... == "Ion") then
 
@@ -2133,10 +2149,7 @@ local function control_OnEvent(self, event, ...)
 			ION:ToggleBlizzBar(GDB.mainbar)
 		end
 
-		if (ION.TOCVersion >= 50000) then
-			PetBattleFrame:HookScript("OnShow", function() for index, bar in pairs(BARIndex) do if (bar.handler:IsShown()) then bar.handler:Hide() bar.handler.pethide = true end end end)
-			PetBattleFrame:HookScript("OnHide", function() for index, bar in pairs(BARIndex) do if (bar.handler.pethide) then bar.handler:Show() bar.handler.pethide = nil end end end)
-		end
+		CDB.fix07312012 = true
 
 		collectgarbage(); PEW = true
 

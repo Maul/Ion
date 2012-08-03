@@ -143,7 +143,7 @@ local function controlOnEvent(self, event, ...)
 
 		ION:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, 10, true, STORAGE, nil, nil, true)
 
-		ION:RegisterGUIOptions("alert", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false)
+		ION:RegisterGUIOptions("alert", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then
 
