@@ -1539,8 +1539,7 @@ local function controlOnEvent(self, event, ...)
 			end
 		end
 
-	elseif (event == "SKILL_LINES_CHANGED" or
-	        event == "LEARNED_SPELL_IN_TAB" or
+	elseif (event == "LEARNED_SPELL_IN_TAB" or
 	        event == "CHARACTER_POINTS_CHANGED" or
 	        event == "PET_STABLE_UPDATE" and PEW) then
 

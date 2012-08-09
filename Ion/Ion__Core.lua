@@ -31,6 +31,9 @@ IonGDB = {
 	bars = {},
 	buttons = {},
 
+	xbars = {},
+	xbtns = {},
+
 	buttonLoc = { -0.85, -111.45 },
 	buttonRadius = 87.5,
 
@@ -42,12 +45,16 @@ IonGDB = {
 	vehicle = false,
 
 	firstRun = true,
+	xbarFirstRun = true,
 }
 
 IonCDB = {
 
 	bars = {},
 	buttons = {},
+
+	xbars = {},
+	xbtns = {},
 
 	selfCast = false,
 	focusCast = false,
@@ -2163,7 +2170,6 @@ local function control_OnEvent(self, event, ...)
 		end
 
 	elseif (event == "ACTIVE_TALENT_GROUP_CHANGED" or
-		  event == "SKILL_LINES_CHANGED" or
 		  event == "LEARNED_SPELL_IN_TAB" or
 		  event == "CHARACTER_POINTS_CHANGED") then
 

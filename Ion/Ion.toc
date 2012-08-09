@@ -27,6 +27,9 @@ Ion_EditFrames.lua
 Ion_KeyBinder.lua
 Ion_Flyouts.lua
 Ion_SnapTo.lua
+
+Ion_ExtraBar.lua
+
 Ion-Broker.lua
 
 Ion__Core.xml

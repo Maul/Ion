@@ -2490,8 +2490,9 @@ function BUTTON:MACRO_OnShow(...)
 
 	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 	self:RegisterEvent("UPDATE_POSSESS_BAR")
+	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-
 
 end
 
@@ -2541,6 +2542,8 @@ function BUTTON:MACRO_OnHide(...)
 
 	self:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 	self:UnregisterEvent("UPDATE_POSSESS_BAR")
+	self:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+	self:UnregisterEvent("UPDATE_EXTRA_ACTIONBAR")
 	self:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
 
 end

@@ -23,7 +23,7 @@ Ion.MANAGED_ACTION_STATES = {
 
 	pet = {
 		homestate = "pet1",
-		states = "[nopet] pet1; [target=pet,exists,nodead] pet2",
+		states = "[nopet] pet1; [@pet,exists,nodead] pet2",
 		rangeStart = 2,
 		rangeStop = 3,
 		order = 3,
@@ -58,7 +58,7 @@ Ion.MANAGED_ACTION_STATES = {
 	},
 
 	reaction = {
-		states = "[target=target,harm] reaction1; laststate",
+		states = "[@target,harm] reaction1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 8,
@@ -156,7 +156,7 @@ Ion.MANAGED_BAR_STATES = {
 	},
 
 	reaction = {
-		states = "[target=target,help] reaction0; [target=target,harm] reaction1",
+		states = "[@target,help] reaction0; [@target,harm] reaction1",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 8,
@@ -220,7 +220,7 @@ Ion.MANAGED_ACTION_STATES = {
 
 	pet = {
 		homestate = "pet1",
-		states = "[nopet] pet1; [target=pet,exists,nodead] pet2",
+		states = "[nopet] pet1; [@pet,exists,nodead] pet2",
 		rangeStart = 2,
 		rangeStop = 3,
 		order = 3,
@@ -255,7 +255,7 @@ Ion.MANAGED_ACTION_STATES = {
 	},
 
 	reaction = {
-		states = "[target=target,harm] reaction1; laststate",
+		states = "[@target,harm] reaction1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 8,
@@ -374,7 +374,7 @@ Ion.MANAGED_BAR_STATES = {
 	},
 
 	reaction = {
-		states = "[target=target,help] reaction0; [target=target,harm] reaction1",
+		states = "[@target,help] reaction0; [@target,harm] reaction1",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 8,

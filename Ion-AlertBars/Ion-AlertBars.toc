@@ -11,5 +11,5 @@
 ## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved..
 ## X-Email: trinityui@live.com
 
-Ion-AlertBar.lua
-Ion-AlertBar.xml
+Ion-AlertBars.lua
+Ion-AlertBars.xml

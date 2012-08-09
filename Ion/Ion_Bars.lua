@@ -498,15 +498,18 @@ end
 
 function HANDLER:AddStates(bar, state, conditions)
 
-	if (MAS[state]) then
-		RegisterStateDriver(self, state, conditions)
-	end
+	if (state) then
 
-	if (MAS[state].homestate) then
-		self:SetAttribute("handler-homestate", MAS[state].homestate)
-	end
+		if (MAS[state]) then
+			RegisterStateDriver(self, state, conditions)
+		end
 
-	bar[state].registered = true
+		if (MAS[state].homestate) then
+			self:SetAttribute("handler-homestate", MAS[state].homestate)
+		end
+
+		bar[state].registered = true
+	end
 
 end
 
@@ -875,157 +878,586 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-paged", [[
 
-						self:SetAttribute("assertstate", "paged")
-
-						self:SetAttribute("state-last", self:GetAttribute("state-paged"))
-
-						self:SetAttribute("state-current", self:GetAttribute("state-paged"))
-
-						if (self:GetAttribute("state-paged") and self:GetAttribute("state-paged") == self:GetAttribute("handler-homestate")) then
-							control:ChildUpdate("paged", "homestate:"..self:GetAttribute("state-paged"))
+						if (self:GetAttribute("statestack")) then
+							if (self:GetAttribute("statestack"):find("paged")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("paged%d+", self:GetAttribute("state-paged") or "homestate"))
+							elseif (self:GetAttribute("statestack"):find("homestate")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-paged") or "homestate"))
+							elseif (self:GetAttribute("state-paged")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-paged"))
+							end
 						else
-							control:ChildUpdate("paged", self:GetAttribute("state-paged"))
+							self:SetAttribute("statestack", self:GetAttribute("state-paged"))
+						end
+
+						if (self:GetAttribute("statestack"):find("^paged") or self:GetAttribute("statestack"):find("^homestate")) then
+
+							self:SetAttribute("assertstate", "paged")
+
+							self:SetAttribute("state-last", self:GetAttribute("state-paged"))
+
+							self:SetAttribute("state-current", self:GetAttribute("state-paged"))
+
+							if (self:GetAttribute("state-paged") and self:GetAttribute("state-paged") == self:GetAttribute("handler-homestate")) then
+								control:ChildUpdate("paged", "homestate:"..self:GetAttribute("state-paged"))
+							else
+								control:ChildUpdate("paged", self:GetAttribute("state-paged"))
+							end
+						else
+							control:ChildUpdate("homestate", "homestate")
 						end
 
 						]])
 
 	handler:SetAttribute("_onstate-stance", [[
 
-						--print(self:GetAttribute("state-stance"))
-
-						self:SetAttribute("assertstate", "stance")
-
-						self:SetAttribute("state-last", self:GetAttribute("state-stance"))
-
-						self:SetAttribute("state-current", self:GetAttribute("state-stance"))
-
-						if (self:GetAttribute("state-stance") and self:GetAttribute("state-stance") == self:GetAttribute("handler-homestate")) then
-							control:ChildUpdate("stance", "homestate:"..self:GetAttribute("state-stance"))
+						if (self:GetAttribute("statestack")) then
+							if (self:GetAttribute("statestack"):find("stance")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("stance%d+", self:GetAttribute("state-stance") or "homestate"))
+							elseif (self:GetAttribute("statestack"):find("homestate")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-stance") or "homestate"))
+							elseif (self:GetAttribute("state-stance")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-stance"))
+							end
 						else
-							control:ChildUpdate("stance", self:GetAttribute("state-stance"))
+							self:SetAttribute("statestack", self:GetAttribute("state-stance"))
+						end
+
+						if (self:GetAttribute("statestack"):find("^stance") or self:GetAttribute("statestack"):find("^homestate")) then
+
+							self:SetAttribute("assertstate", "stance")
+
+							self:SetAttribute("state-last", self:GetAttribute("state-stance"))
+
+							self:SetAttribute("state-current", self:GetAttribute("state-stance"))
+
+							if (self:GetAttribute("state-stance") and self:GetAttribute("state-stance") == self:GetAttribute("handler-homestate")) then
+								control:ChildUpdate("stance", "homestate:"..self:GetAttribute("state-stance"))
+							else
+								control:ChildUpdate("stance", self:GetAttribute("state-stance"))
+							end
+						else
+							control:ChildUpdate("homestate", "homestate")
 						end
 
 						]])
 
 	handler:SetAttribute("_onstate-pet", [[
 
-						self:SetAttribute("assertstate", "pet")
-
-						self:SetAttribute("state-last", self:GetAttribute("state-pet"))
-
-						self:SetAttribute("state-current", self:GetAttribute("state-pet"))
-
-						if (self:GetAttribute("state-pet") and self:GetAttribute("state-pet") == self:GetAttribute("handler-homestate")) then
-							control:ChildUpdate("pet", "homestate:"..self:GetAttribute("state-pet"))
+						if (self:GetAttribute("statestack")) then
+							if (self:GetAttribute("statestack"):find("pet")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("pet%d+", self:GetAttribute("state-pet") or "homestate"))
+							elseif (self:GetAttribute("statestack"):find("homestate")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-pet" or "homestate")))
+							elseif (self:GetAttribute("state-pet")) then
+								self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-pet"))
+							end
 						else
-							control:ChildUpdate("pet", self:GetAttribute("state-pet"))
+							self:SetAttribute("statestack", self:GetAttribute("state-pet"))
+						end
+
+						if (self:GetAttribute("statestack"):find("^pet") or self:GetAttribute("statestack"):find("^homestate")) then
+
+							self:SetAttribute("assertstate", "pet")
+
+							self:SetAttribute("state-last", self:GetAttribute("state-pet"))
+
+							self:SetAttribute("state-current", self:GetAttribute("state-pet"))
+
+							if (self:GetAttribute("state-pet") and self:GetAttribute("state-pet") == self:GetAttribute("handler-homestate")) then
+								control:ChildUpdate("pet", "homestate:"..self:GetAttribute("state-pet"))
+							else
+								control:ChildUpdate("pet", self:GetAttribute("state-pet"))
+							end
+						else
+							control:ChildUpdate("homestate", "homestate")
 						end
 
 						]])
 
 	handler:SetAttribute("_onstate-stealth", [[
 
-						self:SetAttribute("assertstate", "stealth")
-
 						if (self:GetAttribute("state-stealth") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-stealth"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
-							control:ChildUpdate("stealth", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-stealth", nil)
-						else
-							self:SetAttribute("state-last-stealth", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-stealth"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("stealth")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("stealth%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("stealth", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("stealth", self:GetAttribute("state-last") or "homestate")
+							end
+
+						elseif (self:GetAttribute("state-stealth")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("stealth")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("stealth%d+", self:GetAttribute("state-restealthction")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-stealth")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-stealth"))
+							end
+
 							self:SetAttribute("state-current", self:GetAttribute("state-stealth"))
-							control:ChildUpdate("stealth", self:GetAttribute("state-stealth"))
+
+							self:SetAttribute("assertstate", "stealth")
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("stealth", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("stealth", self:GetAttribute("state-stealth"))
+							end
+
 						end
 
 						]])
 
 	handler:SetAttribute("_onstate-reaction", [[
 
-						self:SetAttribute("assertstate", "reaction")
-
 						if (self:GetAttribute("state-reaction") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-reaction"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
-							control:ChildUpdate("reaction", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-reaction", nil)
-						else
-							self:SetAttribute("state-last-reaction", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-reaction"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("reaction")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("reaction%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("reaction", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("reaction", self:GetAttribute("state-last") or "homestate")
+							end
+
+						elseif (self:GetAttribute("state-reaction")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("reaction")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("reaction%d+", self:GetAttribute("state-reaction")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-reaction")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-reaction"))
+							end
+
 							self:SetAttribute("state-current", self:GetAttribute("state-reaction"))
-							control:ChildUpdate("reaction", self:GetAttribute("state-reaction"))
+
+							self:SetAttribute("assertstate", "reaction")
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("reaction", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("reaction", self:GetAttribute("state-reaction"))
+							end
 						end
 
 						]])
 
 	handler:SetAttribute("_onstate-combat", [[
 
-						self:SetAttribute("assertstate", "combat")
-
 						if (self:GetAttribute("state-combat") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-combat"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
-							control:ChildUpdate("combat", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-combat", nil)
-						else
-							self:SetAttribute("state-last-combat", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-combat"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("combat")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("combat%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("combat", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("combat", self:GetAttribute("state-last") or "homestate")
+							end
+
+						elseif (self:GetAttribute("state-combat")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("combat")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("combat%d+", self:GetAttribute("state-combat")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-combat")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-combat"))
+							end
+
 							self:SetAttribute("state-current", self:GetAttribute("state-combat"))
-							control:ChildUpdate("combat", self:GetAttribute("state-combat"))
+
+							self:SetAttribute("assertstate", "combat")
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("combat", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("combat", self:GetAttribute("state-combat"))
+							end
 						end
 
 						]])
 
 	handler:SetAttribute("_onstate-group", [[
 
-						self:SetAttribute("assertstate", "group")
-
 						if (self:GetAttribute("state-group") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-group"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
-							control:ChildUpdate("group", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-group", nil)
-						else
-							self:SetAttribute("state-last-group", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-group"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("group")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("group%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("group", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("group", self:GetAttribute("state-last") or "homestate")
+							end
+
+						elseif (self:GetAttribute("state-group")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("group")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("group%d+", self:GetAttribute("state-group")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-group")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-group"))
+							end
+
 							self:SetAttribute("state-current", self:GetAttribute("state-group"))
-							control:ChildUpdate("group", self:GetAttribute("state-group"))
+
+							self:SetAttribute("assertstate", "group")
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("group", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("group", self:GetAttribute("state-group"))
+							end
 						end
 
 						]])
 
 	handler:SetAttribute("_onstate-fishing", [[
 
-						self:SetAttribute("assertstate", "fishing")
-
 						if (self:GetAttribute("state-fishing") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-fishing"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
-							control:ChildUpdate("fishing", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-fishing", nil)
-						else
-							self:SetAttribute("state-last-fishing", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-fishing"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("fishing")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("fishing%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("fishing", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("fishing", self:GetAttribute("state-last") or "homestate")
+							end
+
+						elseif (self:GetAttribute("state-fishing")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("fishing")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("fishing%d+", self:GetAttribute("state-fishing")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-fishing")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-fishing"))
+							end
+
 							self:SetAttribute("state-current", self:GetAttribute("state-fishing"))
-							control:ChildUpdate("fishing", self:GetAttribute("state-fishing"))
+
+							self:SetAttribute("assertstate", "fishing")
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("fishing", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("fishing", self:GetAttribute("state-fishing"))
+							end
+						end
+
+						]])
+
+	handler:SetAttribute("_onstate-alt", [[
+
+						if (self:GetAttribute("state-alt") == "laststate") then
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("alt")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("alt%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("alt", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("alt", self:GetAttribute("state-last") or "homestate")
+							end
+
+						elseif (self:GetAttribute("state-alt")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("alt")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("alt%d+", self:GetAttribute("state-alt")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-alt")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-alt"))
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-alt"))
+
+							self:SetAttribute("assertstate", "alt")
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("alt", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("alt", self:GetAttribute("state-alt"))
+							end
+						end
+
+						]])
+
+	handler:SetAttribute("_onstate-ctrl", [[
+
+						if (self:GetAttribute("state-ctrl") == "laststate") then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("ctrl")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("ctrl%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("ctrl", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("ctrl", self:GetAttribute("state-last") or "homestate")
+							end
+
+						elseif (self:GetAttribute("state-ctrl")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("ctrl")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("ctrl%d+", self:GetAttribute("state-ctrl")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-ctrl")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-ctrl"))
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-ctrl"))
+
+							self:SetAttribute("assertstate", "ctrl")
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("ctrl", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("ctrl", self:GetAttribute("state-ctrl"))
+							end
+						end
+
+						]])
+
+	handler:SetAttribute("_onstate-shift", [[
+
+						if (self:GetAttribute("state-shift") == "laststate") then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("shift")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("shift%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("shift", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("shift", self:GetAttribute("state-last") or "homestate")
+							end
+
+						elseif (self:GetAttribute("state-shift")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("shift")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("shift%d+", self:GetAttribute("state-shift")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-shift")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-shift"))
+							end
+
+							self:SetAttribute("state-current", self:GetAttribute("state-shift"))
+
+							self:SetAttribute("assertstate", "shift")
+
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("shift", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("shift", self:GetAttribute("state-shift"))
+							end
 						end
 
 						]])
 
 	handler:SetAttribute("_onstate-vehicle", [[
 
-						self:SetAttribute("assertstate", "vehicle")
-
 						if (self:GetAttribute("state-vehicle") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-vehicle"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("vehicle")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("vehicle%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-priority", nil)
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
 							control:ChildUpdate("vehicle", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-vehicle", nil)
-						else
-							self:SetAttribute("state-last-vehicle", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-vehicle"))
+
+						elseif (self:GetAttribute("state-vehicle")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("vehicle")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("vehicle%d+", self:GetAttribute("state-vehicle")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-vehicle")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-vehicle"))
+							end
+
+							self:SetAttribute("state-priority", self:GetAttribute("state-vehicle"))
+
 							self:SetAttribute("state-current", self:GetAttribute("state-vehicle"))
+
+							self:SetAttribute("assertstate", "vehicle")
+
 							control:ChildUpdate("vehicle", self:GetAttribute("state-vehicle"))
 						end
 
@@ -1033,17 +1465,50 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-possess", [[
 
-						self:SetAttribute("assertstate", "possess")
-
 						if (self:GetAttribute("state-possess") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-possess"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("possess")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("possess%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-priority", nil)
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
 							control:ChildUpdate("possess", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-possess", nil)
-						else
-							self:SetAttribute("state-last-possess", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-possess"))
+
+						elseif (self:GetAttribute("state-possess")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("possess")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("possess%d+", self:GetAttribute("state-possess")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-possess")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-possess"))
+							end
+
+							self:SetAttribute("state-priority", self:GetAttribute("state-possess"))
+
 							self:SetAttribute("state-current", self:GetAttribute("state-possess"))
+
+							self:SetAttribute("assertstate", "possess")
+
 							control:ChildUpdate("possess", self:GetAttribute("state-possess"))
 						end
 
@@ -1051,17 +1516,50 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-override", [[
 
-						self:SetAttribute("assertstate", "override")
-
 						if (self:GetAttribute("state-override") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-override"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("override")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("override%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-priority", nil)
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
 							control:ChildUpdate("override", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-override", nil)
-						else
-							self:SetAttribute("state-last-override", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-override"))
+
+						elseif (self:GetAttribute("state-override")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("override")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("override%d+", self:GetAttribute("state-override")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-override")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-override"))
+							end
+
+							self:SetAttribute("state-priority", self:GetAttribute("state-override"))
+
 							self:SetAttribute("state-current", self:GetAttribute("state-override"))
+
+							self:SetAttribute("assertstate", "override")
+
 							control:ChildUpdate("override", self:GetAttribute("state-override"))
 						end
 
@@ -1069,60 +1567,51 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-extrabar", [[
 
-						self:SetAttribute("assertstate", "extrabar")
-
 						if (self:GetAttribute("state-extrabar") == "laststate") then
-							self:SetAttribute("state-last", self:GetAttribute("state-last-extrabar"))
-							self:SetAttribute("state-current", self:GetAttribute("state-last"))
+
+							if (self:GetAttribute("statestack")) then
+
+								if (self:GetAttribute("statestack"):find("extrabar")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("extrabar%d+;", ""))
+								end
+
+								local laststate = (";"):split(self:GetAttribute("statestack"))
+
+								self:SetAttribute("state-last", laststate)
+
+							end
+
+							self:SetAttribute("state-priority", self:GetAttribute("state-nil"))
+
+							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
+
+							if (self:GetAttribute("state-last")) then
+								self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
+							else
+								self:SetAttribute("assertstate", "homestate")
+							end
+
 							control:ChildUpdate("extrabar", self:GetAttribute("state-last") or "homestate")
-							self:SetAttribute("state-last-extrabar", nil)
-						else
-							self:SetAttribute("state-last-extrabar", self:GetAttribute("state-last"))
-							self:SetAttribute("state-last", self:GetAttribute("state-extrabar"))
+
+						elseif (self:GetAttribute("state-extrabar")) then
+
+							if (self:GetAttribute("statestack")) then
+								if (self:GetAttribute("statestack"):find("extrabar")) then
+									self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("extrabar%d+", self:GetAttribute("state-extrabar")))
+								else
+									self:SetAttribute("statestack", self:GetAttribute("state-extrabar")..";"..self:GetAttribute("statestack"))
+								end
+							else
+								self:SetAttribute("statestack", self:GetAttribute("state-extrabar"))
+							end
+
+							self:SetAttribute("state-priority", self:GetAttribute("state-extrabar"))
+
 							self:SetAttribute("state-current", self:GetAttribute("state-extrabar"))
+
+							self:SetAttribute("assertstate", "extrabar")
+
 							control:ChildUpdate("extrabar", self:GetAttribute("state-extrabar"))
-						end
-
-						]])
-
-	handler:SetAttribute("_onstate-alt", [[
-
-						self:SetAttribute("assertstate", "alt")
-
-						if (self:GetAttribute("state-alt") == "laststate") then
-							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
-							control:ChildUpdate("alt", self:GetAttribute("state-last") or "homestate")
-						else
-							self:SetAttribute("state-current", self:GetAttribute("state-alt"))
-							control:ChildUpdate("alt", self:GetAttribute("state-alt"))
-						end
-
-						]])
-
-	handler:SetAttribute("_onstate-ctrl", [[
-
-						self:SetAttribute("assertstate", "ctrl")
-
-						if (self:GetAttribute("state-ctrl") == "laststate") then
-							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
-							control:ChildUpdate("ctrl", self:GetAttribute("state-last") or "homestate")
-						else
-							self:SetAttribute("state-current", self:GetAttribute("state-ctrl"))
-							control:ChildUpdate("ctrl", self:GetAttribute("state-ctrl"))
-						end
-
-						]])
-
-	handler:SetAttribute("_onstate-shift", [[
-
-						self:SetAttribute("assertstate", "shift")
-
-						if (self:GetAttribute("state-shift") == "laststate") then
-							self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
-							control:ChildUpdate("shift", self:GetAttribute("state-last") or "homestate")
-						else
-							self:SetAttribute("state-current", self:GetAttribute("state-shift"))
-							control:ChildUpdate("shift", self:GetAttribute("state-shift"))
 						end
 
 						]])
@@ -1140,6 +1629,8 @@ function BAR:CreateHandler()
 						]])
 
 	handler:SetAttribute("_onstate-current", [[ self:SetAttribute("activestate", self:GetAttribute("state-current") or "homestate") ]])
+
+	handler:SetAttribute("statestack", "homestate")
 
 	handler:SetAttribute("activestate", "homestate")
 

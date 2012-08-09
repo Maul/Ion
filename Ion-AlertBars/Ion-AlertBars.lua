@@ -1,13 +1,13 @@
-﻿--Ion Pet Action Bar, a World of Warcraft® user interface addon.
+﻿--Ion Alert Action Bar, a World of Warcraft® user interface addon.
 --Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
 local ION, GDB, CDB, PEW = Ion
 
-ION.PETIndex = {}
+ION.ALERTIndex = {}
 
-local PETIndex = ION.PETIndex
+local ALERTIndex = ION.ALERTIndex
 
-local petbarsGDB, petbarsCDB, petbtnsGDB, petbtnsCDB
+local alertbarsGDB, alertbarsCDB, alertbtnsGDB, alertbtnsCDB
 
 local BUTTON = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
@@ -17,23 +17,23 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
 
 local	SKIN = LibStub("Masque", true)
 
-IonPetGDB = {
-	petbars = {},
-	petbtns = {},
+IonAlertGDB = {
+	alertbars = {},
+	alertbtns = {},
 	freeSlots = 16,
 	firstRun = true,
 }
 
-IonPetCDB = {
-	petbars = {},
-	petbtns = {},
+IonAlertCDB = {
+	alertbars = {},
+	alertbtns = {},
 }
 
 local format = string.format
 
 local GetParentKeys = ION.GetParentKeys
 
-local defGDB, defCDB = CopyTable(IonPetGDB), CopyTable(IonPetCDB)
+local defGDB, defCDB = CopyTable(IonAlertGDB), CopyTable(IonAlertCDB)
 
 local configData = {
 
@@ -76,8 +76,8 @@ function BUTTON:LoadData(spec, state)
 
 	local id = self.id
 
-	self.GDB = petbtnsGDB
-	self.CDB = petbtnsCDB
+	self.GDB = alertbtnsGDB
+	self.CDB = alertbtnsCDB
 
 	if (self.GDB and self.CDB) then
 
@@ -119,9 +119,11 @@ end
 
 local function controlOnEvent(self, event, ...)
 
-	if (event == "ADDON_LOADED" and ... == "Ion-PetBar") then
+	if (true) then return end
 
-		GDB = IonPetGDB; CDB = IonPetCDB
+	if (event == "ADDON_LOADED" and ... == "Ion-AlertBars") then
+
+		GDB = IonAlertGDB; CDB = IonAlertCDB
 
 		for k,v in pairs(defGDB) do
 			if (GDB[k] == nil) then
@@ -135,22 +137,22 @@ local function controlOnEvent(self, event, ...)
 			end
 		end
 
-		petbarsGDB = GDB.petbars
-		petbarsCDB = CDB.petbars
+		alertbarsGDB = GDB.alertbars
+		alertbarsCDB = CDB.alertbars
 
-		petbtnsGDB = GDB.petbtns
-		petbtnsCDB = CDB.petbtns
+		alertbtnsGDB = GDB.alertbtns
+		alertbtnsCDB = CDB.alertbtns
 
-		ION:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "IonActionButtonTemplate", { __index = BUTTON }, 10, true, STORAGE, nil, nil, true)
+		ION:RegisterBarClass("alert", "Alert Bar", "Alert Frame", alertbarsGDB, alertbarsCDB, ALERTIndex, alertbtnsGDB, "CheckButton", "IonAnchorButtonTemplate", { __index = BUTTON }, 10, true, STORAGE, nil, nil, true)
 
 		ION:RegisterGUIOptions("alert", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then
 
-			local bar = ION:CreateNewBar("pet", 1)
+			local bar = ION:CreateNewBar("alert", 1)
 
 			for i=1,10 do
-				ION:CreateNewObject("pet", i)
+				ION:CreateNewObject("alert", i)
 			end
 
 			bar:AddObjects(10)
@@ -159,15 +161,15 @@ local function controlOnEvent(self, event, ...)
 
 		else
 
-			for id,data in pairs(petbarsGDB) do
+			for id,data in pairs(alertbarsGDB) do
 				if (data ~= nil) then
-					ION:CreateNewBar("pet", id)
+					ION:CreateNewBar("alert", id)
 				end
 			end
 
-			for id,data in pairs(petbtnsGDB) do
+			for id,data in pairs(alertbtnsGDB) do
 				if (data ~= nil) then
-					ION:CreateNewObject("pet", id)
+					ION:CreateNewObject("alert", id)
 				end
 			end
 		end

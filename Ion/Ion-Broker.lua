@@ -103,20 +103,7 @@ local function DelayedUpdate(self, elapsed)
 
 	if (self.elapsed > 3) then
 
-		--for key,value in pairs(_G) do
-		--	if (type(_G[key]) == "table" and _G[key].GetObjectType) then
-		--		local name = _G[key]:GetName()
-		--		if (name and name:find("IonHydrogen") and not ORB.foundicon) then
-		--			if (name:find("Titan") and name:find("ButtonIcon$")) then
-		--				ORB.anchorFrame = _G[key]
-		--			elseif (name and name:find("Icon") and not name:find("Titan")) then
-		--				ORB.anchorFrame = _G[key]; ORB.foundicon = true
-		--			elseif (_G[key]:GetObjectType() == "Button") then
-		--				ORB.anchorFrame = _G[key]
-		--			end
-		--		end
-		--	end
-		--end
+		--improved frame search by Phanx
 
 		for key,value in pairs(_G) do
 			local obj = _G[key]
@@ -132,6 +119,8 @@ local function DelayedUpdate(self, elapsed)
 				end
 			end
 		end
+
+		--improved frame search by Phanx
 
 		if (ORB.anchorFrame) then
 

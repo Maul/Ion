@@ -245,7 +245,7 @@ L.BINDFRAME_BIND = "bind"
 L.BINDFRAME_LOCKED = "locked"
 L.BINDFRAME_PRIORITY = "priority"
 L.BINDINGS_LOCKED	= "This button's bindings are locked.\nLeft-Click button to unlock."
-L.BINDER_NOTICE = "Ion Key Binder\nThe Original Mouseover Binding System\nDeveloped by Maul"
+L.BINDER_NOTICE = "Ion Key Binder\n|cffffffffThe Original Mouseover Binding System|r\nDeveloped by Maul"
 
 L.OFF = "Off"
 L.ALPHAUP_BATTLE = "Combat"

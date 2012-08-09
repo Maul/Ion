@@ -218,11 +218,11 @@ function BINDER:OnShow()
 
 		local priority = ""
 
-		if (button.config.hotKeyPri) then
+		if (button.keys.hotKeyPri) then
 			priority = "|cff00ff00"..L.BINDFRAME_PRIORITY.."|r\n"
 		end
 
-		if (button.config.hotKeyLock) then
+		if (button.keys.hotKeyLock) then
 			self.type:SetText(priority.."|cfff00000"..L.BINDFRAME_LOCKED.."|r")
 		else
 			self.type:SetText(priority.."|cffffffff"..L.BINDFRAME_BIND.."|r")
@@ -276,13 +276,11 @@ function BINDER:OnClick(button)
 
 	if (button == "LeftButton") then
 
-		if (self.button.config.hotKeyLock) then
-			self.button.config.hotKeyLock = false
+		if (self.button.keys.hotKeyLock) then
+			self.button.keys.hotKeyLock = false
 		else
-			self.button.config.hotKeyLock = true
+			self.button.keys.hotKeyLock = true
 		end
-
-		self.button:SaveData()
 
 		self:OnShow()
 
@@ -291,10 +289,10 @@ function BINDER:OnClick(button)
 
 	if (button == "RightButton") then
 
-		if (self.button.config.hotKeyPri) then
-			self.button.config.hotKeyPri = false
+		if (self.button.keys.hotKeyPri) then
+			self.button.keys.hotKeyPri = false
 		else
-			self.button.config.hotKeyPri = true
+			self.button.keys.hotKeyPri = true
 		end
 
 		self:ApplyBindings(self.button)

@@ -1594,6 +1594,18 @@ function ION.BarEditorColorPicker_OnShow(frame)
 
 end
 
+--	paged = 	paged1;	paged2;	paged3;	paged4;	paged5;	paged6;
+
+--	stance =	stance0;	stance1;	stance2;	stance3;	stance4;	stance5;	stance6;
+
+--	modkey =	alt0;		alt1;		ctrl0;	ctrl1;	shift0;	shift1;
+
+--	sit1 =	reaction0;	reaction1;	combat0;	combat1;	group0;	group1;	group2;
+
+--	sit2 = 	stealth0;	stealth1;	fishing0;	fishing1;	pet0;		pet1;
+
+--	control = 	vehicle0;	vehicle1;	possess0;	possess1;	override0;	override1;	extrabar0;	extrabar1;
+
 function ION:BarVisibility_OnLoad(frame)
 
 	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
