@@ -252,9 +252,19 @@ end
 
 function ION:UpdateSpellIndex()
 
-	local i, spellName, subName, altName, spellID, tempID, spellType, spellLvl, isPassive, icon, cost, powerType, curSpell, link, _ = 1
+	local sIndexMax = 0
 
-	repeat
+	for i=1,8 do
+
+		local _, _, _, numSlots = GetSpellTabInfo(i)
+
+		sIndexMax = sIndexMax + numSlots
+	end
+
+	local spellName, subName, altName, spellID, tempID, spellType, spellLvl, isPassive, icon, cost, powerType, curSpell, link, _
+
+	for i = 1,sIndexMax do
+
 		spellName, subName = GetSpellBookItemName(i, BOOKTYPE_SPELL)
 		spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
 		spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_SPELL)
@@ -422,13 +432,80 @@ function ION:UpdateSpellIndex()
 	   		end
    		end
 
-   		i = i + 1
+   	end
 
-   	until (not spellName)
+	-- maybe a temp fix to get the Sunfire spell to show for balance druids
+	if (ION.class == "DRUID") then
 
-	i = 1
+		local spellName, _, icon, cost, _, powerType = GetSpellInfo(93402)
 
-	repeat
+		if (ION.sIndex[8921]) then
+
+			if (not ION.sIndex[(spellName):lower()]) then
+				ION.sIndex[(spellName):lower()] = {}
+			end
+
+			curSpell = ION.sIndex[(spellName):lower()]
+
+			curSpell.index = ION.sIndex[8921].index
+			curSpell.booktype = ION.sIndex[8921].booktype
+			curSpell.spellName = spellName
+			curSpell.subName = nil
+			curSpell.spellID = 93402
+			curSpell.spellType = "SPELL"
+			curSpell.spellLvl = ION.sIndex[8921].spellLvl
+			curSpell.spellCost = cost
+			curSpell.isPassive = nil
+			curSpell.icon = icon
+			curSpell.powerType = powerType
+
+			if (not ION.sIndex[(spellName):lower().."()"]) then
+				ION.sIndex[(spellName):lower().."()"] = {}
+			end
+
+			curSpell = ION.sIndex[(spellName):lower().."()"]
+
+			curSpell.index = ION.sIndex[8921].index
+			curSpell.booktype = ION.sIndex[8921].booktype
+			curSpell.spellName = spellName
+			curSpell.subName = nil
+			curSpell.spellID = 93402
+			curSpell.spellType = "SPELL"
+			curSpell.spellLvl = ION.sIndex[8921].spellLvl
+			curSpell.spellCost = cost
+			curSpell.isPassive = nil
+			curSpell.icon = icon
+			curSpell.powerType = powerType
+
+			if (not ION.sIndex[93402]) then
+				ION.sIndex[93402] = {}
+			end
+
+			curSpell = ION.sIndex[(spellName):lower().."()"]
+
+			curSpell.index = ION.sIndex[8921].index
+			curSpell.booktype = ION.sIndex[8921].booktype
+			curSpell.spellName = spellName
+			curSpell.subName = nil
+			curSpell.spellID = 93402
+			curSpell.spellType = "SPELL"
+			curSpell.spellLvl = ION.sIndex[8921].spellLvl
+			curSpell.spellCost = cost
+			curSpell.isPassive = nil
+			curSpell.icon = icon
+			curSpell.powerType = powerType
+		end
+	end
+end
+
+function ION:UpdatePetSpellIndex()
+
+	local numPetSpells = HasPetSpells() or 0
+
+	local spellName, subName, altName, spellID, tempID, spellType, spellLvl, isPassive, icon, cost, powerType, curSpell, link, _
+
+	for i=1,numPetSpells do
+
 		spellName, subName = GetSpellBookItemName(i, BOOKTYPE_PET)
 		spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
 		spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_PET)
@@ -535,7 +612,7 @@ function ION:UpdateSpellIndex()
 
    		i = i + 1
 
-   	until (not spellName)
+   	end
 
 	-- a lot of work to associate the Call Pet spell with the pet's name so that tooltips work on Call Pet spells. /sigh
 	local _, _, numSlots, isKnown = GetFlyoutInfo(9)
@@ -610,69 +687,6 @@ function ION:UpdateSpellIndex()
 
 				end
 			end
-		end
-	end
-
-	-- maybe a temp fix to get the Sunfire spell to show for balance druids
-	if (ION.class == "DRUID") then
-
-		local spellName, _, icon, cost, _, powerType = GetSpellInfo(93402)
-
-		if (ION.sIndex[8921]) then
-
-			if (not ION.sIndex[(spellName):lower()]) then
-				ION.sIndex[(spellName):lower()] = {}
-			end
-
-			curSpell = ION.sIndex[(spellName):lower()]
-
-			curSpell.index = ION.sIndex[8921].index
-			curSpell.booktype = ION.sIndex[8921].booktype
-			curSpell.spellName = spellName
-			curSpell.subName = nil
-			curSpell.spellID = 93402
-			curSpell.spellType = "SPELL"
-			curSpell.spellLvl = ION.sIndex[8921].spellLvl
-			curSpell.spellCost = cost
-			curSpell.isPassive = nil
-			curSpell.icon = icon
-			curSpell.powerType = powerType
-
-			if (not ION.sIndex[(spellName):lower().."()"]) then
-				ION.sIndex[(spellName):lower().."()"] = {}
-			end
-
-			curSpell = ION.sIndex[(spellName):lower().."()"]
-
-			curSpell.index = ION.sIndex[8921].index
-			curSpell.booktype = ION.sIndex[8921].booktype
-			curSpell.spellName = spellName
-			curSpell.subName = nil
-			curSpell.spellID = 93402
-			curSpell.spellType = "SPELL"
-			curSpell.spellLvl = ION.sIndex[8921].spellLvl
-			curSpell.spellCost = cost
-			curSpell.isPassive = nil
-			curSpell.icon = icon
-			curSpell.powerType = powerType
-
-			if (not ION.sIndex[93402]) then
-				ION.sIndex[93402] = {}
-			end
-
-			curSpell = ION.sIndex[(spellName):lower().."()"]
-
-			curSpell.index = ION.sIndex[8921].index
-			curSpell.booktype = ION.sIndex[8921].booktype
-			curSpell.spellName = spellName
-			curSpell.subName = nil
-			curSpell.spellID = 93402
-			curSpell.spellType = "SPELL"
-			curSpell.spellLvl = ION.sIndex[8921].spellLvl
-			curSpell.spellCost = cost
-			curSpell.isPassive = nil
-			curSpell.icon = icon
-			curSpell.powerType = powerType
 		end
 	end
 end
@@ -2146,6 +2160,7 @@ local function control_OnEvent(self, event, ...)
 		GDB.firstRun = false
 
 		ION:UpdateSpellIndex()
+		ION:UpdatePetSpellIndex()
 		ION:UpdateStanceStrings()
 		ION:UpdateCompanionData()
 		ION:UpdateIconIndex()
@@ -2180,6 +2195,10 @@ local function control_OnEvent(self, event, ...)
 
 		ION:UpdateCompanionData()
 
+	elseif (event == "UNIT_PET" and ... == "player") then
+
+		ION:UpdatePetSpellIndex()
+
 	elseif (event == "UNIT_LEVEL" and ... == "player") then
 
 		ION.level = UnitLevel("player")
@@ -2207,6 +2226,7 @@ frame:RegisterEvent("PET_UI_CLOSE")
 frame:RegisterEvent("COMPANION_LEARNED")
 frame:RegisterEvent("COMPANION_UPDATE")
 frame:RegisterEvent("UNIT_LEVEL")
+frame:RegisterEvent("UNIT_PET")
 
 frame = CreateFrame("GameTooltip", "IonTooltipScan", UIParent, "GameTooltipTemplate")
 frame:SetOwner(UIParent, "ANCHOR_NONE")

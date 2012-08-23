@@ -688,134 +688,10 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 						</Scripts>
 					</Frame>
 
-					<Frame name="$parentStateEditor" parentKey="editor">
+					<Frame name="$parentAdjustableOptions" parentKey="adjoptions">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentCheckOptions" relativePoint="TOPRIGHT">
 								<Offset x="3" y="0"/>
-							</Anchor>
-							<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT">
-								<Offset x="0" y="-160"/>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<Frame name="$parentPresets" parentKey="presets">
-								<Anchors>
-									<Anchor point="TOPLEFT">
-										<Offset x="0" y="0"/>
-									</Anchor>
-									<Anchor point="BOTTOMRIGHT">
-										<Offset x="0" y="0"/>
-									</Anchor>
-								</Anchors>
-								<Layers>
-									<Layer level="ARTWORK">
-										<FontString name="$parentPrimary" parentKey="primary" justifyH="CENTER" inherits="GameFontNormalSmall">
-											<Anchors>
-												<Anchor point="TOP">
-													<Offset x="-100" y="-10"/>
-												</Anchor>
-											</Anchors>
-										</FontString>
-									</Layer>
-									<Layer level="ARTWORK">
-										<FontString name="$parentSecondary" parentKey="secondary" justifyH="CENTER" inherits="GameFontNormalSmall">
-											<Anchors>
-												<Anchor point="TOP">
-													<Offset x="150" y="-10"/>
-												</Anchor>
-											</Anchors>
-										</FontString>
-									</Layer>
-								</Layers>
-								<Frames>
-									<Frame parentKey="primary">
-										<Anchors>
-											<Anchor point="TOPLEFT">
-												<Offset x="6" y="-6"/>
-											</Anchor>
-											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
-												<Offset x="110" y="50"/>
-											</Anchor>
-										</Anchors>
-										<Scripts>
-											<OnLoad>
-												Ion.SubFrameBlackBackdrop_OnLoad(self)
-											</OnLoad>
-										</Scripts>
-									</Frame>
-									<Frame parentKey="secondary">
-										<Anchors>
-											<Anchor point="TOPLEFT">
-												<Offset x="111" y="-6"/>
-											</Anchor>
-											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
-												<Offset x="-6" y="50"/>
-											</Anchor>
-										</Anchors>
-										<Scripts>
-											<OnLoad>
-												Ion.SubFrameBlackBackdrop_OnLoad(self)
-											</OnLoad>
-										</Scripts>
-									</Frame>
-								</Frames>
-							</Frame>
-							<Frame name="$parentCustom" parentKey="custom" hidden="true">
-								<Anchors>
-									<Anchor point="TOPLEFT">
-										<Offset x="0" y="0"/>
-									</Anchor>
-									<Anchor point="BOTTOMRIGHT">
-										<Offset x="0" y="0"/>
-									</Anchor>
-								</Anchors>
-								<Frames>
-									<Frame>
-										<Anchors>
-											<Anchor point="TOPLEFT">
-												<Offset x="0" y="0"/>
-											</Anchor>
-											<Anchor point="BOTTOMRIGHT">
-												<Offset x="0" y="0"/>
-											</Anchor>
-										</Anchors>
-									</Frame>
-								</Frames>
-							</Frame>
-							<Frame name="$parentHidden" parentKey="hidden" hidden="true">
-								<Anchors>
-									<Anchor point="TOPLEFT">
-										<Offset x="0" y="0"/>
-									</Anchor>
-									<Anchor point="BOTTOMRIGHT">
-										<Offset x="0" y="0"/>
-									</Anchor>
-								</Anchors>
-								<Frames>
-									<Frame>
-										<Anchors>
-											<Anchor point="TOPLEFT">
-												<Offset x="0" y="0"/>
-											</Anchor>
-											<Anchor point="BOTTOMRIGHT">
-												<Offset x="0" y="0"/>
-											</Anchor>
-										</Anchors>
-									</Frame>
-								</Frames>
-							</Frame>
-						</Frames>
-						<Scripts>
-							<OnLoad>
-								Ion:StateEditor_OnLoad(self)
-							</OnLoad>
-						</Scripts>
-					</Frame>
-
-					<Frame name="$parentAdjustableOptions" parentKey="adjoptions">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentStateEditor" relativePoint="BOTTOMLEFT">
-								<Offset x="0" y="-34"/>
 							</Anchor>
 							<Anchor point="BOTTOMLEFT" relativeTo="$parentCheckOptions" relativePoint="BOTTOMRIGHT">
 								<Offset x="0" y="115"/>
@@ -877,7 +753,7 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 				</Scripts>
 			</Frame>
 
-			<Frame name="$parentBarVis" parentKey="barvis" hidden="true">
+			<Frame name="$parentBarStates" parentKey="barstates" hidden="true">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
 						<Offset x="3" y="-30"/>
@@ -887,12 +763,167 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 					</Anchor>
 				</Anchors>
 				<Frames>
+					<Frame name="$parentActionEditor" parentKey="actionedit">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="163" y="0"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT">
+								<Offset x="0" y="-170"/>
+							</Anchor>
+						</Anchors>
+						<Frames>
+							<Frame name="$parentPresets" parentKey="presets">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+								</Anchors>
+								<Layers>
+									<Layer level="ARTWORK">
+										<FontString name="$parentPrimary" parentKey="primary" justifyH="CENTER" inherits="GameFontNormalSmall">
+											<Anchors>
+												<Anchor point="TOP">
+													<Offset x="-100" y="-10"/>
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+									<Layer level="ARTWORK">
+										<FontString name="$parentSecondary" parentKey="secondary" justifyH="CENTER" inherits="GameFontNormalSmall">
+											<Anchors>
+												<Anchor point="TOP">
+													<Offset x="150" y="-10"/>
+												</Anchor>
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+								<Frames>
+									<Frame parentKey="primary">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="6" y="-6"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
+												<Offset x="110" y="50"/>
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												Ion.SubFrameBlackBackdrop_OnLoad(self)
+											</OnLoad>
+										</Scripts>
+									</Frame>
+									<Frame parentKey="secondary">
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="111" y="-6"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+												<Offset x="-5" y="50"/>
+											</Anchor>
+										</Anchors>
+										<Scripts>
+											<OnLoad>
+												Ion.SubFrameBlackBackdrop_OnLoad(self)
+											</OnLoad>
+										</Scripts>
+									</Frame>
+								</Frames>
+							</Frame>
+							<Frame name="$parentCustom" parentKey="custom" hidden="true">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+								</Anchors>
+								<Frames>
+									<Frame>
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+										</Anchors>
+									</Frame>
+								</Frames>
+							</Frame>
+							<Frame name="$parentHidden" parentKey="hidden" hidden="true">
+								<Anchors>
+									<Anchor point="TOPLEFT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+									<Anchor point="BOTTOMRIGHT">
+										<Offset x="0" y="0"/>
+									</Anchor>
+								</Anchors>
+								<Frames>
+									<Frame>
+										<Anchors>
+											<Anchor point="TOPLEFT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+											<Anchor point="BOTTOMRIGHT">
+												<Offset x="0" y="0"/>
+											</Anchor>
+										</Anchors>
+									</Frame>
+								</Frames>
+							</Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								Ion:ActionEditor_OnLoad(self)
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parentVisEditor" parentKey="visedit">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentActionEditor" relativePoint="BOTTOMLEFT">
+								<Offset x="0" y="-35"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Frames>
 
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								Ion:VisEditor_OnLoad(self)
+							</OnLoad>
+						</Scripts>
+					</Frame>
 
+					<Frame name="$parentStateList" parentKey="statelist">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="0" y="0"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parentVisEditor" relativePoint="BOTTOMLEFT">
+								<Offset x="-3" y="0"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								Ion:StateList_OnLoad(self)
+							</OnLoad>
+						</Scripts>
+					</Frame>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						Ion:BarVisibility_OnLoad(self)
+						Ion:BarStates_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>

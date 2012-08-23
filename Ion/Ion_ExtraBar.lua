@@ -407,7 +407,7 @@ function XBTN:SetType(save)
 
 	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 
-	self.actionID = 157
+	self.actionID = 133
 
 	self:SetAttribute("type", "action")
 	self:SetAttribute("*action1", self.actionID)

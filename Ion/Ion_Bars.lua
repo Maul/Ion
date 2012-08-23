@@ -898,13 +898,19 @@ function BAR:CreateHandler()
 
 							self:SetAttribute("state-current", self:GetAttribute("state-paged"))
 
-							if (self:GetAttribute("state-paged") and self:GetAttribute("state-paged") == self:GetAttribute("handler-homestate")) then
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("paged", self:GetAttribute("state-priority"))
+							elseif (self:GetAttribute("state-paged") and self:GetAttribute("state-paged") == self:GetAttribute("handler-homestate")) then
 								control:ChildUpdate("paged", "homestate:"..self:GetAttribute("state-paged"))
 							else
 								control:ChildUpdate("paged", self:GetAttribute("state-paged"))
 							end
 						else
-							control:ChildUpdate("homestate", "homestate")
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("homestate", "homestate")
+							end
 						end
 
 						]])
@@ -931,13 +937,19 @@ function BAR:CreateHandler()
 
 							self:SetAttribute("state-current", self:GetAttribute("state-stance"))
 
-							if (self:GetAttribute("state-stance") and self:GetAttribute("state-stance") == self:GetAttribute("handler-homestate")) then
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("stance", self:GetAttribute("state-priority"))
+							elseif (self:GetAttribute("state-stance") and self:GetAttribute("state-stance") == self:GetAttribute("handler-homestate")) then
 								control:ChildUpdate("stance", "homestate:"..self:GetAttribute("state-stance"))
 							else
 								control:ChildUpdate("stance", self:GetAttribute("state-stance"))
 							end
 						else
-							control:ChildUpdate("homestate", "homestate")
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("homestate", "homestate")
+							end
 						end
 
 						]])
@@ -964,13 +976,19 @@ function BAR:CreateHandler()
 
 							self:SetAttribute("state-current", self:GetAttribute("state-pet"))
 
-							if (self:GetAttribute("state-pet") and self:GetAttribute("state-pet") == self:GetAttribute("handler-homestate")) then
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("stance", self:GetAttribute("state-priority"))
+							elseif (self:GetAttribute("state-pet") and self:GetAttribute("state-pet") == self:GetAttribute("handler-homestate")) then
 								control:ChildUpdate("pet", "homestate:"..self:GetAttribute("state-pet"))
 							else
 								control:ChildUpdate("pet", self:GetAttribute("state-pet"))
 							end
 						else
-							control:ChildUpdate("homestate", "homestate")
+							if (self:GetAttribute("state-priority")) then
+								control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
+							else
+								control:ChildUpdate("homestate", "homestate")
+							end
 						end
 
 						]])

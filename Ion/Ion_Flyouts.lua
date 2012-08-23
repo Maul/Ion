@@ -1366,13 +1366,23 @@ end
 
 function ION:SpellTooltips_Update()
 
+	local sIndexMax = 0
+
+	for i=1,8 do
+
+		local _, _, _, numSlots = GetSpellTabInfo(i)
+
+		sIndexMax = sIndexMax + numSlots
+	end
+
 	wipe(spellTooltips)
 
 	tooltipScan:SetOwner(control,"ANCHOR_NONE")
 
-	local i, tooltip, spell, spellType, text = 1, ""
+	local tooltip, spell, spellType, text = ""
 
-	repeat
+	for i=1,sIndexMax do
+
 		spell = GetSpellBookItemName(i, BOOKTYPE_SPELL); spellType = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
 
 		if (spell and spellType ~= "FLYOUT") then
@@ -1387,11 +1397,11 @@ function ION:SpellTooltips_Update()
 			spellTooltips[spell:lower()] = tooltip:lower()
    		end
 
-   		i = i + 1
-
-   	until (not spell)
+   	end
 
 	i = 1
+
+	if (true) then return end
 
 	repeat
 		spell = GetSpellBookItemName(i, BOOKTYPE_PET); spellType = GetSpellBookItemInfo(i, BOOKTYPE_PET)

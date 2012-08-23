@@ -341,7 +341,7 @@
 					</Anchors>
 				</FontString>
 			</Layer>
-			<Layer level="OVERLAY">
+			<Layer level="OVERLAY" textureSubLevel="1">
 				<Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
 					<Size x="64" y="64"/>
 					<Anchors>
@@ -477,7 +477,7 @@
 							<Anchor point="BOTTOMRIGHT"/>
 						</Anchors>
 						<Layers>
-							<Layer level="OVERLAY">
+							<Layer level="OVERLAY" textureSubLevel="3">
 								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" justifyH="CENTER" justifyV="CENTER" hidden="true">
 									<Anchors>
 										<Anchor point="CENTER">
@@ -503,7 +503,7 @@
 							<Anchor point="BOTTOMRIGHT" relativeTo="$parentCooldown" relativePoint="BOTTOMRIGHT"/>
 						</Anchors>
 						<Layers>
-							<Layer level="OVERLAY">
+							<Layer level="OVERLAY" textureSubLevel="3">
 								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" justifyH="CENTER" justifyV="CENTER" hidden="true">
 									<Anchors>
 										<Anchor point="CENTER">

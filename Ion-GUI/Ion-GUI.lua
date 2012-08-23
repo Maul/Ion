@@ -3,11 +3,11 @@
 
 local ION, GDB, CDB, IBE, IOE, IBTNE, MAS, PEW = Ion
 
-local width, height = 775, 560
+local width, height = 775, 490
 
 local barNames = {}
 
-local numShown = 18
+local numShown = 15
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
 
@@ -339,86 +339,20 @@ function ION:UpdateBarGUI(newBar)
 
 		if (IBE.baropt:IsVisible()) then
 
-			local yoff, anchor, last, adjHeight = -10
-			local editor = IBE.baropt.editor
+			local yoff, adjHeight, anchor, last = -10
 
 			if (IBE.baropt.colorpicker:IsShown()) then
 				IBE.baropt.colorpicker:Hide()
 			end
 
-			if (GUIData[bar.class].stateOpt) then
-
-				editor.tab1:Enable()
-				editor.tab2:Enable()
-				editor.tab1.text:SetTextColor(0.85, 0.85, 0.85)
-				editor.tab2.text:SetTextColor(0.85, 0.85, 0.85)
-
-				editor.tab1:Click()
-
-				editor:SetPoint("BOTTOMRIGHT", IBE.baropt, "TOPRIGHT", 0, -160)
-
-				adjHeight = 280
-
-			else
-				editor.tab3:Click()
-
-				editor.tab1:Disable()
-				editor.tab2:Disable()
-				editor.tab1.text:SetTextColor(0.4, 0.4, 0.4)
-				editor.tab2.text:SetTextColor(0.4, 0.4, 0.4)
-
-				editor:SetPoint("BOTTOMRIGHT", IBE.baropt, "TOPRIGHT", 0, -30)
-
-				adjHeight = 440
-			end
-
 			if (GUIData[bar.class].adjOpt) then
 				IBE.baropt.adjoptions:SetPoint("BOTTOMLEFT", IBE.baropt.chkoptions, "BOTTOMRIGHT", 0, GUIData[bar.class].adjOpt)
 
-				adjHeight = adjHeight - GUIData[bar.class].adjOpt
+				adjHeight = (height-85) - (GUIData[bar.class].adjOpt - 10)
 			else
 				IBE.baropt.adjoptions:SetPoint("BOTTOMLEFT", IBE.baropt.chkoptions, "BOTTOMRIGHT", 0, 30)
 
-				adjHeight = adjHeight - 30
-			end
-
-			for i,f in ipairs(barOpt.pri) do
-				if (f.option == "stance" and (GetNumShapeshiftForms() < 1 or ION.class == "DEATHKNIGHT" or ION.class == "PALADIN" or ION.class == "HUNTER")) then
-					f:SetChecked(nil)
-					f:Disable()
-					f.text:SetTextColor(0.5,0.5,0.5)
-				else
-					f:SetChecked(bar.cdata[f.option])
-					f:Enable()
-					f.text:SetTextColor(1,0.82,0)
-				end
-			end
-
-			for i,f in ipairs(barOpt.sec) do
-				f:SetChecked(bar.cdata[f.option])
-			end
-
-			wipe(popupData)
-
-			for state, value in pairs(ION.STATES) do
-
-				if (bar.cdata.paged and state:find("paged")) then
-
-					popupData[value] = state:match("%d+")
-
-				elseif (bar.cdata.stance and state:find("stance")) then
-
-					popupData[value] = state:match("%d+")
-
-				end
-			end
-
-			ION.EditBox_PopUpInitialize(barOpt.remap.popup, popupData)
-			ION.EditBox_PopUpInitialize(barOpt.remapto.popup, popupData)
-
-			if (newBar) then
-				barOpt.remap:SetText("")
-				barOpt.remapto:SetText("")
+				adjHeight = (height-85) - 20
 			end
 
 			for i,f in ipairs(barOpt.chk) do
@@ -449,10 +383,17 @@ function ION:UpdateBarGUI(newBar)
 
 					if (not f.disabled) then
 
-						f:SetPoint("TOPRIGHT", f.parent, "TOPRIGHT", -10, yoff)
+						if (f.primary) then
+							f:SetPoint("TOPRIGHT", f.parent, "TOPRIGHT", -10, yoff)
+							yoff = yoff-f:GetHeight()-5
+						else
+							f:SetPoint("TOPRIGHT", f.parent, "TOPRIGHT", -10, yoff)
+							yoff = yoff-f:GetHeight()-5
+						end
+
 						f:Show()
 
-						yoff = yoff-f:GetHeight()-9
+
 					end
 				end
 			end
@@ -527,6 +468,9 @@ function ION:UpdateBarGUI(newBar)
 				end
 
 				if (bar[f.func]) then
+
+					f.edit.value = nil
+
 					if (f.format) then
 						f.edit:SetText(format(f.format, bar[f.func](bar, nil, true, true)*f.mult)..f.endtext)
 					else
@@ -585,6 +529,77 @@ function ION:UpdateBarGUI(newBar)
 
 					yoff = yoff-f:GetHeight()-6
 				end
+			end
+		end
+
+		if (IBE.barstates:IsVisible()) then
+
+			local editor = IBE.barstates.actionedit
+
+			if (IBE.baropt.colorpicker:IsShown()) then
+				IBE.baropt.colorpicker:Hide()
+			end
+
+			if (GUIData[bar.class].stateOpt) then
+
+				editor.tab1:Enable()
+				editor.tab2:Enable()
+				editor.tab1.text:SetTextColor(0.85, 0.85, 0.85)
+				editor.tab2.text:SetTextColor(0.85, 0.85, 0.85)
+
+				editor.tab1:Click()
+
+				editor:SetPoint("BOTTOMRIGHT", IBE.barstates, "TOPRIGHT", 0, -170)
+
+			else
+				editor.tab3:Click()
+
+				editor.tab1:Disable()
+				editor.tab2:Disable()
+				editor.tab1.text:SetTextColor(0.4, 0.4, 0.4)
+				editor.tab2.text:SetTextColor(0.4, 0.4, 0.4)
+
+				editor:SetPoint("BOTTOMRIGHT", IBE.barstates, "TOPRIGHT", 0, -30)
+
+			end
+
+			for i,f in ipairs(barOpt.pri) do
+				if (f.option == "stance" and (GetNumShapeshiftForms() < 1 or ION.class == "DEATHKNIGHT" or ION.class == "PALADIN" or ION.class == "HUNTER")) then
+					f:SetChecked(nil)
+					f:Disable()
+					f.text:SetTextColor(0.5,0.5,0.5)
+				else
+					f:SetChecked(bar.cdata[f.option])
+					f:Enable()
+					f.text:SetTextColor(1,0.82,0)
+				end
+			end
+
+			for i,f in ipairs(barOpt.sec) do
+				f:SetChecked(bar.cdata[f.option])
+			end
+
+			wipe(popupData)
+
+			for state, value in pairs(ION.STATES) do
+
+				if (bar.cdata.paged and state:find("paged")) then
+
+					popupData[value] = state:match("%d+")
+
+				elseif (bar.cdata.stance and state:find("stance")) then
+
+					popupData[value] = state:match("%d+")
+
+				end
+			end
+
+			ION.EditBox_PopUpInitialize(barOpt.remap.popup, popupData)
+			ION.EditBox_PopUpInitialize(barOpt.remapto.popup, popupData)
+
+			if (newBar) then
+				barOpt.remap:SetText("")
+				barOpt.remapto:SetText("")
 			end
 		end
 	end
@@ -656,11 +671,16 @@ function Ion:BarEditor_OnLoad(frame)
 		for tab, panel in pairs(frame.tabs) do
 
 			if (tab == cTab) then
+
 				tab:SetChecked(1)
+
 				if (MouseIsOver(cTab)) then
 					PlaySound("igCharacterInfoTab")
 				end
+
 				panel:Show()
+
+				ION:UpdateBarGUI()
 			else
 				tab:SetChecked(nil)
 				panel:Hide()
@@ -686,8 +706,8 @@ function Ion:BarEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(LGUI.VISIBILITY)
-	frame.tab2 = f; frame.tabs[f] = frame.barvis
+	f.text:SetText(LGUI.BAR_STATES)
+	frame.tab2 = f; frame.tabs[f] = frame.barstates
 
 	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
 	f:SetWidth(140)
@@ -1082,238 +1102,6 @@ function ION:BarOptions_OnLoad(frame)
 	end
 end
 
-local function setBarActionState(frame)
-
-	local bar = ION.CurrentBar
-
-	if (bar) then
-		bar:SetState(frame.option, true, frame:GetChecked())
-	end
-end
-
-local function remapOnTextChanged(frame)
-
-	local bar = ION.CurrentBar
-
-	if (bar and bar.cdata.remap and frame.value) then
-
-		local map, remap
-
-		for states in gmatch(bar.cdata.remap, "[^;]+") do
-
-			map, remap = (":"):split(states)
-
-			if (map == frame.value) then
-
-				barOpt.remapto.value = remap
-
-				if (bar.cdata.paged) then
-					barOpt.remapto:SetText(ION.STATES["paged"..remap])
-				elseif (bar.cdata.stance) then
-					barOpt.remapto:SetText(ION.STATES["stance"..remap])
-				end
-			end
-		end
-	else
-		barOpt.remapto:SetText("")
-	end
-end
-
-local function remapToOnTextChanged(frame)
-
-	local bar = ION.CurrentBar
-
-	if (bar and bar.cdata.remap and frame.value and #frame.value > 0) then
-
-		local value = barOpt.remap.value
-
-		bar.cdata.remap = bar.cdata.remap:gsub(value..":%d+", value..":"..frame.value)
-
-		if (bar.cdata.paged) then
-			bar.paged.registered = false
-		elseif (bar.cdata.stance) then
-			bar.stance.registered = false
-		end
-
-		bar.stateschanged = true
-
-		bar:Update()
-	end
-end
-
-function ION:StateEditor_OnLoad(frame)
-
-	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
-
-	frame.tabs = {}
-
-	local function TabsOnClick(cTab, silent)
-
-		for tab, panel in pairs(frame.tabs) do
-
-			if (tab == cTab) then
-				if (MouseIsOver(cTab) and not tab.selected) then
-					PlaySound("igCharacterInfoTab")
-				end
-				panel:Show()
-				tab:SetHeight(33)
-				tab:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
-				tab:SetBackdropColor(1,1,1,1)
-				tab.text:SetTextColor(1,0.82,0)
-
-				tab.selected = true
-			else
-				panel:Hide()
-				tab:SetHeight(28)
-				tab:SetBackdropBorderColor(0.2, 0.2, 0.2, 1)
-				tab:SetBackdropColor(0.7,0.7,0.7,1)
-				tab.text:SetTextColor(0.85, 0.85, 0.85)
-
-				tab.selected = nil
-			end
-
-		end
-	end
-
-	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
-	f:SetWidth(160)
-	f:SetHeight(33)
-	f:SetPoint("TOPLEFT", frame, "BOTTOMLEFT",5,4)
-	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
-	f:SetFrameLevel(frame:GetFrameLevel())
-	f:SetBackdropColor(0.3,0.3,0.3,1)
-	f.text:SetText(LGUI.PRESET_STATES)
-	f.selected = true
-	frame.tab1 = f; frame.tabs[f] = frame.presets
-
-	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
-	f:SetWidth(160)
-	f:SetHeight(28)
-	f:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT",-5,4)
-	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
-	f:SetFrameLevel(frame:GetFrameLevel())
-	f.text:SetText(LGUI.CUSTOM_STATES)
-	frame.tab2 = f; frame.tabs[f] = frame.custom
-
-	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
-	f:SetWidth(160)
-	f:SetHeight(28)
-	f:SetPoint("TOP", frame, "BOTTOM",0,0)
-	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
-	f:SetFrameLevel(frame:GetFrameLevel())
-	f:Hide()
-	frame.tab3 = f; frame.tabs[f] = frame.hidden
-
-	local states, anchor, last, count = {}
-
-	local MAS = ION.MANAGED_ACTION_STATES
-
-	for state, values in pairs(MAS) do
-		states[values.order] = state
-	end
-
-	for index,state in ipairs(states) do
-
-		if (MAS[state].homestate) then
-
-			f = CreateFrame("CheckButton", nil, frame.presets.primary, "IonOptionsCheckButtonTemplate")
-			f:SetID(index)
-			f:SetWidth(18)
-			f:SetHeight(18)
-			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(LGUI[state:upper()])
-			f.option = state
-
-			if (not anchor) then
-				f:SetPoint("TOPLEFT", frame.presets.primary, "TOPLEFT", 10, -10)
-				anchor = f; last = f
-			else
-				f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -15)
-				last = f
-			end
-
-			tinsert(barOpt.pri, f)
-		end
-	end
-
-	anchor, last, count = nil, nil, 1
-
-	for index,state in ipairs(states) do
-
-		if (not MAS[state].homestate and state ~= "custom" and state ~= "extrabar") then
-
-			f = CreateFrame("CheckButton", nil, frame.presets.secondary, "IonOptionsCheckButtonTemplate")
-			f:SetID(index)
-			f:SetWidth(18)
-			f:SetHeight(18)
-			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(LGUI[state:upper()])
-			f.option = state
-
-			if (not anchor) then
-				f:SetPoint("TOPLEFT", frame.presets.secondary, "TOPLEFT", 10, -8)
-				anchor = f; last = f
-			elseif (count == 5) then
-				f:SetPoint("LEFT", anchor, "RIGHT", 90, 0)
-				anchor = f; last = f; count = 1
-			else
-				f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -5)
-				last = f
-			end
-
-			count = count + 1
-
-			tinsert(barOpt.sec, f)
-		end
-	end
-
-	if (ION.class == "DRUID") then
-
-		f = CreateFrame("CheckButton", nil, frame.presets.secondary, "IonOptionsCheckButtonTemplate")
-		f:SetID(#states+1)
-		f:SetWidth(18)
-		f:SetHeight(18)
-		f:SetScript("OnClick", setBarActionState)
-		f.text:SetText(LGUI.PROWL)
-		f.option = "prowl"
-		f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -5)
-
-		tinsert(barOpt.sec, f)
-	end
-
-	f = CreateFrame("EditBox", "$parentRemap", frame.presets, "IonDropDownOptionFull")
-	f:SetWidth(165)
-	f:SetHeight(25)
-	f:SetTextInsets(7,3,0,0)
-	f.text:SetText(LGUI.REMAP)
-	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOMLEFT", 7, 8)
-	f:SetPoint("BOTTOMRIGHT", frame.presets, "BOTTOM", -20, 8)
-	f:SetScript("OnTextChanged", remapOnTextChanged)
-	f:SetScript("OnEditFocusGained", function(self) self:ClearFocus() end)
-	f.popup:ClearAllPoints()
-	f.popup:SetPoint("BOTTOMLEFT")
-	f.popup:SetPoint("BOTTOMRIGHT")
-	barOpt.remap = f
-
-	ION.SubFrameBlackBackdrop_OnLoad(f)
-
-	f = CreateFrame("EditBox", "$parentRemapTo", frame.presets, "IonDropDownOptionFull")
-	f:SetWidth(160)
-	f:SetHeight(25)
-	f:SetTextInsets(7,3,0,0)
-	f.text:SetText(LGUI.REMAPTO)
-	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOM", 5, 8)
-	f:SetPoint("BOTTOMRIGHT", frame.presets, "BOTTOMRIGHT", -28, 8)
-	f:SetScript("OnTextChanged", remapToOnTextChanged)
-	f:SetScript("OnEditFocusGained", function(self) self:ClearFocus() end)
-	f.popup:ClearAllPoints()
-	f.popup:SetPoint("BOTTOMLEFT")
-	f.popup:SetPoint("BOTTOMRIGHT")
-	barOpt.remapto = f
-
-	ION.SubFrameBlackBackdrop_OnLoad(f)
-end
-
 local function adjOptionOnTextChanged(edit, frame)
 
 	local bar = ION.CurrentBar
@@ -1322,10 +1110,11 @@ local function adjOptionOnTextChanged(edit, frame)
 
 		if (frame.method == 1) then
 
-		elseif (frame.method == 2) then
+		elseif (frame.method == 2 and edit.value) then
 
 			bar[frame.func](bar, edit.value, true)
 
+			edit.value = nil
 		end
 	end
 end
@@ -1594,6 +1383,238 @@ function ION.BarEditorColorPicker_OnShow(frame)
 
 end
 
+local function setBarActionState(frame)
+
+	local bar = ION.CurrentBar
+
+	if (bar) then
+		bar:SetState(frame.option, true, frame:GetChecked())
+	end
+end
+
+local function remapOnTextChanged(frame)
+
+	local bar = ION.CurrentBar
+
+	if (bar and bar.cdata.remap and frame.value) then
+
+		local map, remap
+
+		for states in gmatch(bar.cdata.remap, "[^;]+") do
+
+			map, remap = (":"):split(states)
+
+			if (map == frame.value) then
+
+				barOpt.remapto.value = remap
+
+				if (bar.cdata.paged) then
+					barOpt.remapto:SetText(ION.STATES["paged"..remap])
+				elseif (bar.cdata.stance) then
+					barOpt.remapto:SetText(ION.STATES["stance"..remap])
+				end
+			end
+		end
+	else
+		barOpt.remapto:SetText("")
+	end
+end
+
+local function remapToOnTextChanged(frame)
+
+	local bar = ION.CurrentBar
+
+	if (bar and bar.cdata.remap and frame.value and #frame.value > 0) then
+
+		local value = barOpt.remap.value
+
+		bar.cdata.remap = bar.cdata.remap:gsub(value..":%d+", value..":"..frame.value)
+
+		if (bar.cdata.paged) then
+			bar.paged.registered = false
+		elseif (bar.cdata.stance) then
+			bar.stance.registered = false
+		end
+
+		bar.stateschanged = true
+
+		bar:Update()
+	end
+end
+
+function ION:ActionEditor_OnLoad(frame)
+
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+
+	frame.tabs = {}
+
+	local function TabsOnClick(cTab, silent)
+
+		for tab, panel in pairs(frame.tabs) do
+
+			if (tab == cTab) then
+				if (MouseIsOver(cTab) and not tab.selected) then
+					PlaySound("igCharacterInfoTab")
+				end
+				panel:Show()
+				tab:SetHeight(33)
+				tab:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+				tab:SetBackdropColor(1,1,1,1)
+				tab.text:SetTextColor(1,0.82,0)
+
+				tab.selected = true
+			else
+				panel:Hide()
+				tab:SetHeight(28)
+				tab:SetBackdropBorderColor(0.2, 0.2, 0.2, 1)
+				tab:SetBackdropColor(0.7,0.7,0.7,1)
+				tab.text:SetTextColor(0.85, 0.85, 0.85)
+
+				tab.selected = nil
+			end
+
+		end
+	end
+
+	local f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
+	f:SetWidth(160)
+	f:SetHeight(33)
+	f:SetPoint("TOPLEFT", frame, "BOTTOMLEFT",5,4)
+	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
+	f:SetFrameLevel(frame:GetFrameLevel())
+	f:SetBackdropColor(0.3,0.3,0.3,1)
+	f.text:SetText(LGUI.PRESET_STATES)
+	f.selected = true
+	frame.tab1 = f; frame.tabs[f] = frame.presets
+
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
+	f:SetWidth(160)
+	f:SetHeight(28)
+	f:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT",-5,4)
+	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
+	f:SetFrameLevel(frame:GetFrameLevel())
+	f.text:SetText(LGUI.CUSTOM_STATES)
+	frame.tab2 = f; frame.tabs[f] = frame.custom
+
+	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
+	f:SetWidth(160)
+	f:SetHeight(28)
+	f:SetPoint("TOP", frame, "BOTTOM",0,0)
+	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
+	f:SetFrameLevel(frame:GetFrameLevel())
+	f:Hide()
+	frame.tab3 = f; frame.tabs[f] = frame.hidden
+
+	local states, anchor, last, count = {}
+
+	local MAS = ION.MANAGED_ACTION_STATES
+
+	for state, values in pairs(MAS) do
+		states[values.order] = state
+	end
+
+	for index,state in ipairs(states) do
+
+		if (MAS[state].homestate) then
+
+			f = CreateFrame("CheckButton", nil, frame.presets.primary, "IonOptionsCheckButtonTemplate")
+			f:SetID(index)
+			f:SetWidth(18)
+			f:SetHeight(18)
+			f:SetScript("OnClick", setBarActionState)
+			f.text:SetText(LGUI[state:upper()])
+			f.option = state
+
+			if (not anchor) then
+				f:SetPoint("TOPLEFT", frame.presets.primary, "TOPLEFT", 10, -10)
+				anchor = f; last = f
+			else
+				f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -18)
+				last = f
+			end
+
+			tinsert(barOpt.pri, f)
+		end
+	end
+
+	anchor, last, count = nil, nil, 1
+
+	for index,state in ipairs(states) do
+
+		if (not MAS[state].homestate and state ~= "custom" and state ~= "extrabar") then
+
+			f = CreateFrame("CheckButton", nil, frame.presets.secondary, "IonOptionsCheckButtonTemplate")
+			f:SetID(index)
+			f:SetWidth(18)
+			f:SetHeight(18)
+			f:SetScript("OnClick", setBarActionState)
+			f.text:SetText(LGUI[state:upper()])
+			f.option = state
+
+			if (not anchor) then
+				f:SetPoint("TOPLEFT", frame.presets.secondary, "TOPLEFT", 10, -8)
+				anchor = f; last = f
+			elseif (count == 5) then
+				f:SetPoint("LEFT", anchor, "RIGHT", 90, 0)
+				anchor = f; last = f; count = 1
+			else
+				f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
+				last = f
+			end
+
+			count = count + 1
+
+			tinsert(barOpt.sec, f)
+		end
+	end
+
+	if (ION.class == "DRUID") then
+
+		f = CreateFrame("CheckButton", nil, frame.presets.secondary, "IonOptionsCheckButtonTemplate")
+		f:SetID(#states+1)
+		f:SetWidth(18)
+		f:SetHeight(18)
+		f:SetScript("OnClick", setBarActionState)
+		f.text:SetText(LGUI.PROWL)
+		f.option = "prowl"
+		f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
+
+		tinsert(barOpt.sec, f)
+	end
+
+	f = CreateFrame("EditBox", "$parentRemap", frame.presets, "IonDropDownOptionFull")
+	f:SetWidth(165)
+	f:SetHeight(25)
+	f:SetTextInsets(7,3,0,0)
+	f.text:SetText(LGUI.REMAP)
+	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOMLEFT", 7, 8)
+	f:SetPoint("BOTTOMRIGHT", frame.presets.secondary, "BOTTOM", -70, -35)
+	f:SetScript("OnTextChanged", remapOnTextChanged)
+	f:SetScript("OnEditFocusGained", function(self) self:ClearFocus() end)
+	f.popup:ClearAllPoints()
+	f.popup:SetPoint("BOTTOMLEFT")
+	f.popup:SetPoint("BOTTOMRIGHT")
+	barOpt.remap = f
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
+
+	f = CreateFrame("EditBox", "$parentRemapTo", frame.presets, "IonDropDownOptionFull")
+	f:SetWidth(160)
+	f:SetHeight(25)
+	f:SetTextInsets(7,3,0,0)
+	f.text:SetText(LGUI.REMAPTO)
+	f:SetPoint("BOTTOMLEFT", barOpt.remap, "BOTTOMRIGHT", 25, 0)
+	f:SetPoint("BOTTOMRIGHT", frame.presets.secondary, "BOTTOMRIGHT", -23, -35)
+	f:SetScript("OnTextChanged", remapToOnTextChanged)
+	f:SetScript("OnEditFocusGained", function(self) self:ClearFocus() end)
+	f.popup:ClearAllPoints()
+	f.popup:SetPoint("BOTTOMLEFT")
+	f.popup:SetPoint("BOTTOMRIGHT")
+	barOpt.remapto = f
+
+	ION.SubFrameBlackBackdrop_OnLoad(f)
+end
+
 --	paged = 	paged1;	paged2;	paged3;	paged4;	paged5;	paged6;
 
 --	stance =	stance0;	stance1;	stance2;	stance3;	stance4;	stance5;	stance6;
@@ -1606,9 +1627,21 @@ end
 
 --	control = 	vehicle0;	vehicle1;	possess0;	possess1;	override0;	override1;	extrabar0;	extrabar1;
 
-function ION:BarVisibility_OnLoad(frame)
+function ION:VisEditor_OnLoad(frame)
 
 	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+
+end
+
+function ION:StateList_OnLoad(frame)
+
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+
+end
+
+function ION:BarStates_OnLoad(frame)
+
+	--ION.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 end
 
