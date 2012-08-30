@@ -11,8 +11,6 @@ local numShown = 15
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
 
-local LGUI = LibStub("AceLocale-3.0"):GetLocale("IonGUI")
-
 local GUIData = ION.RegisteredGUIData
 
 local ICONS = ION.iIndex
@@ -33,53 +31,53 @@ local popupData = {}
 
 local chkOptions = {
 
-	[1] = { [0] = "AUTOHIDE", LGUI.AUTOHIDE, 1, "AutoHideBar" },
-	[2] = { [0] = "SHOWGRID", LGUI.SHOWGRID, 1, "ShowGridSet" },
-	[3] = { [0] = "SNAPTO", LGUI.SNAPTO, 1, "SnapToBar" },
-	[4] = { [0] = "UPCLICKS", LGUI.UPCLICKS, 1, "UpClicksSet" },
-	[5] = { [0] = "DOWNCLICKS", LGUI.DOWNCLICKS, 1, "DownClicksSet" },
-	[6] = { [0] = "DUALSPEC", LGUI.DUALSPEC, 1, "DualSpecSet" },
-	[7] = { [0] = "HIDDEN", LGUI.HIDDEN, 1, "ConcealBar" },
-	[8] = { [0] = "SPELLGLOW", LGUI.SPELLGLOW, 1, "SpellGlowSet" },
-	[9] = { [0] = "SPELLGLOW", LGUI.SPELLGLOW_DEFAULT, 1, "SpellGlowSet", "default" },
-	[10] = { [0] = "SPELLGLOW", LGUI.SPELLGLOW_ALT, 1, "SpellGlowSet", "alt" },
-	[11] = { [0] = "LOCKBAR", LGUI.LOCKBAR, 1, "LockSet" },
-	[12] = { [0] = "LOCKBAR", LGUI.LOCKBAR_SHIFT, 0.9, "LockSet", "shift" },
-	[13] = { [0] = "LOCKBAR", LGUI.LOCKBAR_CTRL, 0.9, "LockSet", "ctrl" },
-	[14] = { [0] = "LOCKBAR", LGUI.LOCKBAR_ALT, 0.9, "LockSet", "alt" },
-	[15] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS, 1, "ToolTipSet" },
-	[16] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS_ENH, 0.9, "ToolTipSet", "enhanced" },
-	[17] = { [0] = "TOOLTIPS", LGUI.TOOLTIPS_COMBAT, 0.9, "ToolTipSet", "combat" },
+	[1] = { [0] = "AUTOHIDE", L.AUTOHIDE, 1, "AutoHideBar" },
+	[2] = { [0] = "SHOWGRID", L.SHOWGRID, 1, "ShowGridSet" },
+	[3] = { [0] = "SNAPTO", L.SNAPTO, 1, "SnapToBar" },
+	[4] = { [0] = "UPCLICKS", L.UPCLICKS, 1, "UpClicksSet" },
+	[5] = { [0] = "DOWNCLICKS", L.DOWNCLICKS, 1, "DownClicksSet" },
+	[6] = { [0] = "DUALSPEC", L.DUALSPEC, 1, "DualSpecSet" },
+	[7] = { [0] = "HIDDEN", L.HIDDEN, 1, "ConcealBar" },
+	[8] = { [0] = "SPELLGLOW", L.SPELLGLOW, 1, "SpellGlowSet" },
+	[9] = { [0] = "SPELLGLOW", L.SPELLGLOW_DEFAULT, 1, "SpellGlowSet", "default" },
+	[10] = { [0] = "SPELLGLOW", L.SPELLGLOW_ALT, 1, "SpellGlowSet", "alt" },
+	[11] = { [0] = "LOCKBAR", L.LOCKBAR, 1, "LockSet" },
+	[12] = { [0] = "LOCKBAR", L.LOCKBAR_SHIFT, 0.9, "LockSet", "shift" },
+	[13] = { [0] = "LOCKBAR", L.LOCKBAR_CTRL, 0.9, "LockSet", "ctrl" },
+	[14] = { [0] = "LOCKBAR", L.LOCKBAR_ALT, 0.9, "LockSet", "alt" },
+	[15] = { [0] = "TOOLTIPS", L.TOOLTIPS_OPT, 1, "ToolTipSet" },
+	[16] = { [0] = "TOOLTIPS", L.TOOLTIPS_ENH, 0.9, "ToolTipSet", "enhanced" },
+	[17] = { [0] = "TOOLTIPS", L.TOOLTIPS_COMBAT, 0.9, "ToolTipSet", "combat" },
 }
 
 local adjOptions = {
 
-	[1] = { [0] = "SCALE", LGUI.SCALE, 1, "ScaleBar", 0.01, 0.1, 4 },
-	[2] = { [0] = "SHAPE", LGUI.SHAPE, 2, "ShapeBar", nil, nil, nil, ION.BarShapes },
-	[3] = { [0] = "COLUMNS", LGUI.COLUMNS, 1, "ColumnsSet", 1 , 0},
-	[4] = { [0] = "ARCSTART", LGUI.ARCSTART, 1, "ArcStartSet", 1, 0, 359 },
-	[5] = { [0] = "ARCLENGTH", LGUI.ARCLENGTH, 1, "ArcLengthSet", 1, 0, 359 },
-	[6] = { [0] = "HPAD", LGUI.HPAD, 1, "PadHSet", 0.1 },
-	[7] = { [0] = "VPAD", LGUI.VPAD, 1, "PadVSet", 0.1 },
-	[8] = { [0] = "HVPAD", LGUI.HVPAD, 1, "PadHVSet", 0.1 },
-	[9] = { [0] = "STRATA", LGUI.STRATA, 2, "StrataSet", nil, nil, nil, ION.Stratas },
-	[10] = { [0] = "ALPHA", LGUI.ALPHA, 1, "AlphaSet", 0.01, 0, 1 },
-	[11] = { [0] = "ALPHAUP", LGUI.ALPHAUP, 2, "AlphaUpSet", nil, nil, nil, ION.AlphaUps },
-	[12] = { [0] = "ALPHAUP", LGUI.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
-	[13] = { [0] = "XPOS", LGUI.XPOS, 1, "XAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
-	[14] = { [0] = "YPOS", LGUI.YPOS, 1, "YAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
+	[1] = { [0] = "SCALE", L.SCALE, 1, "ScaleBar", 0.01, 0.1, 4 },
+	[2] = { [0] = "SHAPE", L.SHAPE, 2, "ShapeBar", nil, nil, nil, ION.BarShapes },
+	[3] = { [0] = "COLUMNS", L.COLUMNS, 1, "ColumnsSet", 1 , 0},
+	[4] = { [0] = "ARCSTART", L.ARCSTART, 1, "ArcStartSet", 1, 0, 359 },
+	[5] = { [0] = "ARCLENGTH", L.ARCLENGTH, 1, "ArcLengthSet", 1, 0, 359 },
+	[6] = { [0] = "HPAD", L.HPAD, 1, "PadHSet", 0.1 },
+	[7] = { [0] = "VPAD", L.VPAD, 1, "PadVSet", 0.1 },
+	[8] = { [0] = "HVPAD", L.HVPAD, 1, "PadHVSet", 0.1 },
+	[9] = { [0] = "STRATA", L.STRATA, 2, "StrataSet", nil, nil, nil, ION.Stratas },
+	[10] = { [0] = "ALPHA", L.ALPHA, 1, "AlphaSet", 0.01, 0, 1 },
+	[11] = { [0] = "ALPHAUP", L.ALPHAUP, 2, "AlphaUpSet", nil, nil, nil, ION.AlphaUps },
+	[12] = { [0] = "ALPHAUP", L.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
+	[13] = { [0] = "XPOS", L.XPOS, 1, "XAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
+	[14] = { [0] = "YPOS", L.YPOS, 1, "YAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
 }
 
 local swatchOptions = {
 
-	[1] = { [0] = "BINDTEXT", LGUI.BINDTEXT, 1, "BindTextSet", true, nil, "bindColor" },
-	[2] = { [0] = "MACROTEXT", LGUI.MACROTEXT, 1, "MacroTextSet", true, nil, "macroColor" },
-	[3] = { [0] = "COUNTTEXT", LGUI.COUNTTEXT, 1, "CountTextSet", true, nil, "countColor" },
-	[4] = { [0] = "RANGEIND", LGUI.RANGEIND, 1, "RangeIndSet", true, nil, "rangecolor" },
-	[5] = { [0] = "CDTEXT", LGUI.CDTEXT, 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
-	[6] = { [0] = "CDALPHA", LGUI.CDALPHA, 1, "CDAlphaSet", nil, nil },
-	[7] = { [0] = "AURATEXT", LGUI.AURATEXT, 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
-	[8] = { [0] = "AURAIND", LGUI.AURAIND, 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
+	[1] = { [0] = "BINDTEXT", L.BINDTEXT, 1, "BindTextSet", true, nil, "bindColor" },
+	[2] = { [0] = "MACROTEXT", L.MACROTEXT, 1, "MacroTextSet", true, nil, "macroColor" },
+	[3] = { [0] = "COUNTTEXT", L.COUNTTEXT, 1, "CountTextSet", true, nil, "countColor" },
+	[4] = { [0] = "RANGEIND", L.RANGEIND, 1, "RangeIndSet", true, nil, "rangecolor" },
+	[5] = { [0] = "CDTEXT", L.CDTEXT, 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
+	[6] = { [0] = "CDALPHA", L.CDALPHA, 1, "CDAlphaSet", nil, nil },
+	[7] = { [0] = "AURATEXT", L.AURATEXT, 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
+	[8] = { [0] = "AURAIND", L.AURAIND, 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
 }
 
 local function round(num, idp)
@@ -333,7 +331,7 @@ function ION:UpdateBarGUI(newBar)
 	if (bar and GUIData[bar.class]) then
 
 		if (IBE:IsVisible()) then
-			IBE.count.text:SetText(bar.objType.." "..LGUI.COUNT..": |cffffffff"..bar.objCount.."|r")
+			IBE.count.text:SetText(bar.objType.." "..L.COUNT..": |cffffffff"..bar.objCount.."|r")
 			IBE.barname:SetText(bar.gdata.name)
 		end
 
@@ -706,7 +704,7 @@ function Ion:BarEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(LGUI.BAR_STATES)
+	f.text:SetText(L.BAR_STATES)
 	frame.tab2 = f; frame.tabs[f] = frame.barstates
 
 	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
@@ -716,7 +714,7 @@ function Ion:BarEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(1)
-	f.text:SetText(LGUI.GENERAL)
+	f.text:SetText(L.GENERAL)
 	frame.tab1 = f; frame.tabs[f] = frame.baropt
 
 	f = CreateFrame("EditBox", nil, frame, "IonEditBoxTemplateSmall")
@@ -955,7 +953,7 @@ end
 function ION:CreateButton_OnLoad(button)
 
 	button.type = "create"
-	button.text:SetText(LGUI.CREATE_BAR)
+	button.text:SetText(L.CREATE_BAR)
 
 end
 
@@ -963,7 +961,7 @@ function ION:BarEditor_CreateNewBar(button)
 
 	if (button.type == "create") then
 
-		local data = { [LGUI.SELECT_BAR_TYPE] = "none" }
+		local data = { [L.SELECT_BAR_TYPE] = "none" }
 
 		for class,info in pairs(ION.RegisteredBarData) do
 			if (info.barCreateMore) then
@@ -975,14 +973,14 @@ function ION:BarEditor_CreateNewBar(button)
 
 		button.type = "cancel"
 
-		button.text:SetText(LGUI.CANCEL)
+		button.text:SetText(L.CANCEL)
 	else
 
 		ION.BarListScrollFrameUpdate()
 
 		button.type = "create"
 
-		button.text:SetText(LGUI.CREATE_BAR)
+		button.text:SetText(L.CREATE_BAR)
 
 	end
 end
@@ -992,7 +990,7 @@ function ION:DeleteButton_OnLoad(button)
 	button.parent = button:GetParent()
 	button.parent.delete = button
 	button.type = "delete"
-	button.text:SetText(LGUI.DELETE_BAR)
+	button.text:SetText(L.DELETE_BAR)
 
 end
 
@@ -1017,7 +1015,7 @@ function ION:Confirm_OnLoad(button)
 
 	button.parent = button:GetParent()
 	button.parent.confirm = button
-	button.title:SetText(LGUI.CONFIRM)
+	button.title:SetText(L.CONFIRM)
 
 end
 
@@ -1025,7 +1023,7 @@ function ION:ConfirmYes_OnLoad(button)
 
 	button.parent = button:GetParent()
 	button.type = "yes"
-	_G[button:GetName().."Text"]:SetText(LGUI.CONFIRM_YES)
+	_G[button:GetName().."Text"]:SetText(L.CONFIRM_YES)
 
 end
 
@@ -1045,7 +1043,7 @@ function ION:ConfirmNo_OnLoad(button)
 
 	button.parent = button:GetParent()
 	button.type = "no"
-	_G[button:GetName().."Text"]:SetText(LGUI.CONFIRM_NO)
+	_G[button:GetName().."Text"]:SetText(L.CONFIRM_NO)
 end
 
 function ION:BarEditor_ConfirmNo(button)
@@ -1483,7 +1481,7 @@ function ION:ActionEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel())
 	f:SetBackdropColor(0.3,0.3,0.3,1)
-	f.text:SetText(LGUI.PRESET_STATES)
+	f.text:SetText(L.PRESET_STATES)
 	f.selected = true
 	frame.tab1 = f; frame.tabs[f] = frame.presets
 
@@ -1493,7 +1491,7 @@ function ION:ActionEditor_OnLoad(frame)
 	f:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT",-5,4)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel())
-	f.text:SetText(LGUI.CUSTOM_STATES)
+	f.text:SetText(L.CUSTOM_STATES)
 	frame.tab2 = f; frame.tabs[f] = frame.custom
 
 	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTabTemplate")
@@ -1522,7 +1520,7 @@ function ION:ActionEditor_OnLoad(frame)
 			f:SetWidth(18)
 			f:SetHeight(18)
 			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(LGUI[state:upper()])
+			f.text:SetText(L[state:upper()])
 			f.option = state
 
 			if (not anchor) then
@@ -1548,7 +1546,7 @@ function ION:ActionEditor_OnLoad(frame)
 			f:SetWidth(18)
 			f:SetHeight(18)
 			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(LGUI[state:upper()])
+			f.text:SetText(L[state:upper()])
 			f.option = state
 
 			if (not anchor) then
@@ -1575,7 +1573,7 @@ function ION:ActionEditor_OnLoad(frame)
 		f:SetWidth(18)
 		f:SetHeight(18)
 		f:SetScript("OnClick", setBarActionState)
-		f.text:SetText(LGUI.PROWL)
+		f.text:SetText(L.PROWL)
 		f.option = "prowl"
 		f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
 
@@ -1586,7 +1584,7 @@ function ION:ActionEditor_OnLoad(frame)
 	f:SetWidth(165)
 	f:SetHeight(25)
 	f:SetTextInsets(7,3,0,0)
-	f.text:SetText(LGUI.REMAP)
+	f.text:SetText(L.REMAP)
 	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOMLEFT", 7, 8)
 	f:SetPoint("BOTTOMRIGHT", frame.presets.secondary, "BOTTOM", -70, -35)
 	f:SetScript("OnTextChanged", remapOnTextChanged)
@@ -1602,7 +1600,7 @@ function ION:ActionEditor_OnLoad(frame)
 	f:SetWidth(160)
 	f:SetHeight(25)
 	f:SetTextInsets(7,3,0,0)
-	f.text:SetText(LGUI.REMAPTO)
+	f.text:SetText(L.REMAPTO)
 	f:SetPoint("BOTTOMLEFT", barOpt.remap, "BOTTOMRIGHT", 25, 0)
 	f:SetPoint("BOTTOMRIGHT", frame.presets.secondary, "BOTTOMRIGHT", -23, -35)
 	f:SetScript("OnTextChanged", remapToOnTextChanged)
@@ -2268,7 +2266,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
 	f.text:SetPoint("CENTER")
 	f.text:SetJustifyH("CENTER")
-	f.text:SetText(LGUI.MACRO_NAME)
+	f.text:SetText(L.MACRO_NAME)
 
 	f = CreateFrame("Frame", nil, frame.nameedit)
 	f:SetPoint("TOPLEFT", 0, 0)
@@ -2298,7 +2296,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
 	f.text:SetPoint("CENTER", 10, 0)
 	f.text:SetJustifyH("CENTER")
-	f.text:SetText(LGUI.MACRO_EDITNOTE)
+	f.text:SetText(L.MACRO_EDITNOTE)
 
 	f = CreateFrame("Frame", nil, frame.noteedit)
 	f:SetPoint("TOPLEFT", 0, 0)
@@ -2316,7 +2314,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetPoint("RIGHT", frame.noteedit, "RIGHT", 12, 0)
 	f:SetFrameLevel(frame.noteedit:GetFrameLevel()+1)
 	f:Hide()
-	f.tooltipText = LGUI.MACRO_USENOTE
+	f.tooltipText = L.MACRO_USENOTE
 	frame.usenote = f
 	frame.noteedit.cb = f
 
@@ -2419,14 +2417,14 @@ function ION:ButtonEditor_OnLoad(frame)
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontDisable");
 	f.text:SetPoint("LEFT", 22, 0)
 	f.text:SetJustifyH("LEFT")
-	f.text:SetText(LGUI.SEARCH)
+	f.text:SetText(L.SEARCH)
 
 	f = CreateFrame("Button", nil, frame.iconlist, "IonCheckButtonTemplate1")
 	f:SetWidth(122)
 	f:SetHeight(35)
 	f:SetPoint("TOPLEFT", frame.search, "TOPRIGHT", -1, 4)
 	f:SetScript("OnClick", function(self) self:Hide() self.frame.search:Hide() self.frame.customdone:Show() self.frame.customcancel:Show() self.frame.custompath:Show() end)
-	f.text:SetText(LGUI.CUSTOM_ICON)
+	f.text:SetText(L.CUSTOM_ICON)
 	f.frame = frame
 	frame.customicon = f
 
@@ -2437,7 +2435,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) self:Hide()  self.frame.customcancel:Hide() self.frame.custompath:Hide() self.frame.customicon:Show() self.frame.search:Show() customDoneOnClick(self) end)
 	f:SetFrameLevel(frame.customicon:GetFrameLevel()+1)
 	f:Hide()
-	f.text:SetText(LGUI.DONE)
+	f.text:SetText(L.DONE)
 	f.frame = frame
 	frame.customdone = f
 
@@ -2448,7 +2446,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) self:Hide() self.frame.customdone:Hide() self.frame.custompath:Hide() self.frame.customicon:Show() self.frame.search:Show() end)
 	f:SetFrameLevel(frame.customicon:GetFrameLevel()+1)
 	f:Hide()
-	f.text:SetText(LGUI.CANCEL)
+	f.text:SetText(L.CANCEL)
 	f.frame = frame
 	frame.customcancel = f
 
@@ -2474,7 +2472,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
 	f.text:SetPoint("LEFT", 8, 0)
 	f.text:SetJustifyH("LEFT")
-	f.text:SetText(LGUI.PATH..": INTERFACE\\")
+	f.text:SetText(L.PATH..": INTERFACE\\")
 
 	f:SetTextInsets(f.text:GetWidth()+5, 0, 0, 0)
 
@@ -2520,7 +2518,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(LGUI.OPTIONS)
+	f.text:SetText(L.OPTIONS)
 	frame.tab3 = f; frame.tabs[f] = frame.options
 
 	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
@@ -2530,7 +2528,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(LGUI.ACTION)
+	f.text:SetText(L.ACTION)
 	frame.tab2 = f; frame.tabs[f] = frame.action
 
 	f = CreateFrame("CheckButton", nil, frame, "IonCheckButtonTemplate1")
@@ -2540,7 +2538,7 @@ function ION:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(1)
-	f.text:SetText(LGUI.MACRO)
+	f.text:SetText(L.MACRO)
 	frame.tab1 = f; frame.tabs[f] = frame.macro
 
 
@@ -2562,8 +2560,8 @@ end
 function ION.ColorPicker_OnLoad(self)
 
 	self:SetFrameStrata("TOOLTIP")
-	self.apply.text:SetText(LGUI.APPLY)
-	self.cancel.text:SetText(LGUI.CANCEL)
+	self.apply.text:SetText(L.APPLY)
+	self.cancel.text:SetText(L.CANCEL)
 end
 
 

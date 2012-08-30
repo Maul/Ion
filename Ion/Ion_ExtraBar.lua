@@ -468,32 +468,30 @@ local function controlOnEvent(self, event, ...)
 								 CDTEXT = true,
 								 CDALPHA = true }, false, 65)
 
-		if (ION.TOCVersion >= 50000) then
+		if (GDB.xbarFirstRun) then
 
-			if (GDB.xbarFirstRun) then
+			local bar = ION:CreateNewBar("extrabar", 1, true)
+			local object = ION:CreateNewObject("extrabar", 1)
 
-				local bar = ION:CreateNewBar("extrabar", 1, true)
-				local object = ION:CreateNewObject("extrabar", 1)
+			bar:AddObjectToList(object)
 
-				bar:AddObjectToList(object)
+			GDB.xbarFirstRun = false
 
-				GDB.xbarFirstRun = false
+		else
 
-			else
-
-				for id,data in pairs(xbarsGDB) do
-					if (data ~= nil) then
-						ION:CreateNewBar("extrabar", id)
-					end
+			for id,data in pairs(xbarsGDB) do
+				if (data ~= nil) then
+					ION:CreateNewBar("extrabar", id)
 				end
+			end
 
-				for id,data in pairs(xbtnsGDB) do
-					if (data ~= nil) then
-						ION:CreateNewObject("extrabar", id)
-					end
+			for id,data in pairs(xbtnsGDB) do
+				if (data ~= nil) then
+					ION:CreateNewObject("extrabar", id)
 				end
 			end
 		end
+
 
 		STORAGE:Hide()
 

@@ -215,14 +215,15 @@ local function controlOnUpdate(self, elapsed)
 					else
 						k.seen = 1;
 					end
+
 				end
 
 				if (not IsMouseOverSelfOrWatchFrame(k)) then
-					if (v:GetAlpha() > k.alpha) then
-						if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
+					if (v:GetAlpha() > 0) then
+						if (v:GetAlpha()-v.fadeSpeed >= 0) then
 							v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
 						else
-							v:SetAlpha(k.alpha)
+							v:SetAlpha(0)
 						end
 					else
 						k.seen = 0;
@@ -1695,27 +1696,24 @@ end
 
 function BAR:CreateWatcher()
 
-	if (ION.TOCVersion >= 50000) then
+	local watcher = CreateFrame("Frame", "IonBarWatcher"..self:GetID(), self.handler, "SecureHandlerStateTemplate")
 
-		local watcher = CreateFrame("Frame", "IonBarWatcher"..self:GetID(), self.handler, "SecureHandlerStateTemplate")
+	setmetatable(watcher, { __index = HANDLER })
 
-		setmetatable(watcher, { __index = HANDLER })
+	watcher:SetID(self:GetID())
 
-		watcher:SetID(self:GetID())
+	watcher:SetAttribute("_onattributechanged", [[ ]])
 
-		watcher:SetAttribute("_onattributechanged", [[ ]])
+	watcher:SetAttribute("_onstate-petbattle", [[
 
-		watcher:SetAttribute("_onstate-petbattle", [[
+			if (self:GetAttribute("state-petbattle") == "hide") then
+				self:GetParent():Hide()
+			elseif (not self:GetParent():IsShown() and not self:GetParent():GetAttribute("vishide")) then
+				self:GetParent():Show()
+			end
+	]])
 
-				if (self:GetAttribute("state-petbattle") == "hide") then
-					self:GetParent():Hide()
-				elseif (not self:GetParent():IsShown() and not self:GetParent():GetAttribute("vishide")) then
-					self:GetParent():Show()
-				end
-		]])
-
-		RegisterStateDriver(watcher, "petbattle", "[petbattle] hide; [nopetbattle] show")
-	end
+	RegisterStateDriver(watcher, "petbattle", "[petbattle] hide; [nopetbattle] show")
 
 end
 

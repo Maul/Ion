@@ -46,6 +46,8 @@ IonGDB = {
 
 	firstRun = true,
 	xbarFirstRun = true,
+
+	betaWarning = true,
 }
 
 IonCDB = {
@@ -494,6 +496,188 @@ function ION:UpdateSpellIndex()
 			curSpell.isPassive = nil
 			curSpell.icon = icon
 			curSpell.powerType = powerType
+		end
+	end
+
+	for i = 1, select("#", GetProfessions()) do
+
+		local index = select(i, GetProfessions())
+
+		if (index) then
+
+			local _, _, _, _, numSpells, spelloffset = GetProfessionInfo(index)
+
+			for i=1,numSpells do
+
+				spellName, subName = GetSpellBookItemName(i+spelloffset, BOOKTYPE_PROFESSION)
+				spellType, spellID = GetSpellBookItemInfo(i+spelloffset, BOOKTYPE_PROFESSION)
+				spellLvl = GetSpellAvailableLevel(i+spelloffset, BOOKTYPE_PROFESSION)
+				icon = GetSpellBookItemTexture(i+spelloffset, BOOKTYPE_PROFESSION)
+				isPassive = IsPassiveSpell(i+spelloffset, BOOKTYPE_PROFESSION)
+
+				if (spellName and spellType ~= "FUTURESPELL") then
+
+					--print(spellName)
+
+					link = GetSpellLink(spellName)
+
+					if (link) then
+						_, spellID = link:match("(spell:)(%d+)")
+						tempID = tonumber(spellID)
+						if (tempID) then
+							spellID = tempID
+						end
+					end
+
+					altName, _, _, cost, _, powerType = GetSpellInfo(spellID)
+
+					if (subName and #subName > 0) then
+
+						if (not ION.sIndex[(spellName.."("..subName..")"):lower()]) then
+							ION.sIndex[(spellName.."("..subName..")"):lower()] = {}
+						end
+
+						curSpell = ION.sIndex[(spellName.."("..subName..")"):lower()]
+
+						curSpell.index = i+spelloffset
+						curSpell.booktype = BOOKTYPE_PROFESSION
+						curSpell.spellName = spellName
+						curSpell.subName = subName
+						curSpell.spellID = spellID
+						curSpell.spellType = spellType
+						curSpell.spellLvl = spellLvl
+						curSpell.spellCost = cost
+						curSpell.isPassive = isPassive
+						curSpell.icon = icon
+						curSpell.powerType = powerType
+
+					else
+
+						if (not ION.sIndex[(spellName):lower()]) then
+							ION.sIndex[(spellName):lower()] = {}
+						end
+
+						curSpell = ION.sIndex[(spellName):lower()]
+
+						curSpell.index = i+spelloffset
+						curSpell.booktype = BOOKTYPE_PROFESSION
+						curSpell.spellName = spellName
+						curSpell.subName = subName
+						curSpell.spellID = spellID
+						curSpell.spellType = spellType
+						curSpell.spellLvl = spellLvl
+						curSpell.spellCost = cost
+						curSpell.isPassive = isPassive
+						curSpell.icon = icon
+						curSpell.powerType = powerType
+
+						if (not ION.sIndex[(spellName):lower().."()"]) then
+							ION.sIndex[(spellName):lower().."()"] = {}
+						end
+
+						curSpell = ION.sIndex[(spellName):lower().."()"]
+
+						curSpell.index = i+spelloffset
+						curSpell.booktype = BOOKTYPE_PROFESSION
+						curSpell.spellName = spellName
+						curSpell.subName = subName
+						curSpell.spellID = spellID
+						curSpell.spellType = spellType
+						curSpell.spellLvl = spellLvl
+						curSpell.spellCost = cost
+						curSpell.isPassive = isPassive
+						curSpell.icon = icon
+						curSpell.powerType = powerType
+					end
+
+					if (altName and altName ~= spellName) then
+
+						if (subName and #subName > 0) then
+
+							if (not ION.sIndex[(altName.."("..subName..")"):lower()]) then
+								ION.sIndex[(altName.."("..subName..")"):lower()] = {}
+							end
+
+							curSpell = ION.sIndex[(altName.."("..subName..")"):lower()]
+
+							curSpell.index = i+spelloffset
+							curSpell.booktype = BOOKTYPE_PROFESSION
+							curSpell.spellName = spellName
+							curSpell.subName = subName
+							curSpell.spellID = spellID
+							curSpell.spellType = spellType
+							curSpell.spellLvl = spellLvl
+							curSpell.spellCost = cost
+							curSpell.isPassive = isPassive
+							curSpell.icon = icon
+							curSpell.powerType = powerType
+
+						else
+
+							if (not ION.sIndex[(altName):lower()]) then
+								ION.sIndex[(altName):lower()] = {}
+							end
+
+							curSpell = ION.sIndex[(altName):lower()]
+
+							curSpell.index = i+spelloffset
+							curSpell.booktype = BOOKTYPE_PROFESSION
+							curSpell.spellName = spellName
+							curSpell.subName = subName
+							curSpell.spellID = spellID
+							curSpell.spellType = spellType
+							curSpell.spellLvl = spellLvl
+							curSpell.spellCost = cost
+							curSpell.isPassive = isPassive
+							curSpell.icon = icon
+							curSpell.powerType = powerType
+
+							if (not ION.sIndex[(altName):lower().."()"]) then
+								ION.sIndex[(altName):lower().."()"] = {}
+							end
+
+							curSpell = ION.sIndex[(altName):lower().."()"]
+
+							curSpell.index = i+spelloffset
+							curSpell.booktype = BOOKTYPE_PROFESSION
+							curSpell.spellName = spellName
+							curSpell.subName = subName
+							curSpell.spellID = spellID
+							curSpell.spellType = spellType
+							curSpell.spellLvl = spellLvl
+							curSpell.spellCost = cost
+							curSpell.isPassive = isPassive
+							curSpell.icon = icon
+							curSpell.powerType = powerType
+						end
+					end
+
+					if (spellID) then
+
+						if (not ION.sIndex[spellID]) then
+							ION.sIndex[spellID] = {}
+						end
+
+						curSpell = ION.sIndex[spellID]
+
+						curSpell.index = i+spelloffset
+						curSpell.booktype = BOOKTYPE_PROFESSION
+						curSpell.spellName = spellName
+						curSpell.subName = subName
+						curSpell.spellID = spellID
+						curSpell.spellType = spellType
+						curSpell.spellLvl = spellLvl
+						curSpell.spellCost = cost
+						curSpell.isPassive = isPassive
+						curSpell.icon = icon
+						curSpell.powerType = powerType
+					end
+
+					if (icon and not icons[icon:upper()]) then
+						ICONS[#ICONS+1] = icon:upper(); icons[icon:upper()] = true
+					end
+				end
+			end
 		end
 	end
 end
@@ -1502,7 +1686,9 @@ function ION:ToggleBlizzBar(on)
 
 	if (on) then
 
+
 		local button
+
 		for i=1, NUM_OVERRIDE_BUTTONS do
 			button = _G["OverrideActionBarButton"..i]
 			handler:WrapScript(button, "OnShow", [[
@@ -1519,120 +1705,56 @@ function ION:ToggleBlizzBar(on)
 			]])
 		end
 
-		--ActionBarController_OnLoad(ActionBarController)
-		--ActionBarButtonEventsFrame_OnLoad(ActionBarButtonEventsFrame)
-		--ActionBarActionEventsFrame_OnLoad(ActionBarActionEventsFrame)
-
-		MainMenuBar:SetPoint("BOTTOM", 0, 0)
-		OverrideActionBar:SetPoint("BOTTOM", 0, 0)
-		--MainMenuBar_OnLoad(MainMenuBar)
-		--MainMenuBar:Show()
-
-	else
-
-		local button
-
-		for i=1, NUM_OVERRIDE_BUTTONS do
-			button = _G["OverrideActionBarButton"..i]
-			handler:UnwrapScript(button, "OnShow")
-			handler:UnwrapScript(button, "OnHide")
-		end
-
-		--ActionBarController:UnregisterAllEvents()
-		--ActionBarButtonEventsFrame:UnregisterAllEvents()
-		--ActionBarActionEventsFrame:UnregisterAllEvents()
-
-		MainMenuBar:SetPoint("BOTTOM", 0, -200)
-		OverrideActionBar:SetPoint("BOTTOM", 0, -200)
-		--MainMenuBar:UnregisterAllEvents()
-		--MainMenuBar:Hide()
-
-	end
-end
-
-function ION:ToggleMainMenu(on)
-
-	if (ION.OpDep) then return end
-
-	if (on) then
-
-		MainMenuBar:SetPoint("BOTTOM", 0, 0)
-		MainMenuBar_OnLoad(MainMenuBar)
-		MainMenuBar:Show()
+		TextStatusBar_Initialize(MainMenuExpBar)
+		MainMenuExpBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+		MainMenuExpBar:RegisterEvent("PLAYER_XP_UPDATE")
+		MainMenuExpBar.textLockable = 1
+		MainMenuExpBar.cvar = "xpBarText"
+		MainMenuExpBar.cvarLabel = "XP_BAR_TEXT"
+		MainMenuExpBar.alwaysPrefix = true
+		MainMenuExpBar_SetWidth(1024)
 
 		MainMenuBar_OnLoad(MainMenuBarArtFrame)
+		MainMenuBarVehicleLeaveButton_OnLoad(MainMenuBarVehicleLeaveButton)
 
-		if (GetNumShapeshiftForms() > 0) then
-			ShapeshiftBar_OnLoad(ShapeshiftBarFrame)
-		else
-			ShapeshiftBarFrame:UnregisterAllEvents()
-		end
+		MainMenuBar:SetPoint("BOTTOM", 0, 0)
+		MainMenuBar:Show()
 
-		BonusActionBar_OnLoad(BonusActionBarFrame)
+		OverrideActionBar_OnLoad(OverrideActionBar)
+		OverrideActionBar:SetPoint("BOTTOM", 0, 0)
 
-		PossessBar_OnLoad(PossessBarFrame)
+		ExtraActionBarFrame:SetPoint("BOTTOM", 0, 160)
 
-		UnregisterStateDriver(MainMenuBar, "visibility")
-		UnregisterStateDriver(ShapeshiftBarFrame, "visibility")
-		UnregisterStateDriver(PossessBarFrame, "visibility")
+		ActionBarController_OnLoad(ActionBarController)
 
-		local button
-		for i=1, VEHICLE_MAX_ACTIONBUTTONS do
-			button = _G["VehicleMenuBarActionButton"..i]
-			handler:WrapScript(button, "OnShow", [[
-				local key = GetBindingKey("ACTIONBUTTON"..self:GetID())
-				if (key) then
-					self:SetBindingClick(true, key, self:GetName())
-				end
-			]])
-			handler:WrapScript(button, "OnHide", [[
-				local key = GetBindingKey("ACTIONBUTTON"..self:GetID())
-				if (key) then
-					self:ClearBinding(key)
-				end
-			]])
-		end
-
-		MainMenuBarArtFrame:RegisterEvent("UNIT_ENTERING_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_ENTERED_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_EXITING_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_EXITED_VEHICLE")
-		MainMenuBarArtFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	else
 
-		MainMenuBar:SetPoint("BOTTOM", 0, -200)
-		MainMenuBar:UnregisterAllEvents()
-		MainMenuBar:Hide()
-
-		MainMenuBarArtFrame:UnregisterEvent("BAG_UPDATE");
-		MainMenuBarArtFrame:UnregisterEvent("ACTIONBAR_PAGE_CHANGED");
-
-		ShapeshiftBarFrame:UnregisterAllEvents()
-		ShapeshiftBarFrame:Hide()
-
-		BonusActionBarFrame:UnregisterAllEvents()
-		BonusActionBarFrame:Hide()
-
-		PossessBarFrame:UnregisterAllEvents()
-		PossessBarFrame:Hide()
-
-		RegisterStateDriver(MainMenuBar, "visibility", "hide")
-		RegisterStateDriver(ShapeshiftBarFrame, "visibility", "hide")
-		RegisterStateDriver(PossessBarFrame, "visibility", "hide")
-
 		local button
-		for i=1, VEHICLE_MAX_ACTIONBUTTONS do
-			button = _G["VehicleMenuBarActionButton"..i]
+
+		for i=1, NUM_OVERRIDE_BUTTONS do
+			button = _G["OverrideActionBarButton"..i]
 			handler:UnwrapScript(button, "OnShow")
 			handler:UnwrapScript(button, "OnHide")
 		end
 
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERING_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERED_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITING_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITED_VEHICLE")
-		MainMenuBarArtFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+		MainMenuExpBar:UnregisterAllEvents()
+		MainMenuBarArtFrame:UnregisterAllEvents()
+		MainMenuBarArtFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+		MainMenuBarArtFrame:RegisterEvent("UNIT_LEVEL")
+		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+
+		MainMenuBar:SetPoint("BOTTOM", 0, -200)
+		MainMenuBar:Hide()
+
+		OverrideActionBar:UnregisterAllEvents()
+		OverrideActionBar:SetPoint("BOTTOM", 0, -200)
+		OverrideActionBar:Hide()
+
+		ExtraActionBarFrame:SetPoint("BOTTOM", 0, -200)
+		ExtraActionBarFrame:Hide()
+
+		ActionBarController:UnregisterAllEvents()
 
 	end
 end
@@ -1645,11 +1767,7 @@ function ION:BlizzBar()
 		GDB.mainbar = true
 	end
 
-	if (ION.TOCVersion < 50000) then
-		ION:ToggleMainMenu(GDB.mainbar)
-	else
-		ION:ToggleBlizzBar(GDB.mainbar)
-	end
+	ION:ToggleBlizzBar(GDB.mainbar)
 
 end
 
@@ -1807,12 +1925,7 @@ function ION:CreateNewObject(class, id, firstRun)
 		object.objTIndex = index
 		object.objType = data.objType:gsub("%s", ""):upper()
 
-		--if statement for 4.x compatibility
-		if (ION.TOCVersion < 50000) then
-			object:LoadData(GetActiveTalentGroup(), "homestate")
-		else
-			object:LoadData(GetActiveSpecGroup(), "homestate")
-		end
+		object:LoadData(GetActiveSpecGroup(), "homestate")
 
 		if (firstRun) then
 			object:SetDefaults(object:GetDefaults())
@@ -2110,10 +2223,6 @@ local function control_OnEvent(self, event, ...)
 
 		ION:UpdateStanceStrings()
 
-		if (ION.TOCVersion >= 50000) then
-
-		end
-
 		GameMenuFrame:HookScript("OnShow", function(self)
 
 				if (ION.BarsShown or ION.EditFrameShown or ION.BindingMode) then
@@ -2124,6 +2233,13 @@ local function control_OnEvent(self, event, ...)
 					ION:ToggleBars(nil, true)
 
 				end end)
+
+		StaticPopupDialogs["ION_BETA_WARNING"] = {
+			text = L.BETA_WARNING,
+			button1 = OKAY,
+			timeout = 0,
+			OnAccept = function() GDB.betaWarning = false end,
+		}
 
 	elseif (event == "VARIABLES_LOADED") then
 
@@ -2151,10 +2267,6 @@ local function control_OnEvent(self, event, ...)
 			CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
 		end
 
-		if (ION.TOCVersion >= 50000) then
-
-		end
-
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 
 		GDB.firstRun = false
@@ -2165,24 +2277,19 @@ local function control_OnEvent(self, event, ...)
 		ION:UpdateCompanionData()
 		ION:UpdateIconIndex()
 
-		if (ION.TOCVersion < 50000) then
-			ION:ToggleMainMenu(GDB.mainbar)
-		else
-			ION:ToggleBlizzBar(GDB.mainbar)
-		end
+		ION:ToggleBlizzBar(GDB.mainbar)
 
 		CDB.fix07312012 = true
 
 		collectgarbage(); PEW = true
 
+		if (GDB.betaWarning) then
+			StaticPopup_Show("ION_BETA_WARNING")
+		end
+
 	elseif (event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_LOGOUT" or event == "PLAYER_LEAVING_WORLD") then
 
-		--if statement for 4.x compatibility
-		if (ION.TOCVersion < 50000) then
-			SPEC.cSpec = GetActiveTalentGroup()
-		else
-			SPEC.cSpec = GetActiveSpecGroup()
-		end
+		SPEC.cSpec = GetActiveSpecGroup()
 
 	elseif (event == "ACTIVE_TALENT_GROUP_CHANGED" or
 		  event == "LEARNED_SPELL_IN_TAB" or

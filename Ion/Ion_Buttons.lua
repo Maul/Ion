@@ -180,11 +180,7 @@ local stateData = {
 	macro_UseNote = false,
 }
 
-if (ION.TOCVersion < 50000) then
-	ION.SpecialActions = { vehicle = "Interface\\AddOns\\Ion\\Images\\old_vehicle_exit", possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield" }
-else
-	ION.SpecialActions = { vehicle = "Interface\\AddOns\\Ion\\Images\\new_vehicle_exit", possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield" }
-end
+ION.SpecialActions = { vehicle = "Interface\\AddOns\\Ion\\Images\\new_vehicle_exit", possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield" }
 
 local SpecialActions = ION.SpecialActions
 
@@ -2832,11 +2828,7 @@ function BUTTON:SaveData(state)
 
 	local index, spec = self.id
 
-	if (ION.TOCVersion < 50000) then
-		spec = GetActiveTalentGroup()
-	else
-		spec = GetActiveSpecGroup()
-	end
+	spec = GetActiveSpecGroup()
 
 	if (not state) then
 		state = self:GetParent():GetAttribute("activestate") or "homestate"
@@ -3104,21 +3096,14 @@ function BUTTON:SetType(save, kill, init)
 						end
 						]])
 
-		if (ION.TOCVersion < 50000) then
-			self:SetAttribute("overrideID_Offset", 120)
-			self:SetAttribute("vehicleID_Offset", 120)
-			self:SetAttribute("vehicleExit_Macro", "/click VehicleMenuBarLeaveButton")
-			self:SetAttribute("possessExit_Macro", "/click PossessButton2")
-		else
-			--new action ID's for vehicle 133-138
-			--new action ID's for possess 133-138
-			--new action ID's for override 157-162
+		--new action ID's for vehicle 133-138
+		--new action ID's for possess 133-138
+		--new action ID's for override 157-162
 
-			self:SetAttribute("overrideID_Offset", 156)
-			self:SetAttribute("vehicleID_Offset", 132)
-			self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
-			self:SetAttribute("possessExit_Macro", "/click PossessButton2")
-		end
+		self:SetAttribute("overrideID_Offset", 156)
+		self:SetAttribute("vehicleID_Offset", 132)
+		self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
+		self:SetAttribute("possessExit_Macro", "/click PossessButton2")
 
 		self:SetAttribute("_childupdate", [[
 

@@ -470,14 +470,8 @@ function BUTTON:GetBlizzData(data)
 
 		visible = true
 
-		--for 4.x compatibility
-		if (ION.TOCVersion < 50000) then
-			spellID, isKnown = GetFlyoutSlotInfo(self.flyout.keys, i)
-			petIndex, petName = GetCallPetSpellInfo(spellID)
-		else
-			spellID, _, isKnown = GetFlyoutSlotInfo(self.flyout.keys, i)
-			petIndex, petName = GetCallPetSpellInfo(spellID)
-		end
+		spellID, _, isKnown = GetFlyoutSlotInfo(self.flyout.keys, i)
+		petIndex, petName = GetCallPetSpellInfo(spellID)
 
 		if (petIndex and (not petName or petName == "")) then
 			visible = false
@@ -1399,11 +1393,38 @@ function ION:SpellTooltips_Update()
 
    	end
 
-	i = 1
+	for i = 1, select("#", GetProfessions()) do
 
-	if (true) then return end
+		local index = select(i, GetProfessions())
 
-	repeat
+		if (index) then
+
+			local _, _, _, _, numSpells, spelloffset = GetProfessionInfo(index)
+
+			for i=1,numSpells do
+
+				spell = GetSpellBookItemName(i+spelloffset, BOOKTYPE_PROFESSION); spellType = GetSpellBookItemInfo(i+spelloffset, BOOKTYPE_PROFESSION)
+
+				if (spell and spellType ~= "FLYOUT") then
+					tooltip = " "
+					tooltipScan:SetSpellBookItem(i+spelloffset, BOOKTYPE_PROFESSION)
+					for i,string in ipairs(tooltipStrings) do
+						text = string:GetText()
+						if (text) then
+							tooltip = tooltip..text..","
+						end
+					end
+					spellTooltips[spell:lower()] = tooltip:lower()
+   				end
+   			end
+   		end
+   	end
+
+	local numPetSpells = HasPetSpells() or 0
+
+	for i=1,numPetSpells do
+
+		spellName, subName = GetSpellBookItemName(i, BOOKTYPE_PET)
 		spell = GetSpellBookItemName(i, BOOKTYPE_PET); spellType = GetSpellBookItemInfo(i, BOOKTYPE_PET)
 
 		if (spell and spellType ~= "FLYOUT") then
@@ -1421,8 +1442,7 @@ function ION:SpellTooltips_Update()
 
    		i = i + 1
 
-   	until (not spell)
-
+   	end
 end
 
 function ION:CompanionTooltips_Update()

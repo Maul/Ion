@@ -180,20 +180,6 @@
 		</Scripts>
 	</Button>
 
-	<Button name="IonRaidButton" inherits="MainMenuBarMicroButton" parent="MainMenuBarArtFrame">
-		<Scripts>
-			<OnLoad>
-				Ion.RaidButton_OnLoad(self)
-			</OnLoad>
-			<OnEvent>
-				Ion.RaidButton_OnEvent(self, event, ...)
-			</OnEvent>
-			<OnClick>
-				Ion.RaidButton_OnClick(self)
-			</OnClick>
-		</Scripts>
-	</Button>
-
 	<Button name="IonEJButton" inherits="MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
