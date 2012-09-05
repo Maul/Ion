@@ -7,7 +7,7 @@
 -- Most of this code comes from or is inspired by one or both of these addons and the credit
 -- should go to them.
 
-local ION = Ion
+local ION, GDB = Ion
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Ion")
 
@@ -17,7 +17,7 @@ ORB:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 ORB.DataObj = LibStub:GetLibrary("LibDataBroker-1.1")
 
-ORB.DataObj:NewDataObject("IonHydrogen", {
+ORB.DataObj:NewDataObject("IonBroker", {
 
 	type = "launcher",
 	text = " "..L.ION,
@@ -48,33 +48,36 @@ ORB.DataObj:NewDataObject("IonHydrogen", {
 
 local function updatePoint(self, elapsed)
 
-	self.elapsed = self.elapsed + elapsed
+	if (GDB.animate) then
 
-	if (self.elapsed > 0.025) then
+		self.elapsed = self.elapsed + elapsed
 
-		self.l = self.l + 0.0625
-		self.r = self.r + 0.0625
+		if (self.elapsed > 0.025) then
 
-		if (self.r > 1) then
-			self.l = 0
-			self.r = 0.0625
-			self.b = self.b + 0.0625
+			self.l = self.l + 0.0625
+			self.r = self.r + 0.0625
+
+			if (self.r > 1) then
+				self.l = 0
+				self.r = 0.0625
+				self.b = self.b + 0.0625
+			end
+
+			if (self.b > 1) then
+				self.l = 0
+				self.r = 0.0625
+				self.b = 0.0625
+			end
+
+			self.t = self.b - (0.0625 * self.tadj)
+
+			if (self.t < 0) then self.t = 0 end
+			if (self.t > 1) then self.t = 1 end
+
+			self.texture:SetTexCoord(self.l, self.r, self.t, self.b)
+
+			self.elapsed = 0
 		end
-
-		if (self.b > 1) then
-			self.l = 0
-			self.r = 0.0625
-			self.b = 0.0625
-		end
-
-		self.t = self.b - (0.0625 * self.tadj)
-
-		if (self.t < 0) then self.t = 0 end
-		if (self.t > 1) then self.t = 1 end
-
-		self.texture:SetTexCoord(self.l, self.r, self.t, self.b)
-
-		self.elapsed = 0
 	end
 end
 
@@ -109,12 +112,9 @@ local function DelayedUpdate(self, elapsed)
 			local obj = _G[key]
 			if (type(obj) == "table" and type(rawget(obj, 0)) == "userdata" and type(obj.GetName) == "function") then
 				local name = obj:GetName()
-				if (name and name:find("IonHydrogen") and not ORB.foundicon) then
-					if (name:find("Icon") and not name:find("Titan")) then
-						ORB.anchorFrame = obj
-						ORB.foundicon = true
-					elseif (name:find("Titan") and name:find("ButtonIcon$")) or (obj:GetObjectType() == "Button") then
-						ORB.anchorFrame = obj
+				if (name and name:find("IonBroker") and not ORB.foundicon) then
+					if (name:find("Icon")) then
+						ORB.anchorFrame = obj; ORB.foundicon = true
 					end
 				end
 			end
@@ -160,8 +160,13 @@ local LOGIN_Updater = CreateFrame("Frame", nil, UIParent)
 
 ORB:SetScript("OnEvent", function(self, event, ...)
 
-	LOGIN_Updater:Show()
+	if (not IsAddOnLoaded("Titan")) then
 
-	ORB.eventfired = true
+		LOGIN_Updater:Show()
+
+		ORB.eventfired = true
+	end
+
+	GDB = IonGDB
 end)
 

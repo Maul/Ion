@@ -159,6 +159,7 @@ local gDef = {
 		point = "BOTTOM",
 		x = 0,
 		y = 55,
+		showGrid = true,
 	},
 
 	[2] = {
@@ -169,6 +170,7 @@ local gDef = {
 		point = "BOTTOM",
 		x = 0,
 		y = 100,
+		showGrid = true,
 	},
 }
 
@@ -235,32 +237,48 @@ local function controlOnUpdate(self, elapsed)
 
 	for k,v in pairs(alphaupIndex) do
 		if (v~=nil) then
-			if (k.alphaUp == alphaUps[3] or k.alphaUp == alphaUps[4]) then
 
-				if (InCombatLockdown()) then
+			if (k:IsShown()) then
+				v:SetAlpha(1)
+			else
 
-					if (v:GetAlpha() < 1) then
-						if (v:GetAlpha()+v.fadeSpeed <= 1) then
-							v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+				if (k.alphaUp == alphaUps[3] or k.alphaUp == alphaUps[4]) then
+
+					if (InCombatLockdown()) then
+
+						if (v:GetAlpha() < 1) then
+							if (v:GetAlpha()+v.fadeSpeed <= 1) then
+								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+							else
+								v:SetAlpha(1)
+							end
 						else
-							v:SetAlpha(1)
+							k.seen = 1;
 						end
+
 					else
-						k.seen = 1;
-					end
+						if (k.alphaUp == alphaUps[4]) then
 
-				else
-					if (k.alphaUp == alphaUps[4]) then
-
-						if (IsMouseOverSelfOrWatchFrame(k)) then
-							if (v:GetAlpha() < 1) then
-								if (v:GetAlpha()+v.fadeSpeed <= 1) then
-									v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+							if (IsMouseOverSelfOrWatchFrame(k)) then
+								if (v:GetAlpha() < 1) then
+									if (v:GetAlpha()+v.fadeSpeed <= 1) then
+										v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+									else
+										v:SetAlpha(1)
+									end
 								else
-									v:SetAlpha(1)
+									k.seen = 1;
 								end
 							else
-								k.seen = 1;
+								if (v:GetAlpha() > k.alpha) then
+									if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
+										v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
+									else
+										v:SetAlpha(k.alpha)
+									end
+								else
+									k.seen = 0;
+								end
 							end
 						else
 							if (v:GetAlpha() > k.alpha) then
@@ -273,45 +291,45 @@ local function controlOnUpdate(self, elapsed)
 								k.seen = 0;
 							end
 						end
-					else
-						if (v:GetAlpha() > k.alpha) then
-							if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
-								v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
+					end
+
+				elseif (k.alphaUp == alphaUps[5] or k.alphaUp == alphaUps[6]) then
+
+					if (not InCombatLockdown()) then
+
+						if (v:GetAlpha() < 1) then
+							if (v:GetAlpha()+v.fadeSpeed <= 1) then
+								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
 							else
-								v:SetAlpha(k.alpha)
+								v:SetAlpha(1)
 							end
 						else
-							k.seen = 0;
+							k.seen = 1;
 						end
-					end
-				end
 
-			elseif (k.alphaUp == alphaUps[5] or k.alphaUp == alphaUps[6]) then
-
-				if (not InCombatLockdown()) then
-
-					if (v:GetAlpha() < 1) then
-						if (v:GetAlpha()+v.fadeSpeed <= 1) then
-							v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
-						else
-							v:SetAlpha(1)
-						end
 					else
-						k.seen = 1;
-					end
+						if (k.alphaUp == alphaUps[6]) then
 
-				else
-					if (k.alphaUp == alphaUps[6]) then
-
-						if (IsMouseOverSelfOrWatchFrame(k)) then
-							if (v:GetAlpha() < 1) then
-								if (v:GetAlpha()+v.fadeSpeed <= 1) then
-									v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+							if (IsMouseOverSelfOrWatchFrame(k)) then
+								if (v:GetAlpha() < 1) then
+									if (v:GetAlpha()+v.fadeSpeed <= 1) then
+										v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+									else
+										v:SetAlpha(1)
+									end
 								else
-									v:SetAlpha(1)
+									k.seen = 1;
 								end
 							else
-								k.seen = 1;
+								if (v:GetAlpha() > k.alpha) then
+									if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
+										v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
+									else
+										v:SetAlpha(k.alpha)
+									end
+								else
+									k.seen = 0;
+								end
 							end
 						else
 							if (v:GetAlpha() > k.alpha) then
@@ -324,6 +342,20 @@ local function controlOnUpdate(self, elapsed)
 								k.seen = 0;
 							end
 						end
+					end
+
+				elseif (k.alphaUp == alphaUps[2]) then
+
+					if (IsMouseOverSelfOrWatchFrame(k)) then
+						if (v:GetAlpha() < 1) then
+							if (v:GetAlpha()+v.fadeSpeed <= 1) then
+								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+							else
+								v:SetAlpha(1)
+							end
+						else
+							k.seen = 1;
+						end
 					else
 						if (v:GetAlpha() > k.alpha) then
 							if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
@@ -334,30 +366,6 @@ local function controlOnUpdate(self, elapsed)
 						else
 							k.seen = 0;
 						end
-					end
-				end
-
-			elseif (k.alphaUp == alphaUps[2]) then
-
-				if (IsMouseOverSelfOrWatchFrame(k)) then
-					if (v:GetAlpha() < 1) then
-						if (v:GetAlpha()+v.fadeSpeed <= 1) then
-							v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
-						else
-							v:SetAlpha(1)
-						end
-					else
-						k.seen = 1;
-					end
-				else
-					if (v:GetAlpha() > k.alpha) then
-						if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
-							v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
-						else
-							v:SetAlpha(k.alpha)
-						end
-					else
-						k.seen = 0;
 					end
 				end
 			end
@@ -405,6 +413,7 @@ end
 function HANDLER:AddVisibilityDriver(bar, state, conditions)
 
 	if (MBS[state]) then
+
 		RegisterStateDriver(self, state, conditions)
 
 		if (self:GetAttribute("activestates"):find(state)) then

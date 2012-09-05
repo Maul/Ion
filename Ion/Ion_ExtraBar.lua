@@ -30,7 +30,7 @@ local gDef = {
 	snapToPoint = false,
 	point = "BOTTOM",
 	x = 0,
-	y = 146,
+	y = 226,
 }
 
 local GetParentKeys = ION.GetParentKeys
@@ -407,7 +407,7 @@ function XBTN:SetType(save)
 
 	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 
-	self.actionID = 133
+	self.actionID = 169
 
 	self:SetAttribute("type", "action")
 	self:SetAttribute("*action1", self.actionID)

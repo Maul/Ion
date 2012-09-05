@@ -48,6 +48,8 @@ IonGDB = {
 	xbarFirstRun = true,
 
 	betaWarning = true,
+
+	animate = true,
 }
 
 IonCDB = {
@@ -121,6 +123,14 @@ ION.STATES = {
 	fishing1 = L.FISHING1,
 	vehicle0 = L.VEHICLE0,
 	vehicle1 = L.VEHICLE1,
+	possess0 = L.POSSESS0,
+	possess1 = L.POSSESS1,
+	override0 = L.OVERRIDE0,
+	override1 = L.OVERRIDE1,
+	extrabar0 = L.EXTRABAR0,
+	extrabar1 = L.EXTRABAR1,
+	prowl0 = L.PROWL0,
+	prowl1 = L.PROWL1,
 	custom0 = L.CUSTOM0,
 
 }
@@ -139,6 +149,10 @@ ION.STATEINDEX = {
 	group = L.GROUP,
 	fishing = L.FISHING,
 	vehicle = L.VEHICLE,
+	possess = L.POSSESS,
+	override = L.OVERRIDE,
+	extrabar = L.EXTRABAR,
+	prowl = L.PROWL,
 	custom = L.CUSTOM,
 
 	[L.PAGED] = "paged",
@@ -153,6 +167,10 @@ ION.STATEINDEX = {
 	[L.GROUP] = "group",
 	[L.FISHING] = "fishing",
 	[L.VEHICLE] = "vehicle",
+	[L.POSSESS] = "possess",
+	[L.OVERRIDE] = "override",
+	[L.EXTRABAR] = "extrabar",
+	[L.PROWL] = "prowl",
 	[L.CUSTOM] = "custom",
 
 }
@@ -235,6 +253,7 @@ local slashFunctions = {
 	[43] = "PrintBarTypes",
 	[44] = "BlizzBar",
 	[45] = "",
+	[46] = "Animate",
 }
 
 local count = 1
@@ -1316,33 +1335,36 @@ local minimapShapes = {
 
 local function updatePoint(self, elapsed)
 
-	self.elapsed = self.elapsed + elapsed
+	if (GDB.animate) then
 
-	if (self.elapsed > 0.025) then
+		self.elapsed = self.elapsed + elapsed
 
-		self.l = self.l + 0.0625
-		self.r = self.r + 0.0625
+		if (self.elapsed > 0.025) then
 
-		if (self.r > 1) then
-			self.l = 0
-			self.r = 0.0625
-			self.b = self.b + 0.0625
+			self.l = self.l + 0.0625
+			self.r = self.r + 0.0625
+
+			if (self.r > 1) then
+				self.l = 0
+				self.r = 0.0625
+				self.b = self.b + 0.0625
+			end
+
+			if (self.b > 1) then
+				self.l = 0
+				self.r = 0.0625
+				self.b = 0.0625
+			end
+
+			self.t = self.b - (0.0625 * self.tadj)
+
+			if (self.t < 0) then self.t = 0 end
+			if (self.t > 1) then self.t = 1 end
+
+			self.texture:SetTexCoord(self.l, self.r, self.t, self.b)
+
+			self.elapsed = 0
 		end
-
-		if (self.b > 1) then
-			self.l = 0
-			self.r = 0.0625
-			self.b = 0.0625
-		end
-
-		self.t = self.b - (0.0625 * self.tadj)
-
-		if (self.t < 0) then self.t = 0 end
-		if (self.t > 1) then self.t = 1 end
-
-		self.texture:SetTexCoord(self.l, self.r, self.t, self.b)
-
-		self.elapsed = 0
 	end
 end
 
@@ -1768,6 +1790,16 @@ function ION:BlizzBar()
 	end
 
 	ION:ToggleBlizzBar(GDB.mainbar)
+
+end
+
+function ION:Animate()
+
+	if (GDB.animate) then
+		GDB.animate = false
+	else
+		GDB.animate = true
+	end
 
 end
 

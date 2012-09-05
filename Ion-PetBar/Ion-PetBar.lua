@@ -469,6 +469,11 @@ function PETBTN:SetData(bar)
 			self.cdAlpha = 1
 		end
 
+		self.barLock = bar.cdata.barLock
+		self.barLockAlt = bar.cdata.barLockAlt
+		self.barLockCtrl = bar.cdata.barLockCtrl
+		self.barLockShift = bar.cdata.barLockShift
+
 		self.upClicks = bar.cdata.upClicks
 		self.downClicks = bar.cdata.downClicks
 

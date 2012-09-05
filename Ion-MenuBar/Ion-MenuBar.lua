@@ -34,7 +34,7 @@ local gDef = {
 	snapToPoint = false,
 	point = "BOTTOMRIGHT",
 	x = -154.5,
-	y = 50,
+	y = 33,
 }
 
 local menuElements = {}

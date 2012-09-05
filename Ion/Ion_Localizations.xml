@@ -1,5 +1,15 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<Script file="Localizations\Ion_X-enUS.lua"/>
+	<Script file="Localizations\Ion_X-deDE.lua"/>
+	<Script file="Localizations\Ion_X-esES.lua"/>
+	<Script file="Localizations\Ion_X-esMX.lua"/>
+	<Script file="Localizations\Ion_X-frFR.lua"/>
+	<Script file="Localizations\Ion_X-itIT.lua"/>
+	<Script file="Localizations\Ion_X-koKR.lua"/>
+	<Script file="Localizations\Ion_X-ptBR.lua"/>
+	<Script file="Localizations\Ion_X-ruRU.lua"/>
+	<Script file="Localizations\Ion_X-zhCN.lua"/>
+	<Script file="Localizations\Ion_X-zhTW.lua"/>
 
 </Ui>

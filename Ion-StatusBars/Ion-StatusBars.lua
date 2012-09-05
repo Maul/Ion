@@ -909,6 +909,7 @@ end
 
 function STATUS:RepBar_DropDown_OnLoad()
 	UIDropDownMenu_Initialize(self.dropdown, repDropDown_Initialize, "MENU")
+	self.dropdown_init = true
 end
 
 function STATUS:MirrorBar_OnUpdate(elapsed)
@@ -1003,6 +1004,10 @@ end
 function STATUS:OnClick(button, down)
 
 	if (button == "RightButton") then
+
+		if (not self.dropdown_init) then
+			self:RepBar_DropDown_OnLoad()
+		end
 
 		if (DropDownList1:IsVisible()) then
 			DropDownList1:Hide()
@@ -2132,8 +2137,6 @@ function STATUS:SetType(save)
 			self:SetScript("OnEnter", STATUS.OnEnter)
 			self:SetScript("OnLeave", STATUS.OnLeave)
 			self:SetHitRectInsets(0, 0, 0, 0)
-
-			self:RepBar_DropDown_OnLoad()
 
 			self.sb:RegisterEvent("UPDATE_FACTION")
 			self.sb:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")

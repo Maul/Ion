@@ -146,6 +146,9 @@ L.SLASH_CMD44_DESC = "Toggle Blizzard's Action Bar"
 L.SLASH_CMD45 = "VehicleBar"
 L.SLASH_CMD45_DESC = "Toggle Blizzard's Vehicle Bar"
 
+L.SLASH_CMD46 = "Animate"
+L.SLASH_CMD46_DESC = "Toggle Ion's Orb Animation"
+
 L.BARTYPES_USAGE = "Usage: |cffffff00/ion create <type>|r\n"
 L.BARTYPES_TYPES = "     Types -\n"
 L.BARTYPES_LINE = "Creates a bar for %ss"
@@ -198,6 +201,8 @@ L.SHIFT1 = "Shift Down"
 
 L.STEALTH0 = "No Stealth"
 L.STEALTH1 = "Stealth"
+L.PROWL0 = "No Prowl"
+L.PROWL1 = "Prowl"
 L.REACTION0 = "Friendly"
 L.REACTION1 = "Hostile"
 L.COMBAT0 = "No Combat"

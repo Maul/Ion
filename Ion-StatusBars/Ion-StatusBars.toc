@@ -5,6 +5,7 @@
 ## Notes: Status bars for Ion
 ## DefaultState: enabled
 ## Dependencies: Ion
+## OptionalDeps: Blizzard_CompactRaidFrames
 ## SavedVariables: IonStatusGDB
 ## SavedVariablesPerCharacter: IonStatusCDB
 ## X-Child-Of: Ion
