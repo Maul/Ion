@@ -118,6 +118,12 @@ Ion.MANAGED_ACTION_STATES = {
 		order = 16,
 	},
 
+	prowl = {
+		states = "[stance:KITTY,stealth] prowl1; laststate",
+		rangeStart = 1,
+		rangeStop = 1,
+		order = 17
+	},
 }
 
 Ion.MANAGED_BAR_STATES = {
@@ -168,7 +174,7 @@ Ion.MANAGED_BAR_STATES = {
 	},
 
 	stealth = {
-		states = "[nomod:stealth] stealth0; [stealth] stealth1",
+		states = "[nostealth] stealth0; [stealth] stealth1",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 7,
@@ -220,20 +226,27 @@ Ion.MANAGED_BAR_STATES = {
 		states = "[nopossessbar] possess0; [possessbar] possess1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 13,
+		order = 14,
 	},
 
 	override = {
 		states = "[nooverridebar] override0; [overridebar] override1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 13,
+		order = 15,
 	},
 
 	extrabar = {
 		states = "[noextrabar] extrabar0; [extrabar] extrabar1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 13,
+		order = 16,
+	},
+
+	prowl = {
+		states = "[nostance:KITTY,nostealth] prowl0; [stance:KITTY,stealth] prowl1",
+		rangeStart = 1,
+		rangeStop = 1,
+		order = 17,
 	},
 }

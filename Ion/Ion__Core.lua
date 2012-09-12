@@ -208,7 +208,7 @@ end
 local defGDB, GDB, defCDB, CDB, defSPEC, SPEC = CopyTable(IonGDB), CopyTable(IonGDB), CopyTable(IonCDB), CopyTable(IonCDB), CopyTable(IonSpec), CopyTable(IonSpec)
 
 local slashFunctions = {
-	[1] = "",
+	[1] = "ToggleMainMenu",
 	[2] = "CreateNewBar",
 	[3] = "DeleteBar",
 	[4] = "ToggleBars",
@@ -1055,7 +1055,7 @@ function ION:UpdateStanceStrings()
 
 	    	wipe(ION.StanceIndex)
 
-		local _, name, spellID, catform
+		local _, name, spellID
 
 		local states = "[stance:0] stance0; "
 
@@ -1082,7 +1082,7 @@ function ION:UpdateStanceStrings()
 						ION.StanceIndex[i] = spellID
 
 						if (ION.class == "DRUID" and spellID == 768) then
-							catform = i
+							ION.kitty = i
 						end
 					end
 				end
@@ -1103,9 +1103,6 @@ function ION:UpdateStanceStrings()
 
 				ION.STATES.prowl = L.DRUID_PROWL
 
-				if (catform) then
-					states = "[stance:"..catform..",stealth] prowl; "..states
-				end
 			end
 
 			if (ION.class == "MONK") then
@@ -1507,6 +1504,7 @@ function ION:MinimapButton_OnEnter(minimap)
 	GameTooltip:AddLine(L.MINIMAP_TOOLTIP1, 1, 1, 1)
 	GameTooltip:AddLine(L.MINIMAP_TOOLTIP2, 1, 1, 1)
 	GameTooltip:AddLine(L.MINIMAP_TOOLTIP3, 1, 1, 1)
+	GameTooltip:AddLine(L.MINIMAP_TOOLTIP4, 1, 1, 1)
 
 	GameTooltip:Show()
 end
@@ -1524,6 +1522,8 @@ function ION:MinimapButton_OnClick(minimap, button)
 
 	if (button == "RightButton") then
 		ION:ToggleEditFrames()
+	elseif (IsShiftKeyDown()) then
+		ION:ToggleMainMenu()
 	elseif (IsAltKeyDown() or button == "MiddleButton") then
 		ION:ToggleBindings()
 	else
@@ -2051,6 +2051,7 @@ function ION:ToggleBars(show, hide)
 			collectgarbage()
 		else
 
+			ION:ToggleMainMenu(nil, true)
 			ION:ToggleEditFrames(nil, true)
 
 			ION.BarsShown = true
@@ -2075,6 +2076,20 @@ function ION:ToggleButtonGrid(show, hide)
 	for id,btn in pairs(BTNIndex) do
 		btn[1]:SetGrid(show, hide)
 	end
+end
+
+function ION:ToggleMainMenu(show, hide)
+
+	if (not IsAddOnLoaded("Ion-GUI")) then
+		LoadAddOn("Ion-GUI")
+	end
+
+	if ((IonMainMenu:IsVisible() or hide) and not show) then
+		IonMainMenu:Hide()
+	else
+		IonMainMenu:Show()
+	end
+
 end
 
 function ION:PrintStateList()
@@ -2223,10 +2238,6 @@ local function control_OnEvent(self, event, ...)
 
 		ION.player, ION.class, ION.level, ION.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
 
-		if (ION.class == "DRUID") then
-			ION.MAS.stealth = { states = "[nostance:3,stealth] stealth1; laststate", rangeStart = 1, rangeStop = 1, order = 7 }
-		end
-
 		for k,v in pairs(opDepList) do
 			if (IsAddOnLoaded(v)) then
 				ION.OpDep = true
@@ -2257,14 +2268,23 @@ local function control_OnEvent(self, event, ...)
 
 		GameMenuFrame:HookScript("OnShow", function(self)
 
-				if (ION.BarsShown or ION.EditFrameShown or ION.BindingMode) then
+				if (IonMainMenu and IonMainMenu:IsShown()) then
+					HideUIPanel(self); ION:ToggleMainMenu(nil, true)
+				end
 
-					HideUIPanel(self)
-					ION:ToggleEditFrames(nil, true)
-					ION:ToggleBindings(nil, true)
-					ION:ToggleBars(nil, true)
+				if (ION.BarsShown) then
+					HideUIPanel(self); ION:ToggleBars(nil, true)
+				end
 
-				end end)
+				if (ION.EditFrameShown) then
+					HideUIPanel(self); ION:ToggleEditFrames(nil, true)
+				end
+
+				if (ION.BindingMode) then
+					HideUIPanel(self); ION:ToggleBindings(nil, true)
+				end
+
+				end)
 
 		StaticPopupDialogs["ION_BETA_WARNING"] = {
 			text = L.BETA_WARNING,

@@ -215,6 +215,7 @@ function ION:ToggleEditFrames(show, hide)
 
 	else
 
+		ION:ToggleMainMenu(nil, true)
 		ION:ToggleBars(nil, true)
 		ION:ToggleBindings(nil, true)
 

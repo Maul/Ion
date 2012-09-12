@@ -25,17 +25,8 @@ ORB.DataObj:NewDataObject("IonBroker", {
 	icon = "Interface\\AddOns\\Ion\\Images\\static_icon",
 	OnClick = function(self, button, down)
 
-		PlaySound("igChatScrollDown")
+		ION:MinimapButton_OnClick(IonMinimapButton, button)
 
-		if (InCombatLockdown()) then return end
-
-		if (button == "RightButton") then
-			ION:ToggleEditFrames()
-		elseif (IsAltKeyDown() or button == "MiddleButton") then
-			ION:ToggleBindings()
-		else
-			ION:ToggleBars()
-		end
 	end,
 	OnTooltipShow = function(tooltip)
 		if not tooltip or not tooltip.AddLine then return end
@@ -43,6 +34,7 @@ ORB.DataObj:NewDataObject("IonBroker", {
 		tooltip:AddLine(L.MINIMAP_TOOLTIP1, 1, 1, 1)
 		tooltip:AddLine(L.MINIMAP_TOOLTIP2, 1, 1, 1)
 		tooltip:AddLine(L.MINIMAP_TOOLTIP3, 1, 1, 1)
+		tooltip:AddLine(L.MINIMAP_TOOLTIP4, 1, 1, 1)
 	end,
 })
 

@@ -1,7 +1,7 @@
 ﻿--Ion GUI, a World of Warcraft® user interface addon.
 --Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local ION, GDB, CDB, IBE, IOE, IBTNE, MAS, PEW = Ion
+local ION, GDB, CDB, IMM, IBE, IOE, IBTNE, MAS, PEW = Ion
 
 local width, height = 775, 490
 
@@ -574,7 +574,20 @@ function ION:UpdateBarGUI(newBar)
 			end
 
 			for i,f in ipairs(barOpt.sec) do
-				f:SetChecked(bar.cdata[f.option])
+
+				if (f.stance ) then
+					if (f.stance:GetChecked()) then
+						f:SetChecked(bar.cdata[f.option])
+						f:Enable()
+						f.text:SetTextColor(1,0.82,0)
+					else
+						f:SetChecked(nil)
+						f:Disable()
+						f.text:SetTextColor(0.5,0.5,0.5)
+					end
+				else
+					f:SetChecked(bar.cdata[f.option])
+				end
 			end
 
 			wipe(popupData)
@@ -654,9 +667,12 @@ local function countOnMouseWheel(frame, delta)
 	end
 end
 
-function Ion:BarEditor_OnLoad(frame)
+function ION:BarEditor_OnLoad(frame)
 
 	ION.SubFramePlainBackdrop_OnLoad(frame)
+
+	frame:SetWidth(width)
+	frame:SetHeight(height)
 
 	frame:RegisterEvent("ADDON_LOADED")
 	frame:RegisterForDrag("LeftButton", "RightButton")
@@ -1503,7 +1519,7 @@ function ION:ActionEditor_OnLoad(frame)
 	f:Hide()
 	frame.tab3 = f; frame.tabs[f] = frame.hidden
 
-	local states, anchor, last, count = {}
+	local states, anchor, last, count, prowl = {}
 
 	local MAS = ION.MANAGED_ACTION_STATES
 
@@ -1520,7 +1536,7 @@ function ION:ActionEditor_OnLoad(frame)
 			f:SetWidth(18)
 			f:SetHeight(18)
 			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(L[state:upper()])
+			f.text:SetText(L["GUI_"..state:upper()])
 			f.option = state
 
 			if (not anchor) then
@@ -1531,6 +1547,10 @@ function ION:ActionEditor_OnLoad(frame)
 				last = f
 			end
 
+			if (state == "stance" and ION.class == "DRUID") then
+				prowl = f
+			end
+
 			tinsert(barOpt.pri, f)
 		end
 	end
@@ -1539,14 +1559,14 @@ function ION:ActionEditor_OnLoad(frame)
 
 	for index,state in ipairs(states) do
 
-		if (not MAS[state].homestate and state ~= "custom" and state ~= "extrabar") then
+		if (not MAS[state].homestate and state ~= "custom" and state ~= "extrabar" and state ~= "prowl") then
 
 			f = CreateFrame("CheckButton", nil, frame.presets.secondary, "IonOptionsCheckButtonTemplate")
 			f:SetID(index)
 			f:SetWidth(18)
 			f:SetHeight(18)
 			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(L[state:upper()])
+			f.text:SetText(L["GUI_"..state:upper()])
 			f.option = state
 
 			if (not anchor) then
@@ -1566,15 +1586,16 @@ function ION:ActionEditor_OnLoad(frame)
 		end
 	end
 
-	if (ION.class == "DRUID") then
+	if (prowl) then
 
 		f = CreateFrame("CheckButton", nil, frame.presets.secondary, "IonOptionsCheckButtonTemplate")
 		f:SetID(#states+1)
 		f:SetWidth(18)
 		f:SetHeight(18)
 		f:SetScript("OnClick", setBarActionState)
-		f.text:SetText(L.PROWL)
+		f.text:SetText(L.GUI_PROWL)
 		f.option = "prowl"
+		f.stance = prowl
 		f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
 
 		tinsert(barOpt.sec, f)
@@ -2580,6 +2601,18 @@ function ION.ColorPicker_OnColorSelect(self, r, g, b)
 	self.hexvalue:SetText(string.upper(string.format("%02x%02x%02x", math.ceil((r*255)), math.ceil((g*255)), math.ceil((b*255)))))
 end
 
+function ION:MainMenu_OnLoad(frame)
+
+	ION.SubFrameHoneycombBackdrop_OnLoad(frame)
+
+	frame:SetWidth(width)
+	frame:SetHeight(height)
+
+	frame:RegisterEvent("ADDON_LOADED")
+	frame:RegisterForDrag("LeftButton", "RightButton")
+
+end
+
 --not an optimal solution, but it works for now
 local function hookHandler(handler)
 
@@ -2634,9 +2667,7 @@ local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Ion-GUI") then
 
-		IonBarEditor:SetWidth(width)
-		IonBarEditor:SetHeight(height)
-
+		IMM = IonMainMenu
 		IBE = IonBarEditor
 		IOE = IonObjectEditor
 		IBTNE = IonButtonEditor

@@ -1619,7 +1619,13 @@ end
 
 function BUTTON:MACRO_ACTIVE_TALENT_GROUP_CHANGED(...)
 
-	local spec = select(2,...)
+	local spec
+
+	if (self.dualSpec) then
+		spec = select(2,...)
+	else
+		spec = 1
+	end
 
 	self:Show()
 
@@ -2713,6 +2719,7 @@ function BUTTON:SetData(bar)
 		self.downClicks = bar.cdata.downClicks
 
 		self.showGrid = bar.gdata.showGrid
+		self.dualSpec = bar.cdata.dualSpec
 
 		self.bindColor = bar.gdata.bindColor
 		self.macroColor = bar.gdata.macroColor
@@ -2826,9 +2833,7 @@ end
 
 function BUTTON:SaveData(state)
 
-	local index, spec = self.id
-
-	spec = GetActiveSpecGroup()
+	local index, spec = self.id, GetActiveSpecGroup()
 
 	if (not state) then
 		state = self:GetParent():GetAttribute("activestate") or "homestate"
@@ -2910,11 +2915,29 @@ function BUTTON:LoadData(spec, state)
 		end
 
 		if (not self.CDB[id].keys) then
-			self.CDB[id].keys = CopyTable(keyData)
+			self.CDB[id].keys = {}
 		end
+
+		-- kill old per character key data
+		if (self.CDB[id].keys.hotKeys) then
+			self.CDB[id].keys.hotKeys = nil
+			self.CDB[id].keys.hotKeyText = nil
+			self.CDB[id].keys.hotKeyLock = nil
+			self.CDB[id].keys.hotKeyPri = nil
+		end
+
+		if (not self.CDB[id].keys[spec]) then
+			self.CDB[id].keys[spec] = CopyTable(keyData)
+		end
+
+		ION:UpdateData(self.CDB[id].keys[spec], keyData)
 
 		if (not self.CDB[id][spec]) then
 			self.CDB[id][spec] = { homestate = CopyTable(stateData) }
+		end
+
+		if (self.CDB[id][spec].keys) then
+			self.CDB[id][spec].keys = nil
 		end
 
 		if (not self.CDB[id][spec][state]) then
@@ -2925,9 +2948,11 @@ function BUTTON:LoadData(spec, state)
 		ION:UpdateData(self.GDB[id].keys, keyData)
 
 		for spec,states in pairs(self.CDB[id]) do
-			for state,data in pairs(states) do
-				if (type(data) == "table") then
-					ION:UpdateData(data, stateData)
+			if (spec ~= "keys") then
+				for state,data in pairs(states) do
+					if (type(data) == "table") then
+						ION:UpdateData(data, stateData)
+					end
 				end
 			end
 		end

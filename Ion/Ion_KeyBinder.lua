@@ -445,6 +445,7 @@ function ION:ToggleBindings(show, hide)
 
 	else
 
+		ION:ToggleMainMenu(nil, true)
 		ION:ToggleEditFrames(nil, true)
 
 		ION.BindingMode = true

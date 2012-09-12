@@ -1282,7 +1282,7 @@ local function linkScanOnUpdate(self, elapsed)
 	self.elapsed = self.elapsed + elapsed
 
 	-- scan X items per frame draw, where X is the for limit
-	for i=1,5 do
+	for i=1,2 do
 
 		self.link = itemLinks[self.index]
 

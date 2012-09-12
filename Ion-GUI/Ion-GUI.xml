@@ -599,6 +599,28 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 
 	<!-- Not Templates -->
 
+	<Frame name="IonMainMenu" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent" clampedToScreen="true">
+		<Anchors>
+			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
+				<Offset x="0" y="75"/>
+			</Anchor>
+		</Anchors>
+		<Frames>
+
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Ion:MainMenu_OnLoad(self)
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+
 	<Frame name="IonBarEditor" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent" clampedToScreen="true">
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
